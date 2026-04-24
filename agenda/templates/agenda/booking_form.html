@@ -1,0 +1,232 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.booking-form-card {
+  max-width: 700px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+}
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-group { margin-bottom: 1.2rem; }
+.form-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 0.4rem;
+}
+.form-group .form-help {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+/* Verificação de disponibilidade */
+#availability-result {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  display: none;
+  margin-top: 0.75rem;
+  border-left: 4px solid;
+}
+#availability-result.available {
+  background: rgba(39,174,96,0.08);
+  border-color: #27ae60;
+  color: #1a7a40;
+}
+#availability-result.conflict {
+  background: rgba(231,76,60,0.08);
+  border-color: #e74c3c;
+  color: #c0392b;
+}
+#availability-result.checking {
+  background: rgba(243,156,18,0.08);
+  border-color: #f39c12;
+  color: #946b00;
+}
+.conflict-list {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+}
+.conflict-list li { margin-bottom: 0.3rem; font-size: 0.82rem; }
+.form-actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem 0 0;
+}
+.errorlist li {
+  font-size: 0.82rem;
+  color: #e74c3c;
+  padding: 0.3rem 0.6rem;
+  background: rgba(231,76,60,0.08);
+  border-radius: 3px;
+  margin-bottom: 0.3rem;
+}
+.non-field-errors {
+  background: rgba(231,76,60,0.08);
+  border: 1px solid rgba(231,76,60,0.3);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  color: #c0392b;
+  font-size: 0.87rem;
+}
+@media (max-width: 600px) {
+  .form-row-2 { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-form-card">
+
+  {% if form.non_field_errors %}
+  <div class="non-field-errors">
+    <i class="fa fa-exclamation-triangle"></i>
+    {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+  </div>
+  {% endif %}
+
+  <form method="post" id="bookingForm">
+    {% csrf_token %}
+
+    <!-- Título -->
+    <div class="form-group">
+      <label for="{{ form.title.id_for_label }}">{{ form.title.label }} *</label>
+      {{ form.title }}
+      {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+
+    <!-- Ministério -->
+    <div class="form-group">
+      <label for="{{ form.ministry.id_for_label }}">{{ form.ministry.label }}</label>
+      {{ form.ministry }}
+    </div>
+
+    <!-- Local -->
+    <div class="form-group">
+      <label for="{{ form.location.id_for_label }}">{{ form.location.label }} *</label>
+      {{ form.location }}
+      {% if form.location.errors %}<ul class="errorlist">{% for e in form.location.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+
+    <!-- Data -->
+    <div class="form-group">
+      <label for="{{ form.date.id_for_label }}">{{ form.date.label }} *</label>
+      {{ form.date }}
+      {% if form.date.errors %}<ul class="errorlist">{% for e in form.date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+
+    <!-- Horários -->
+    <div class="form-row-2">
+      <div class="form-group">
+        <label for="{{ form.start_time.id_for_label }}">{{ form.start_time.label }} *</label>
+        {{ form.start_time }}
+        {% if form.start_time.errors %}<ul class="errorlist">{% for e in form.start_time.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.end_time.id_for_label }}">{{ form.end_time.label }} *</label>
+        {{ form.end_time }}
+        {% if form.end_time.errors %}<ul class="errorlist">{% for e in form.end_time.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+
+    <!-- Resultado da verificação -->
+    <div id="availability-result"></div>
+
+    <!-- Observações -->
+    <div class="form-group" style="margin-top:0.75rem;">
+      <label for="{{ form.notes.id_for_label }}">{{ form.notes.label }}</label>
+      {{ form.notes }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-save"></i> Salvar Agendamento
+      </button>
+      <a href="{% url 'agenda_view' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Verificação de disponibilidade em tempo real ──────────
+const locationEl  = document.getElementById('{{ form.location.id_for_label }}');
+const dateEl      = document.getElementById('{{ form.date.id_for_label }}');
+const startEl     = document.getElementById('{{ form.start_time.id_for_label }}');
+const endEl       = document.getElementById('{{ form.end_time.id_for_label }}');
+const resultEl    = document.getElementById('availability-result');
+
+let checkTimeout = null;
+
+function checkAvailability() {
+  const loc   = locationEl.value;
+  const date  = dateEl.value;
+  const start = startEl.value;
+  const end   = endEl.value;
+
+  if (!loc || !date || !start || !end) {
+    resultEl.style.display = 'none';
+    return;
+  }
+  if (start >= end) {
+    resultEl.className = 'conflict';
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = '<i class="fa fa-times-circle"></i> O horário de término deve ser após o início.';
+    return;
+  }
+
+  resultEl.className = 'checking';
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Verificando disponibilidade...';
+
+  clearTimeout(checkTimeout);
+  checkTimeout = setTimeout(() => {
+    const excludePk = '{{ booking.pk|default:"" }}';
+    const url = `{% url 'check_availability' %}?location=${loc}&date=${date}&start=${start}&end=${end}${excludePk ? '&exclude=' + excludePk : ''}`;
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if (data.available) {
+          resultEl.className = 'available';
+          resultEl.innerHTML = '<i class="fa fa-check-circle"></i> <strong>Horário disponível!</strong> Este local está livre no período selecionado.';
+        } else {
+          const conflicts = data.conflicts.map(c =>
+            `<li><strong>${c.title}</strong> — ${c.start} às ${c.end} (${c.status})</li>`
+          ).join('');
+          resultEl.className = 'conflict';
+          resultEl.innerHTML = `
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>Conflito de agendamento!</strong>
+            Este local já está ocupado no período informado:
+            <ul class="conflict-list">${conflicts}</ul>
+            Escolha outro local ou ajuste o horário.
+          `;
+        }
+      })
+      .catch(() => {
+        resultEl.style.display = 'none';
+      });
+  }, 400);
+}
+
+[locationEl, dateEl, startEl, endEl].forEach(el => {
+  if (el) el.addEventListener('change', checkAvailability);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div style="max-width:580px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group" style="margin-bottom:1.2rem;">
+      <label style="display:block;font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);margin-bottom:0.4rem;">
+        {{ field.label }}{% if field.field.required %} *{% endif %}
+      </label>
+      {{ field }}
+      {% if field.help_text %}
+      <small style="color:var(--text-muted);font-size:0.78rem;">{{ field.help_text }}</small>
+      {% endif %}
+      {% for error in field.errors %}
+      <small style="color:#e74c3c;font-size:0.8rem;display:block;margin-top:0.3rem;">{{ error }}</small>
+      {% endfor %}
+    </div>
+    {% endfor %}
+    <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+      <a href="{% url 'location_manage' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

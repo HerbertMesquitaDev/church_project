@@ -1,0 +1,22 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Excluir Local{% endblock %}
+{% block page_title %}Excluir Local{% endblock %}
+{% block content %}
+<div style="max-width:500px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:2rem;text-align:center;">
+  <div style="width:60px;height:60px;border-radius:50%;background:rgba(231,76,60,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+    <i class="fa fa-map-marker-alt" style="font-size:1.5rem;color:#e74c3c;"></i>
+  </div>
+  <h3 style="color:var(--navy);margin-bottom:0.5rem;">Excluir local?</h3>
+  <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1.5rem;">
+    Tem certeza que deseja excluir <strong>{{ location.name }}</strong>?<br>
+    <small>Todos os agendamentos vinculados a este local serão afetados.</small>
+  </p>
+  <form method="post" style="display:flex;gap:1rem;justify-content:center;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c;">
+      <i class="fa fa-trash"></i> Excluir
+    </button>
+    <a href="{% url 'location_manage' %}" class="btn btn-outline">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
