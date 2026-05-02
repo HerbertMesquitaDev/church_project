@@ -1,0 +1,66 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:560px">
+
+    <div style="margin-bottom:.75rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_quiz_question_edit' question.pk %}" style="color:var(--gold)">
+            <i class="fa fa-arrow-left"></i> Voltar para a Pergunta
+        </a>
+    </div>
+
+    <div class="quiz-manage-card">
+        <div class="quiz-manage-card-header">
+            <i class="fa fa-list-ul"></i>
+            <div>
+                <strong>{{ title }}</strong>
+                <span class="text-muted" style="font-size:.8rem">Pergunta: {{ question.text|truncatechars:60 }}</span>
+            </div>
+        </div>
+
+        <form method="post" class="members-form" style="margin-top:.75rem">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>{{ form.text.label }}</label>
+                {{ form.text }}
+                {% if form.text.errors %}<span class="field-error">{{ form.text.errors.0 }}</span>{% endif %}
+            </div>
+            <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap">
+                <div class="form-check-group form-group">
+                    {{ form.is_correct }}
+                    <label for="{{ form.is_correct.id_for_label }}">
+                        {{ form.is_correct.label }}
+                    </label>
+                </div>
+                <div class="form-group" style="max-width:120px">
+                    <label>{{ form.order.label }}</label>
+                    {{ form.order }}
+                </div>
+            </div>
+
+            <div class="quiz-manage-tip" style="margin-bottom:1rem">
+                <i class="fa fa-exclamation-circle"></i>
+                Marque como correta <strong>somente uma</strong> alternativa por pergunta.
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+                <a href="{% url 'manage_quiz_question_edit' question.pk %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.quiz-manage-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.25rem; }
+.quiz-manage-card-header { display:flex; align-items:flex-start; gap:.75rem; margin-bottom:.25rem; }
+.quiz-manage-card-header i { font-size:1.1rem; color:var(--gold,#C9A84C); margin-top:.15rem; }
+.quiz-manage-card-header strong { display:block; font-size:.95rem; color:var(--text-heading,#1A2340); }
+.quiz-manage-tip { display:flex; align-items:flex-start; gap:.6rem; background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.2); border-radius:8px; padding:.8rem 1rem; font-size:.82rem; color:var(--text-muted); }
+.quiz-manage-tip i { color:var(--gold,#C9A84C); margin-top:.1rem; flex-shrink:0; }
+[data-theme="dark"] .quiz-manage-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .quiz-manage-card-header strong { color:#E8E4DC; }
+</style>
+{% endblock %}

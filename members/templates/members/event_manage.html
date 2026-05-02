@@ -1,0 +1,193 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Agenda de Eventos{% endblock %}
+{% block page_title %}Agenda de Eventos{% endblock %}
+
+{% block content %}
+
+<!-- Stats rápidos -->
+<div class="stats-grid" style="margin-bottom:1.5rem">
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(46,204,113,0.1)"><i class="fa fa-calendar-check" style="color:#27ae60"></i></div>
+        <div>
+            <span class="stat-number">{{ total_upcoming }}</span>
+            <span class="stat-label">Próximos</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(26,35,64,0.08)"><i class="fa fa-history" style="color:var(--gold-dark)"></i></div>
+        <div>
+            <span class="stat-number">{{ total_past }}</span>
+            <span class="stat-label">Realizados</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-calendar-alt" style="color:var(--gold-dark)"></i></div>
+        <div>
+            <span class="stat-number">{{ total_all }}</span>
+            <span class="stat-label">Total de Eventos</span>
+        </div>
+    </div>
+    {% if request.user.is_superuser %}
+    <div class="stat-card stat-card-action" onclick="window.location='{% url 'event_create' %}'">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-plus" style="color:var(--gold-dark)"></i></div>
+        <div>
+            <span class="stat-number" style="font-size:1rem;color:var(--gold-dark)">Novo</span>
+            <span class="stat-label">Cadastrar Evento</span>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Barra de filtros -->
+<div class="filter-bar">
+    <form method="get" class="filter-form">
+
+        <div class="filter-field filter-field-grow">
+            <label class="filter-label">Buscar</label>
+            <div class="filter-input-icon">
+                <i class="fa fa-search"></i>
+                <input type="text" name="q" value="{{ q }}" placeholder="Título, local ou descrição…" class="filter-input">
+            </div>
+        </div>
+
+        <div class="filter-field">
+            <label class="filter-label">Período</label>
+            <select name="periodo" class="filter-input">
+                <option value="upcoming" {% if periodo == 'upcoming' %}selected{% endif %}>Próximos</option>
+                <option value="past"     {% if periodo == 'past'     %}selected{% endif %}>Realizados</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label class="filter-label">Categoria</label>
+            <select name="categoria" class="filter-input">
+                <option value="">Todas</option>
+                {% for cat in categories %}
+                <option value="{{ cat.pk }}" {% if cat_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary" style="padding:.55rem 1.1rem">
+                <i class="fa fa-filter"></i> Filtrar
+            </button>
+            {% if q or cat_id or periodo != 'upcoming' %}
+            <a href="{% url 'event_manage' %}" class="btn btn-outline" style="padding:.55rem 1rem">
+                <i class="fa fa-times"></i> Limpar
+            </a>
+            {% endif %}
+        </div>
+
+        {% if request.user.is_superuser %}
+        <a href="{% url 'event_create' %}" class="btn btn-primary filter-new-btn">
+            <i class="fa fa-plus"></i> Novo Evento
+        </a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Tabela -->
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead>
+            <tr>
+                <th>Evento</th>
+                <th>Data / Hora</th>
+                <th>Local</th>
+                <th>Categoria</th>
+                <th>Recorrência</th>
+                <th>Status</th>
+                <th>Destaque</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for event in events %}
+        <tr>
+            <td>
+                <strong class="td-title">{{ event.title }}</strong>
+                {% if event.short_description %}
+                <br><small class="td-sub">{{ event.short_description|truncatechars:60 }}</small>
+                {% endif %}
+            </td>
+            <td style="white-space:nowrap">
+                <span style="font-weight:500">{{ event.date|date:"d/m/Y" }}</span>
+                <br><small class="td-sub"><i class="fa fa-clock"></i> {{ event.date|date:"H:i" }}
+                {% if event.end_date %} – {{ event.end_date|date:"H:i" }}{% endif %}</small>
+            </td>
+            <td>
+                {% if event.location %}
+                    <i class="fa fa-map-marker-alt" style="color:var(--gold-dark);font-size:.8rem"></i>
+                    {{ event.location }}
+                {% else %}—{% endif %}
+            </td>
+            <td>
+                {% if event.category %}
+                <span class="cat-pill">
+                    <span class="cat-dot" style="background:{{ event.category.color }}"></span>
+                    {{ event.category.name }}
+                </span>
+                {% else %}—{% endif %}
+            </td>
+            <td>
+                {% if event.recurrence == 'none' %}—
+                {% elif event.recurrence == 'weekly' %}<span class="badge-green">Semanal</span>
+                {% elif event.recurrence == 'biweekly' %}<span class="badge-grey">Quinzenal</span>
+                {% elif event.recurrence == 'monthly' %}<span class="badge-blue">Mensal</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if event.published %}<span class="badge-green">Publicado</span>
+                {% else %}<span class="badge-grey">Rascunho</span>{% endif %}
+            </td>
+            <td style="text-align:center">
+                {% if event.featured %}<i class="fa fa-star" style="color:var(--gold)"></i>
+                {% else %}—{% endif %}
+            </td>
+            <td class="action-btns">
+                <a href="{{ event.get_absolute_url }}" target="_blank" title="Ver no site" class="btn-action btn-view">
+                    <i class="fa fa-eye"></i>
+                </a>
+                <a href="{% url 'event_social_post_create' event_pk=event.pk %}" title="Publicar nas redes sociais" class="btn-action" style="background:rgba(225,48,108,.08);color:#E1306C;border-color:rgba(225,48,108,.2)">
+                    <i class="fa fa-share-nodes"></i>
+                </a>
+                {% with social_count=event.social_posts.count %}
+                {% if social_count %}
+                <a href="{% url 'event_social_post_list' event_pk=event.pk %}" title="{{ social_count }} publicação(ões)" class="btn-action btn-view" style="font-size:.68rem;min-width:28px">
+                    {{ social_count }}
+                </a>
+                {% endif %}
+                {% endwith %}
+                {% if request.user.is_superuser %}
+                <a href="{% url 'event_edit' event.pk %}" title="Editar" class="btn-action btn-approve">
+                    <i class="fa fa-pen"></i>
+                </a>
+                <a href="{% url 'event_delete' event.pk %}" title="Excluir" class="btn-action btn-reject">
+                    <i class="fa fa-trash"></i>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" class="table-empty">
+                <i class="fa fa-calendar-times"></i>
+                {% if q or cat_id %}
+                    Nenhum evento encontrado com os filtros aplicados.
+                    <br><a href="{% url 'event_manage' %}" style="color:var(--gold-dark)">Limpar filtros</a>
+                {% else %}
+                    Nenhum evento cadastrado ainda.
+                    {% if request.user.is_superuser %}
+                    <br><a href="{% url 'event_create' %}" style="color:var(--gold-dark)">Criar o primeiro evento</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'core/pagination.html' %}
+{% endblock %}

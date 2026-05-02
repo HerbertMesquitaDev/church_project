@@ -1,0 +1,98 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ album.title }} — Galeria — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:7rem">
+    <div class="container">
+
+        <div class="breadcrumb" style="margin-bottom:1.5rem">
+            <a href="{% url 'home' %}">Início</a>
+            <span>/</span>
+            <a href="{% url 'gallery' %}">Galeria</a>
+            <span>/</span>
+            <span>{{ album.title }}</span>
+        </div>
+
+        <div class="gallery-album-header">
+            <div>
+                <h1>{{ album.title }}</h1>
+                {% if album.event_date %}
+                <p class="gallery-album-date"><i class="fa fa-calendar"></i> {{ album.event_date|date:"d \d\e F \d\e Y" }}</p>
+                {% endif %}
+                {% if album.description %}
+                <p class="gallery-album-desc">{{ album.description }}</p>
+                {% endif %}
+            </div>
+            <a href="{% url 'gallery' %}" class="btn btn-outline">
+                <i class="fa fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        {% if photos %}
+        <div class="gallery-photos-grid">
+            {% for photo in photos %}
+            <div class="gallery-photo-item" onclick="openLightbox({{ forloop.counter0 }})">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:album.title }}" loading="lazy">
+                {% if photo.caption %}
+                <div class="gallery-photo-caption">{{ photo.caption }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Lightbox -->
+        <div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;">
+            <button onclick="closeLightbox()" style="position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;color:#fff;font-size:1.8rem;cursor:pointer;line-height:1;"><i class="fa fa-times"></i></button>
+            <button onclick="prevPhoto()" style="position:absolute;left:1.5rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:.75rem 1rem;border-radius:6px;"><i class="fa fa-chevron-left"></i></button>
+            <button onclick="nextPhoto()" style="position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1.5rem;cursor:pointer;padding:.75rem 1rem;border-radius:6px;"><i class="fa fa-chevron-right"></i></button>
+            <img id="lightbox-img" src="" alt="" style="max-width:90vw;max-height:82vh;object-fit:contain;border-radius:4px;">
+            <div id="lightbox-caption" style="color:rgba(255,255,255,.75);margin-top:.75rem;font-size:.9rem;text-align:center;max-width:600px;"></div>
+            <div id="lightbox-counter" style="color:rgba(255,255,255,.4);font-size:.78rem;margin-top:.35rem;"></div>
+        </div>
+
+        {% else %}
+        <div class="empty-state"><i class="fa fa-images"></i><h3>Nenhuma foto neste álbum.</h3></div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var photos = [
+    {% for photo in photos %}
+    { src: "{{ photo.image.url }}", caption: "{{ photo.caption|escapejs }}" }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+var current = 0;
+
+function openLightbox(idx) {
+    current = idx;
+    showPhoto();
+    document.getElementById('lightbox').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.body.style.overflow = '';
+}
+function showPhoto() {
+    document.getElementById('lightbox-img').src = photos[current].src;
+    document.getElementById('lightbox-caption').textContent = photos[current].caption;
+    document.getElementById('lightbox-counter').textContent = (current + 1) + ' / ' + photos.length;
+}
+function prevPhoto() { current = (current - 1 + photos.length) % photos.length; showPhoto(); }
+function nextPhoto() { current = (current + 1) % photos.length; showPhoto(); }
+
+document.addEventListener('keydown', function(e) {
+    if (document.getElementById('lightbox').style.display === 'flex') {
+        if (e.key === 'ArrowLeft') prevPhoto();
+        if (e.key === 'ArrowRight') nextPhoto();
+        if (e.key === 'Escape') closeLightbox();
+    }
+});
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) closeLightbox();
+});
+</script>
+{% endblock %}

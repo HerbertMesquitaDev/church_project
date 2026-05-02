@@ -1,0 +1,50 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }} — EBD{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="form-page-wrap" style="max-width:560px">
+
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.5rem" class="text-muted">
+    <a href="{% url 'ebd_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-users"></i> Turmas</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <a href="{% url 'ebd_trimester_manage' class_pk=cls.pk %}" style="color:var(--gold);text-decoration:none">{{ cls.name }}</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ title }}</span>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-section-title">Dados do Trimestre</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Ano *</label>
+        <input type="number" name="year" class="form-input" value="{{ tri.year|default:'2025' }}" min="2000" max="2100" required>
+      </div>
+      <div class="form-group">
+        <label>Trimestre *</label>
+        <select name="quarter" class="form-input" required>
+          {% for val, label in quarters %}
+          <option value="{{ val }}" {% if tri.quarter == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Título *</label>
+      <input type="text" name="title" class="form-input" value="{{ tri.title|default:'' }}" placeholder="Ex: A Fé que Transforma" required>
+    </div>
+    <div class="form-group">
+      <label>Descrição</label>
+      <textarea name="description" class="form-input" rows="3">{{ tri.description|default:'' }}</textarea>
+    </div>
+    <div class="form-check-group form-group">
+      <input type="checkbox" id="active" name="active" {% if tri.active|default:True %}checked{% endif %}>
+      <label for="active">Trimestre ativo</label>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+      <a href="{% url 'ebd_trimester_manage' class_pk=cls.pk %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

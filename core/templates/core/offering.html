@@ -1,0 +1,81 @@
+{% extends 'core/base.html' %}
+{% block title %}Dízimos & Ofertas — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Contribua</span>
+        <h1>Dízimos & Ofertas</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        {% if site_settings.offering_text %}
+        <div class="offering-public-intro">
+            <div>{{ site_settings.offering_text|safe }}</div>
+        </div>
+        {% else %}
+        <div class="offering-public-intro">
+            <p>Contribua com a obra de Deus. Cada oferta e dízimo é usado para manter os ministérios e alcançar mais vidas.</p>
+        </div>
+        {% endif %}
+
+        <div class="offering-public-grid">
+
+            {% if site_settings.pix_key %}
+            <div class="offering-public-card offering-pix-card">
+                <div class="offering-public-icon"><i class="fa fa-qrcode"></i></div>
+                <h3>PIX</h3>
+                <p class="offering-public-label">Chave PIX</p>
+                <div class="offering-pix-key">{{ site_settings.pix_key }}</div>
+                {% if site_settings.pix_name %}
+                <p class="offering-public-name">{{ site_settings.pix_name }}</p>
+                {% endif %}
+                <button class="offering-copy-btn-pub" onclick="copyPix('{{ site_settings.pix_key }}', this)">
+                    <i class="fa fa-copy"></i> Copiar chave
+                </button>
+            </div>
+            {% endif %}
+
+            {% if site_settings.bank_name %}
+            <div class="offering-public-card offering-bank-card">
+                <div class="offering-public-icon"><i class="fa fa-university"></i></div>
+                <h3>Transferência Bancária</h3>
+                <ul class="offering-bank-list">
+                    <li><span>Banco</span><strong>{{ site_settings.bank_name }}</strong></li>
+                    {% if site_settings.bank_agency %}<li><span>Agência</span><strong>{{ site_settings.bank_agency }}</strong></li>{% endif %}
+                    {% if site_settings.bank_account %}<li><span>Conta</span><strong>{{ site_settings.bank_account }}</strong></li>{% endif %}
+                    {% if site_settings.bank_holder %}<li><span>Titular</span><strong>{{ site_settings.bank_holder }}</strong></li>{% endif %}
+                </ul>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="offering-verse">
+            <blockquote>
+                "Trazei todos os dízimos à casa do tesouro, para que haja mantimento na minha casa."
+                <cite>— Malaquias 3:10</cite>
+            </blockquote>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyPix(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<i class="fa fa-check"></i> Copiado!';
+        btn.style.background = '#27ae60';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa fa-copy"></i> Copiar chave';
+            btn.style.background = '';
+        }, 2500);
+    });
+}
+</script>
+{% endblock %}

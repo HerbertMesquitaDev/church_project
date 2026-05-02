@@ -1,0 +1,91 @@
+{% extends 'members/base_members.html' %}
+{% block title %}EBD — Gestão{% endblock %}
+{% block page_title %}Escola Bíblica Dominical{% endblock %}
+
+{% block extra_css %}
+<style>
+.ebd-class-card { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s; }
+.ebd-class-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-1px); }
+.ebd-class-header { padding:1.1rem 1.25rem .8rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem; }
+.ebd-class-name { font-size:1rem;font-weight:600;color:var(--text-heading);margin:0 0 .2rem; }
+.ebd-class-desc { font-size:.78rem;color:var(--text-muted);margin:0; }
+.ebd-class-stats { display:flex;gap:.75rem;padding:.65rem 1.25rem;border-top:1px solid var(--border);background:var(--surface-alt); }
+.ebd-class-stat { font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:.3rem; }
+.ebd-class-stat strong { color:var(--text-heading); }
+.ebd-class-actions { display:flex;gap:.4rem;padding:.65rem 1.25rem;border-top:1px solid var(--border); }
+.active-pill  { display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(39,174,96,.1);color:#1a7a40; }
+.inactive-pill{ display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(149,165,166,.12);color:#666; }
+[data-theme="dark"] .ebd-class-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .ebd-class-name { color:#E8E4DC; }
+[data-theme="dark"] .ebd-class-stats { background:#25252D;border-color:rgba(201,168,76,.08); }
+[data-theme="dark"] .ebd-class-actions { border-color:rgba(201,168,76,.08); }
+[data-theme="dark"] .active-pill  { background:rgba(39,174,96,.1);color:#58d68d; }
+[data-theme="dark"] .inactive-pill{ background:rgba(149,165,166,.08);color:#9A9690; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:1.5rem">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(201,168,76,.1)"><i class="fa fa-users" style="color:var(--gold-dark)"></i></div>
+    <div><span class="stat-number">{{ classes|length }}</span><span class="stat-label">Turmas</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(41,128,185,.1)"><i class="fa fa-bible" style="color:#2475a8"></i></div>
+    <div><span class="stat-number">{{ total_lessons }}</span><span class="stat-label">Lições cadastradas</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(39,174,96,.1)"><i class="fa fa-check-circle" style="color:#27ae60"></i></div>
+    <div><span class="stat-number">{{ total_attempts }}</span><span class="stat-label">Quizzes respondidos</span></div>
+  </div>
+  <div class="stat-card stat-card-action" onclick="window.location='{% url 'ebd_class_create' %}'">
+    <div class="stat-icon" style="background:rgba(201,168,76,.1)"><i class="fa fa-plus" style="color:var(--gold-dark)"></i></div>
+    <div><span class="stat-number" style="font-size:1rem;color:var(--gold-dark)">Nova</span><span class="stat-label">Criar Turma</span></div>
+  </div>
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<div class="section-label-sm" style="margin-bottom:.75rem">Turmas</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+  {% for cls in classes %}
+  <div class="ebd-class-card">
+    <div class="ebd-class-header">
+      <div>
+        <div class="ebd-class-name">{{ cls.name }}</div>
+        {% if cls.description %}<p class="ebd-class-desc">{{ cls.description|truncatewords:12 }}</p>{% endif %}
+      </div>
+      {% if cls.active %}
+      <span class="active-pill"><i class="fa fa-circle" style="font-size:.45rem"></i> Ativa</span>
+      {% else %}
+      <span class="inactive-pill"><i class="fa fa-circle" style="font-size:.45rem"></i> Inativa</span>
+      {% endif %}
+    </div>
+    <div class="ebd-class-stats">
+      <span class="ebd-class-stat"><i class="fa fa-calendar" style="color:var(--gold-dark)"></i> <strong>{{ cls.trimesters.count }}</strong> trimestre(s)</span>
+      <span class="ebd-class-stat"><i class="fa fa-book-open" style="color:var(--gold-dark)"></i> <strong>{{ cls.trimesters.all|length }}</strong></span>
+    </div>
+    <div class="ebd-class-actions">
+      <a href="{% url 'ebd_trimester_manage' class_pk=cls.pk %}" class="btn btn-primary" style="font-size:.8rem;padding:.35rem .85rem;flex:1;text-align:center">
+        <i class="fa fa-list"></i> Trimestres
+      </a>
+      <a href="{% url 'ebd_class_edit' cls.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+      {% if request.user.is_superuser %}
+      <a href="{% url 'ebd_class_delete' cls.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">
+    <i class="fa fa-users" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+    Nenhuma turma cadastrada ainda.
+    <br><a href="{% url 'ebd_class_create' %}" class="btn btn-primary" style="margin-top:.75rem">Criar primeira turma</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

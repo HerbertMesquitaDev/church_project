@@ -1,0 +1,201 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ cell.name }} — Mural{% endblock %}
+{% block page_title %}{{ cell.name }}{% endblock %}
+
+{% block content %}
+<div class="cell-mural-layout">
+
+    <!-- MURAL / FEED -->
+    <div class="cell-mural-main">
+
+        <!-- Post form -->
+        <form method="post" enctype="multipart/form-data" class="cell-post-form">
+            {% csrf_token %}
+            <div class="cell-post-type-tabs">
+                <label class="cell-tab active" data-type="message">
+                    <input type="radio" name="post_type" value="message" checked> <i class="fa fa-comment"></i> Mensagem
+                </label>
+                <label class="cell-tab" data-type="prayer">
+                    <input type="radio" name="post_type" value="prayer"> <i class="fa fa-pray"></i> Oração
+                </label>
+                <label class="cell-tab" data-type="file">
+                    <input type="radio" name="post_type" value="file"> <i class="fa fa-paperclip"></i> Arquivo
+                </label>
+                {% if is_leader %}
+                <label class="cell-tab" data-type="notice">
+                    <input type="radio" name="post_type" value="notice"> <i class="fa fa-thumbtack"></i> Aviso
+                </label>
+                {% endif %}
+            </div>
+            <textarea name="content" class="cell-post-textarea"
+                placeholder="Escreva sua mensagem..." rows="3" required></textarea>
+            <div id="file-field" style="display:none;margin-top:.5rem">
+                <input type="file" name="file" class="form-input" accept=".pdf,.doc,.docx,.jpg,.png">
+            </div>
+            <div style="text-align:right;margin-top:.6rem">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-paper-plane"></i> Publicar
+                </button>
+            </div>
+        </form>
+
+        <!-- Posts feed -->
+        {% for item in post_data %}
+        {% with post=item.post %}
+        <div class="cell-post {% if post.pinned %}cell-post-pinned{% endif %} cell-post-{{ post.post_type }}">
+            {% if post.pinned %}<div class="cell-pin-badge"><i class="fa fa-thumbtack"></i> Fixado</div>{% endif %}
+
+            <div class="cell-post-header">
+                <div class="cell-post-avatar">{{ post.author.first_name|first|upper }}{{ post.author.last_name|first|upper }}</div>
+                <div>
+                    <strong>{{ post.author.get_full_name|default:post.author.username }}</strong>
+                    <span class="cell-post-time">{{ post.created_at|timesince }} atrás</span>
+                </div>
+                <span class="cell-post-type-icon">
+                    {% if post.post_type == 'prayer' %}<i class="fa fa-pray" title="Pedido de Oração"></i>
+                    {% elif post.post_type == 'file' %}<i class="fa fa-paperclip" title="Arquivo"></i>
+                    {% elif post.post_type == 'notice' %}<i class="fa fa-thumbtack" title="Aviso"></i>
+                    {% endif %}
+                </span>
+                {% if is_leader or request.user == post.author %}
+                <div class="cell-post-actions">
+                    {% if is_leader %}
+                    <a href="{% url 'cell_pin_post' cell.pk post.pk %}" class="cell-action-btn" title="{% if post.pinned %}Desafixar{% else %}Fixar{% endif %}">
+                        <i class="fa fa-thumbtack"></i>
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'cell_delete_post' cell.pk post.pk %}" class="cell-action-btn cell-action-delete"
+                       onclick="return confirm('Remover esta mensagem?')" title="Excluir">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="cell-post-body">
+                {% if post.post_type == 'prayer' %}
+                <div class="cell-prayer-box"><i class="fa fa-pray"></i> {{ post.content|linebreaks }}</div>
+                {% else %}
+                <p>{{ post.content|linebreaks }}</p>
+                {% endif %}
+                {% if post.file %}
+                <a href="{{ post.file.url }}" target="_blank" class="cell-file-link">
+                    <i class="fa fa-file"></i> {{ post.file.name|slice:"13:" }}
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Reactions -->
+            <div class="cell-reactions">
+                {% for emoji, data in item.reactions.items %}
+                <button class="cell-react-btn {% if data.user_reacted %}cell-reacted{% endif %}"
+                        onclick="react({{ post.pk }}, '{{ emoji }}')"
+                        data-post="{{ post.pk }}" data-emoji="{{ emoji }}">
+                    {{ emoji }}
+                    <span class="cell-react-count" id="react-{{ post.pk }}-{{ emoji|slugify }}">
+                        {% if data.count %}{{ data.count }}{% endif %}
+                    </span>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+        {% endwith %}
+        {% empty %}
+        <div class="empty-state" style="padding:2rem 0">
+            <i class="fa fa-comments"></i>
+            <h3>Nenhuma mensagem ainda.</h3>
+            <p>Seja o primeiro a publicar!</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="cell-mural-aside">
+
+        {% if pending_count %}
+        <div class="cell-pending-alert">
+            <i class="fa fa-user-clock"></i>
+            <div>
+                <strong>{{ pending_count }} pedido{{ pending_count|pluralize:",s" }} pendente{{ pending_count|pluralize:",s" }}</strong>
+            </div>
+            <a href="{% url 'cell_manage_members' cell.pk %}" class="btn btn-outline btn-sm">Gerenciar</a>
+        </div>
+        {% endif %}
+
+        <div class="aside-card">
+            <h4>Sobre o grupo</h4>
+            {% if cell.description %}<p style="font-size:.85rem;color:var(--text-muted)">{{ cell.description }}</p>{% endif %}
+            <ul class="cell-info-list">
+                {% if cell.region %}<li><i class="fa fa-map-marker-alt"></i> {{ cell.region }}</li>{% endif %}
+                {% if cell.meeting_day %}<li><i class="fa fa-clock"></i> {{ cell.meeting_day }}</li>{% endif %}
+                {% if cell.meeting_place %}<li><i class="fa fa-map-pin"></i> {{ cell.meeting_place }}</li>{% endif %}
+            </ul>
+            {% if is_member %}
+            <a href="{% url 'cell_leave' cell.pk %}" class="btn btn-outline btn-full" style="margin-top:.75rem;font-size:.8rem;color:var(--text-muted)">
+                Sair do grupo
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="aside-card" style="margin-top:1rem">
+            <h4>Membros ({{ members.count }})</h4>
+            <div class="cell-members-list">
+                {% for m in members %}
+                <div class="cell-member-item">
+                    <div class="cell-member-avatar">{{ m.user.first_name|first|upper }}{{ m.user.last_name|first|upper }}</div>
+                    <div>
+                        <span>{{ m.user.get_full_name|default:m.user.username }}</span>
+                        {% if m.role == 'leader' %}<span class="cell-leader-badge">Líder</span>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </aside>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Post type tabs
+document.querySelectorAll('.cell-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.cell-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        var type = this.dataset.type;
+        document.getElementById('file-field').style.display = type === 'file' ? 'block' : 'none';
+    });
+});
+
+// Reactions via AJAX
+function react(postPk, emoji) {
+    var csrfToken = document.cookie.match(/csrftoken=([^;]+)/);
+    csrfToken = csrfToken ? csrfToken[1] : '';
+    fetch("{% url 'cell_react' cell.pk 0 %}".replace('/0/', '/' + postPk + '/'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken,
+        },
+        body: 'emoji=' + encodeURIComponent(emoji),
+    })
+    .then(r => r.json())
+    .then(data => {
+        var slug = emoji.codePointAt(0).toString(16);
+        var countEl = document.getElementById('react-' + postPk + '-' + slug);
+        if (!countEl) {
+            // fallback: find by data attrs
+            document.querySelectorAll('[data-post="' + postPk + '"][data-emoji="' + emoji + '"] .cell-react-count')
+                .forEach(el => { el.textContent = data.count || ''; });
+            document.querySelectorAll('[data-post="' + postPk + '"][data-emoji="' + emoji + '"]')
+                .forEach(el => { el.classList.toggle('cell-reacted', data.reacted); });
+            return;
+        }
+        countEl.textContent = data.count || '';
+        var btn = countEl.closest('.cell-react-btn');
+        if (btn) btn.classList.toggle('cell-reacted', data.reacted);
+    });
+}
+</script>
+{% endblock %}

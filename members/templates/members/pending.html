@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Aguardando Aprovação{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/members.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <span class="auth-cross" style="color: var(--gold)">⏳</span>
+            <h2>Cadastro em Análise</h2>
+        </div>
+        <p style="text-align:center; color: var(--text-muted); line-height:1.7; margin-bottom:2rem;">
+            Seu cadastro foi recebido com sucesso!<br>
+            A liderança da igreja irá analisar e aprovar em breve.<br>
+            Você receberá acesso assim que for aprovado.
+        </p>
+        <a href="{% url 'home' %}" class="btn btn-outline btn-full">Voltar ao Site</a>
+        <div class="auth-footer" style="margin-top:1rem;">
+            <a href="{% url 'member_logout' %}">Sair da conta</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

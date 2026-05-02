@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ devotional.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block meta_description %}{{ devotional.verse }} — {{ devotional.reflection|striptags|truncatechars:140 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ devotional.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block og_description %}{{ devotional.verse }} — {{ devotional.reflection|striptags|truncatechars:140 }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Palavra do Dia</span>
+        <h1>{{ devotional.title }}</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container devotional-detail-layout">
+
+        <article class="devotional-detail-main">
+            <div class="devotional-detail-meta">
+                <span><i class="fa fa-calendar"></i> {{ devotional.pub_date|date:"d \d\e F \d\e Y" }}</span>
+                {% if devotional.author %}<span><i class="fa fa-user-tie"></i> {{ devotional.author }}</span>{% endif %}
+            </div>
+
+            <div class="devotional-verse-card">
+                <div class="devotional-verse-ref-lg">{{ devotional.verse }}</div>
+                <blockquote class="devotional-verse-quote">"{{ devotional.verse_text }}"</blockquote>
+            </div>
+
+            <div class="devotional-body">
+                <h3>Reflexão</h3>
+                <div class="prose">{{ devotional.reflection|safe }}</div>
+            </div>
+
+            {% if devotional.prayer %}
+            <div class="devotional-prayer-card">
+                <div class="devotional-prayer-header">
+                    <i class="fa fa-hands-praying"></i> Oração do Dia
+                </div>
+                <div>{{ devotional.prayer|safe }}</div>
+            </div>
+            {% endif %}
+
+            <div style="margin-top:2rem;">
+                <a href="{% url 'devotional_list' %}" class="btn btn-outline">
+                    <i class="fa fa-arrow-left"></i> Ver todos os devocionais
+                </a>
+            </div>
+        </article>
+
+        <aside class="devotional-detail-aside">
+            <div class="aside-card">
+                <h4>Devocionais Recentes</h4>
+                {% for d in recent %}
+                <a href="{% url 'devotional_detail' d.pk %}" class="devotional-aside-link">
+                    <div class="devotional-aside-date">
+                        <span>{{ d.pub_date|date:"d" }}</span>
+                        <span>{{ d.pub_date|date:"M" }}</span>
+                    </div>
+                    <div>
+                        <strong>{{ d.title }}</strong>
+                        <small>{{ d.verse }}</small>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </aside>
+
+    </div>
+</section>
+{% endblock %}

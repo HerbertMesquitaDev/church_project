@@ -1,0 +1,160 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Meu Perfil{% endblock %}
+{% block page_title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="profile-layout">
+
+    <div class="profile-card">
+        {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="Foto" class="profile-photo">
+        {% else %}
+            <div class="profile-photo-placeholder"><i class="fa fa-user"></i></div>
+        {% endif %}
+        <h3>{{ profile.full_name }}</h3>
+        {% for mm in profile.member_ministries.all %}
+            <span class="ministry-tag">{{ mm.ministry.name }}{% if mm.role %} · {{ mm.role }}{% endif %}</span><br>
+        {% endfor %}
+    </div>
+
+    <div class="profile-form-wrap">
+
+        <form method="post" enctype="multipart/form-data" class="members-form">
+            {% csrf_token %}
+
+            <div class="form-section-title">Dados Pessoais</div>
+            <div class="form-grid">
+                <div class="form-group"><label>Nome</label>{{ form.first_name }}</div>
+                <div class="form-group"><label>Sobrenome</label>{{ form.last_name }}</div>
+                <div class="form-group"><label>E-mail</label>{{ form.email }}</div>
+                <div class="form-group"><label>Telefone</label>{{ form.phone }}</div>
+                <div class="form-group"><label>Data de Nascimento</label>{{ form.birth_date }}</div>
+            </div>
+
+            <div class="form-section-title">Foto de Perfil</div>
+            <div class="form-group">{{ form.photo }}</div>
+
+            <div class="form-section-title">Sobre Mim</div>
+            <div class="form-group"><label>Breve descrição</label>{{ form.bio }}</div>
+            <div class="form-group form-check-group">
+                {{ form.baptized }}
+                <label for="{{ form.baptized.id_for_label }}">Sou batizado(a)</label>
+            </div>
+
+            <!-- LGPD Status -->
+            <div class="lgpd-profile-strip {% if profile.image_consent and not profile.image_consent_revoked %}granted{% elif profile.image_consent_revoked %}revoked{% else %}pending{% endif %}">
+                <div class="lgpd-info">
+                    {% if profile.image_consent and not profile.image_consent_revoked %}
+                        <i class="fa fa-shield-alt"></i>
+                        <div>
+                            <strong>Uso de imagem autorizado</strong>
+                            <small>Aceito em {{ profile.image_consent_date|date:"d/m/Y" }}</small>
+                        </div>
+                    {% elif profile.image_consent_revoked %}
+                        <i class="fa fa-shield-alt"></i>
+                        <div>
+                            <strong>Autorização de imagem revogada</strong>
+                            <small>Revogado em {{ profile.image_consent_revoked_date|date:"d/m/Y" }}</small>
+                        </div>
+                    {% else %}
+                        <i class="fa fa-exclamation-circle"></i>
+                        <div>
+                            <strong>Autorização de imagem pendente</strong>
+                            <small>Você ainda não se manifestou sobre o uso da sua imagem</small>
+                        </div>
+                    {% endif %}
+                </div>
+                <a href="{% url 'lgpd_consent' %}" class="btn btn-outline btn-sm">
+                    <i class="fa fa-shield-alt"></i> Gerenciar
+                </a>
+            </div>
+
+            <div class="form-section-title">Meus Ministérios</div>
+            <p class="form-hint">Selecione os ministérios em que você participa e informe sua função em cada um.</p>
+            {{ formset.management_form }}
+            <div class="ministry-formset" id="ministryFormset">
+                {% for mform in formset %}
+                <div class="ministry-formset-row">
+                    <div class="form-group" style="flex:1"><label>Ministério</label>{{ mform.ministry }}{{ mform.id }}</div>
+                    <div class="form-group" style="flex:1"><label>Minha Função</label>{{ mform.role }}</div>
+                    <div class="form-group formset-delete"><label>Remover</label>{{ mform.DELETE }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" id="addMinistry">
+                <i class="fa fa-plus"></i> Adicionar Ministério
+            </button>
+            <br><br>
+            <button type="submit" name="save_profile" class="btn btn-primary">Salvar Alterações</button>
+        </form>
+
+        <!-- TESTEMUNHO -->
+        <div style="margin-top:3rem;">
+            <div class="form-section-title" style="display:flex;align-items:center;gap:.5rem;">
+                <i class="fa fa-hands-praying" style="color:var(--gold-dark);font-size:1.1rem;"></i>
+                Meu Testemunho
+            </div>
+
+            {% if user_testimony %}
+            <div class="testimony-status-card testimony-status-{{ user_testimony.status }}">
+                <div class="testimony-status-header">
+                    <span class="testimony-badge testimony-badge-{{ user_testimony.status }}">
+                        {% if user_testimony.status == 'pending' %}<i class="fa fa-clock"></i> Aguardando Aprovação
+                        {% elif user_testimony.status == 'approved' %}<i class="fa fa-check-circle"></i> Aprovado e publicado
+                        {% else %}<i class="fa fa-times-circle"></i> Não aprovado{% endif %}
+                    </span>
+                    <small style="color:var(--text-muted)">Enviado em {{ user_testimony.created_at|date:"d/m/Y" }}</small>
+                </div>
+                <p class="testimony-text-preview">{{ user_testimony.text }}</p>
+                {% if user_testimony.admin_note %}
+                <div class="testimony-admin-note">
+                    <i class="fa fa-comment-dots"></i> <strong>Observação da liderança:</strong> {{ user_testimony.admin_note }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if not user_testimony or user_testimony.status != 'pending' %}
+            {% if user_testimony %}<p class="form-hint" style="margin-top:1.2rem;">Deseja enviar um novo testemunho?</p>{% endif %}
+            <form method="post" class="members-form" style="margin-top:1.2rem;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="{{ testimony_form.text.id_for_label }}">Seu Testemunho</label>
+                    {{ testimony_form.text }}
+                    <small class="form-hint">Máximo de 1.500 caracteres. Será revisado pela liderança antes de ser publicado.</small>
+                    {% if testimony_form.text.errors %}<ul class="errorlist">{% for e in testimony_form.text.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                </div>
+                <button type="submit" name="save_testimony" class="btn btn-primary">
+                    <i class="fa fa-paper-plane"></i> Enviar Testemunho
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const addBtn = document.getElementById('addMinistry');
+const formset = document.getElementById('ministryFormset');
+const totalForms = document.querySelector('[name$="-TOTAL_FORMS"]');
+addBtn.addEventListener('click', () => {
+    const rows = formset.querySelectorAll('.ministry-formset-row');
+    const newRow = rows[rows.length - 1].cloneNode(true);
+    const idx = parseInt(totalForms.value);
+    newRow.querySelectorAll('input, select').forEach(el => {
+        el.name = el.name.replace(/-\d+-/, `-${idx}-`);
+        el.id   = el.id.replace(/-\d+-/,   `-${idx}-`);
+        if (el.type !== 'checkbox') el.value = '';
+        if (el.type === 'checkbox') el.checked = false;
+    });
+    newRow.querySelectorAll('label').forEach(el => {
+        if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/-\d+-/, `-${idx}-`);
+    });
+    formset.appendChild(newRow);
+    totalForms.value = idx + 1;
+});
+</script>
+{% endblock %}

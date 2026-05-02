@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% block title %}Galeria de Fotos — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Memórias</span>
+        <h1>Galeria de Fotos</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if albums %}
+        <div class="gallery-grid">
+            {% for album in albums %}
+            <a href="{% url 'gallery_album' album.pk %}" class="gallery-album-card">
+                <div class="gallery-album-cover">
+                    {% if album.cover %}
+                        <img src="{{ album.cover.url }}" alt="{{ album.title }}">
+                    {% elif album.photos.first %}
+                        <img src="{{ album.photos.first.image.url }}" alt="{{ album.title }}">
+                    {% else %}
+                        <div class="gallery-album-no-cover"><i class="fa fa-images"></i></div>
+                    {% endif %}
+                    <div class="gallery-album-overlay">
+                        <span class="gallery-photo-count">
+                            <i class="fa fa-images"></i> {{ album.photo_count }} foto{{ album.photo_count|pluralize:",s" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="gallery-album-info">
+                    <h3>{{ album.title }}</h3>
+                    {% if album.event_date %}
+                    <small><i class="fa fa-calendar"></i> {{ album.event_date|date:"d \d\e F \d\e Y" }}</small>
+                    {% endif %}
+                    {% if album.description %}
+                    <p>{{ album.description|truncatechars:80 }}</p>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa fa-images"></i>
+            <h3>Nenhum álbum publicado ainda.</h3>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

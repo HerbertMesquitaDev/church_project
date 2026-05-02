@@ -1,0 +1,83 @@
+{% extends 'core/base.html' %}
+{% block title %}EBD — Escola Bíblica Dominical{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Escola Bíblica</span>
+        <h1>EBD — Lições & Estudos</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if not request.user.is_authenticated %}
+        <div class="ebd-login-notice">
+            <i class="fa fa-lock"></i>
+            <div>
+                <strong>Conteúdo completo para membros</strong>
+                <p>Faça login para acessar as aulas, fazer os quizzes e receber seus certificados.</p>
+            </div>
+            <a href="{% url 'member_login' %}?next=/ebd/" class="btn btn-primary" style="white-space:nowrap">Entrar</a>
+        </div>
+        {% endif %}
+
+        {% for cls in classes %}
+        <div class="ebd-class-block">
+            <div class="ebd-class-header">
+                <h2>{{ cls.name }}</h2>
+                {% if cls.description %}<p>{{ cls.description }}</p>{% endif %}
+            </div>
+
+            {% for tri in cls.trimesters.all %}
+            {% if tri.active %}
+            <div class="ebd-trimester">
+                <div class="ebd-tri-header">
+                    {% if tri.cover %}<img src="{{ tri.cover.url }}" alt="" class="ebd-tri-cover">{% endif %}
+                    <div>
+                        <span class="ebd-tri-label">{{ tri.get_quarter_display }} {{ tri.year }}</span>
+                        <h3>{{ tri.title }}</h3>
+                        {% if tri.description %}<p>{{ tri.description }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div class="ebd-lessons-grid">
+                    {% for lesson in tri.lessons.all %}
+                    {% if lesson.published %}
+                    <a href="{% url 'ebd_lesson_preview' lesson.pk %}" class="ebd-lesson-card">
+                        <div class="ebd-lesson-number">{{ lesson.number }}</div>
+                        <div class="ebd-lesson-info">
+                            <strong>{{ lesson.title }}</strong>
+                            {% if lesson.scripture %}<span class="ebd-scripture">{{ lesson.scripture }}</span>{% endif %}
+                            <div class="ebd-lesson-icons">
+                                {% if lesson.body %}<i class="fa fa-align-left" title="Texto"></i>{% endif %}
+                                {% if lesson.video_url %}<i class="fa fa-play-circle" title="Vídeo"></i>{% endif %}
+                                {% if lesson.audio_file %}<i class="fa fa-headphones" title="Áudio"></i>{% endif %}
+                                {% if lesson.pdf_file %}<i class="fa fa-file-pdf" title="PDF"></i>{% endif %}
+                                {% if lesson.quiz %}<i class="fa fa-question-circle" title="Quiz"></i>{% endif %}
+                            </div>
+                        </div>
+                        {% if request.user.is_authenticated %}
+                            {% with cert=lesson.certificates.all %}
+                            {% if cert|length > 0 %}
+                            <span class="ebd-cert-badge"><i class="fa fa-certificate"></i></span>
+                            {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa fa-bible"></i>
+            <h3>Nenhuma aula publicada ainda.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

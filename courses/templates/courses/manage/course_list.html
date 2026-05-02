@@ -1,0 +1,73 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Cursos — Gestão{% endblock %}
+{% block page_title %}Cursos{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+    <div class="manage-topbar">
+        <form method="get" class="manage-search-row">
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar curso..." class="form-input" style="flex:1;min-width:200px">
+            <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
+        </form>
+        <a href="{% url 'manage_course_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Curso</a>
+    </div>
+
+    {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}
+
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Categoria</th>
+                    <th class="hide-mobile">Nível</th>
+                    <th>Aulas</th>
+                    <th>Inscritos</th>
+                    <th>Pub.</th>
+                    <th style="width:110px">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:.6rem">
+                            {% if course.cover %}
+                            <img src="{{ course.cover.url }}" style="width:40px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                            {% endif %}
+                            <div>
+                                <span style="font-weight:500">{{ course.title }}</span>
+                                {% if course.instructor %}<br><small class="text-muted">{{ course.instructor.get_full_name|default:course.instructor.username }}</small>{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ course.category|default:"—" }}</td>
+                    <td class="hide-mobile"><span class="badge">{{ course.get_level_display }}</span></td>
+                    <td>{{ course.lesson_count }}</td>
+                    <td>{{ course.enrolled_count }}</td>
+                    <td>{% if course.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
+                    <td>
+                        <div class="manage-actions">
+                            <a href="{% url 'manage_modules' course.pk %}" class="manage-btn manage-btn-view" title="Módulos/Aulas"><i class="fa fa-list"></i></a>
+                            <a href="{% url 'manage_course_edit' course.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                            <a href="{% url 'manage_enrollments' course.pk %}" class="manage-btn" title="Inscritos" style="background:rgba(41,128,185,.1);color:#2980b9"><i class="fa fa-users"></i></a>
+                            <a href="{% url 'manage_course_delete' course.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" style="text-align:center;padding:2rem" class="text-muted">Nenhum curso cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination-wrap">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q }}" class="page-btn">&laquo;</a>{% endif %}
+        <span class="page-info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q }}" class="page-btn">&raquo;</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

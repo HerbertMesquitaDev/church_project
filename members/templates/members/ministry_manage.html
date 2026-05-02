@@ -1,0 +1,43 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Ministérios{% endblock %}
+{% block page_title %}Gerenciar Ministérios{% endblock %}
+
+{% block content %}
+<p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.9rem">
+    Para criar ou editar ministérios, acesse o <a href="{% url 'admin:core_ministry_changelist' %}" target="_blank" style="color:var(--gold-dark)">Painel Admin <i class="fa fa-external-link-alt fa-xs"></i></a>.
+</p>
+
+{% for ministry in ministries %}
+<div class="manage-ministry-block">
+    <div class="manage-ministry-header">
+        <div class="ministry-icon" style="width:44px;height:44px;font-size:1.1rem"><i class="fa {{ ministry.icon }}"></i></div>
+        <div>
+            <h3>{{ ministry.name }}</h3>
+            <small>{{ ministry.description|truncatewords:12 }}</small>
+        </div>
+        <span style="margin-left:auto;font-size:0.8rem;color:var(--text-muted)">{{ ministry.members.count }} membro(s)</span>
+    </div>
+    {% with members=ministry.members.all %}
+    {% if members %}
+    <div class="ministry-members-row">
+        {% for mm in members %}
+        <div class="ministry-mini-card">
+            {% if mm.profile.photo %}
+                <img src="{{ mm.profile.photo.url }}" alt="">
+            {% else %}
+                <div class="ministry-mini-avatar"><i class="fa fa-user"></i></div>
+            {% endif %}
+            <strong>{{ mm.profile.full_name }}</strong>
+            {% if mm.role %}<span>{{ mm.role }}</span>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color:var(--text-muted);font-size:0.85rem;padding:0.5rem 0">Nenhum membro neste ministério.</p>
+    {% endif %}
+    {% endwith %}
+</div>
+{% empty %}
+<div class="empty-state"><i class="fa fa-church"></i><h3>Nenhum ministério cadastrado.</h3></div>
+{% endfor %}
+{% endblock %}

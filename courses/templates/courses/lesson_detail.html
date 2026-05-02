@@ -1,0 +1,225 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block page_title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div class="lesson-wrap">
+
+    <!-- Breadcrumb -->
+    <div class="lesson-breadcrumb">
+        <a href="{% url 'course_list' %}"><i class="fa fa-graduation-cap"></i> Cursos</a>
+        <i class="fa fa-chevron-right"></i>
+        <a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a>
+        <i class="fa fa-chevron-right"></i>
+        <span>{{ lesson.title }}</span>
+    </div>
+
+    <div class="lesson-layout">
+
+        <!-- Conteúdo principal -->
+        <div class="lesson-main">
+
+            <!-- Vídeo -->
+            {% if lesson.video_url %}
+            <div class="lesson-video-wrap">
+                <iframe src="{{ lesson.get_embed_url }}" frameborder="0" allowfullscreen loading="lazy"></iframe>
+            </div>
+            {% endif %}
+
+            <!-- Texto -->
+            {% if lesson.body %}
+            <div class="lesson-body">{{ lesson.body|safe }}</div>
+            {% endif %}
+
+            <!-- PDF -->
+            {% if lesson.pdf_file %}
+            <div class="lesson-material">
+                <a href="{{ lesson.pdf_file.url }}" target="_blank" class="btn btn-outline">
+                    <i class="fa fa-file-pdf" style="color:#e74c3c"></i> Baixar Material PDF
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Áudio -->
+            {% if lesson.audio_file %}
+            <div class="lesson-material">
+                <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem"><i class="fa fa-headphones" style="color:var(--gold)"></i> Áudio da aula</p>
+                <audio controls style="width:100%"><source src="{{ lesson.audio_file.url }}"></audio>
+            </div>
+            {% endif %}
+
+            <!-- Ações: concluir e navegar -->
+            <div class="lesson-actions">
+                <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+                    {% if not progress.completed %}
+                    <form method="post" action="{% url 'lesson_complete' lesson.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check-circle"></i> Marcar como concluída
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="lesson-done-badge"><i class="fa fa-check-circle"></i> Aula concluída</span>
+                    {% endif %}
+
+                    {% if quiz %}
+                    <a href="{% url 'lesson_quiz' lesson.pk %}" class="btn btn-outline">
+                        <i class="fa fa-question-circle"></i> Fazer Quiz
+                        {% if last_attempt %}
+                        <span style="font-size:.75rem;margin-left:.25rem">({{ last_attempt.score }}%)</span>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div style="display:flex;gap:.5rem">
+                    {% if prev_lesson %}
+                    <a href="{% url 'lesson_detail' prev_lesson.pk %}" class="btn btn-outline btn-sm"><i class="fa fa-chevron-left"></i> Anterior</a>
+                    {% endif %}
+                    {% if next_lesson %}
+                    <a href="{% url 'lesson_detail' next_lesson.pk %}" class="btn btn-primary btn-sm">Próxima <i class="fa fa-chevron-right"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Comentários -->
+            <div class="lesson-comments">
+                <h3 class="lesson-comments-title"><i class="fa fa-comments"></i> Comentários ({{ comments.count }})</h3>
+
+                <!-- Formulário de novo comentário -->
+                <form method="post" action="{% url 'lesson_comment' lesson.pk %}" class="lesson-comment-form">
+                    {% csrf_token %}
+                    <textarea name="body" class="form-input" rows="3" placeholder="Faça uma pergunta ou deixe um comentário..." maxlength="1000" required></textarea>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-paper-plane"></i> Enviar</button>
+                </form>
+
+                <!-- Lista de comentários -->
+                {% for comment in comments %}
+                <div class="lesson-comment">
+                    <div class="lesson-comment-avatar">
+                        {% if comment.user.profile.photo %}
+                        <img src="{{ comment.user.profile.photo.url }}" alt="">
+                        {% else %}
+                        <div class="lesson-comment-avatar-placeholder"><i class="fa fa-user"></i></div>
+                        {% endif %}
+                    </div>
+                    <div class="lesson-comment-body">
+                        <div class="lesson-comment-header">
+                            <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                            <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p>{{ comment.body }}</p>
+
+                        <!-- Respostas -->
+                        {% for reply in comment.replies.all %}
+                        <div class="lesson-comment lesson-reply">
+                            <div class="lesson-comment-avatar">
+                                {% if reply.user.profile.photo %}
+                                <img src="{{ reply.user.profile.photo.url }}" alt="">
+                                {% else %}
+                                <div class="lesson-comment-avatar-placeholder"><i class="fa fa-user"></i></div>
+                                {% endif %}
+                            </div>
+                            <div class="lesson-comment-body">
+                                <div class="lesson-comment-header">
+                                    <strong>{{ reply.user.get_full_name|default:reply.user.username }}</strong>
+                                    {% if reply.user.is_staff %}<span class="lesson-instructor-badge">Professor</span>{% endif %}
+                                    <small class="text-muted">{{ reply.created_at|date:"d/m/Y H:i" }}</small>
+                                </div>
+                                <p>{{ reply.body }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Responder -->
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <form method="post" action="{% url 'lesson_comment' lesson.pk %}" class="lesson-reply-form" style="margin-top:.5rem">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ comment.pk }}">
+                            <div style="display:flex;gap:.5rem">
+                                <input type="text" name="body" class="form-input" placeholder="Responder..." maxlength="1000" required style="flex:1">
+                                <button type="submit" class="btn btn-outline btn-sm"><i class="fa fa-reply"></i></button>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted" style="text-align:center;padding:1.5rem 0;font-size:.875rem">Nenhum comentário ainda. Seja o primeiro!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sidebar: índice das aulas -->
+        <aside class="lesson-sidebar">
+            <div class="lesson-sidebar-card">
+                <div class="lesson-sidebar-title">{{ course.title }}</div>
+                {% for module in course.modules.all %}
+                <div class="lesson-sidebar-module">
+                    <span class="lesson-sidebar-module-name">{{ module.title }}</span>
+                    {% for l in module.lessons.all %}
+                    {% if l.published %}
+                    <a href="{% url 'lesson_detail' l.pk %}" class="lesson-sidebar-link {% if l.pk == lesson.pk %}active{% endif %}">
+                        <i class="fa {% if l.pk == lesson.pk %}fa-circle-dot{% else %}fa-circle{% endif %}" style="font-size:.5rem;opacity:.5"></i>
+                        {{ l.title }}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
+
+    </div>
+</div>
+
+<style>
+.lesson-wrap { display:flex; flex-direction:column; gap:1rem; }
+.lesson-breadcrumb { display:flex; align-items:center; gap:.4rem; font-size:.82rem; color:var(--text-muted); flex-wrap:wrap; }
+.lesson-breadcrumb a { color:var(--gold,#C9A84C); text-decoration:none; }
+.lesson-breadcrumb i { font-size:.65rem; }
+.lesson-layout { display:grid; grid-template-columns:1fr 280px; gap:1.25rem; align-items:start; }
+.lesson-main { display:flex; flex-direction:column; gap:1.25rem; }
+.lesson-video-wrap { position:relative; padding-bottom:56.25%; border-radius:10px; overflow:hidden; background:#000; }
+.lesson-video-wrap iframe { position:absolute; inset:0; width:100%; height:100%; }
+.lesson-body { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.5rem; font-size:.9rem; line-height:1.75; color:var(--text,#2C2C2C); }
+.lesson-material { display:flex; flex-direction:column; gap:.5rem; }
+.lesson-actions { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1rem 1.25rem; }
+.lesson-done-badge { display:inline-flex; align-items:center; gap:.4rem; color:#27ae60; font-weight:500; font-size:.875rem; }
+.lesson-comments { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.25rem; display:flex; flex-direction:column; gap:1rem; }
+.lesson-comments-title { font-size:.95rem; font-weight:600; color:var(--text-heading,#1A2340); display:flex; align-items:center; gap:.5rem; margin:0; }
+.lesson-comments-title i { color:var(--gold,#C9A84C); }
+.lesson-comment-form { display:flex; flex-direction:column; gap:.5rem; }
+.lesson-comment { display:flex; gap:.75rem; }
+.lesson-reply { margin-left:2.5rem; padding-top:.75rem; }
+.lesson-comment-avatar { flex-shrink:0; }
+.lesson-comment-avatar img,.lesson-comment-avatar-placeholder { width:36px; height:36px; border-radius:50%; object-fit:cover; }
+.lesson-comment-avatar-placeholder { background:var(--surface-alt,#FAF7F2); display:flex; align-items:center; justify-content:center; font-size:.9rem; color:var(--gold,#C9A84C); }
+.lesson-comment-body { flex:1; display:flex; flex-direction:column; gap:.25rem; }
+.lesson-comment-header { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+.lesson-comment-header strong { font-size:.85rem; color:var(--text-heading,#1A2340); }
+.lesson-comment-header small { font-size:.75rem; }
+.lesson-comment-body p { font-size:.875rem; color:var(--text,#2C2C2C); margin:0; line-height:1.6; }
+.lesson-instructor-badge { font-size:.65rem; background:rgba(201,168,76,.15); color:var(--gold-dark,#8B6914); padding:.1rem .45rem; border-radius:20px; font-weight:600; }
+.lesson-sidebar-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; overflow:hidden; position:sticky; top:80px; max-height:calc(100vh - 100px); overflow-y:auto; }
+.lesson-sidebar-title { padding:.9rem 1rem; font-weight:600; font-size:.875rem; color:var(--text-heading,#1A2340); background:var(--surface-alt,#FAF7F2); border-bottom:1px solid var(--border,rgba(201,168,76,.1)); }
+.lesson-sidebar-module { padding:.5rem 0; border-bottom:1px solid var(--border,rgba(201,168,76,.08)); }
+.lesson-sidebar-module:last-child { border-bottom:none; }
+.lesson-sidebar-module-name { display:block; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-dark,#8B6914); padding:.4rem 1rem .2rem; }
+.lesson-sidebar-link { display:flex; align-items:center; gap:.5rem; padding:.4rem 1rem; font-size:.8rem; color:var(--text-muted); text-decoration:none; transition:background .15s; }
+.lesson-sidebar-link:hover { background:rgba(201,168,76,.06); color:var(--gold,#C9A84C); }
+.lesson-sidebar-link.active { background:rgba(201,168,76,.1); color:var(--gold-dark,#8B6914); font-weight:600; border-left:3px solid var(--gold,#C9A84C); }
+[data-theme="dark"] .lesson-body,
+[data-theme="dark"] .lesson-actions,
+[data-theme="dark"] .lesson-comments,
+[data-theme="dark"] .lesson-sidebar-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .lesson-sidebar-title { background:#25252D; color:#E8E4DC; }
+[data-theme="dark"] .lesson-comment-body p { color:#C8C4BC; }
+[data-theme="dark"] .lesson-comment-header strong { color:#E8E4DC; }
+[data-theme="dark"] .lesson-comment-avatar-placeholder { background:#25252D; }
+[data-theme="dark"] .lesson-body { color:#C8C4BC; }
+[data-theme="dark"] .lesson-comments-title      { color: #E8E4DC; }
+[data-theme="dark"] .lesson-comments-title i    { color: #D4A94E; }
+@media(max-width:768px){ .lesson-layout { grid-template-columns:1fr; } .lesson-sidebar { display:none; } }
+</style>
+{% endblock %}

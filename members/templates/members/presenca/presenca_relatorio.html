@@ -1,0 +1,172 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Relatório de Frequência{% endblock %}
+{% block page_title %}Relatório de Frequência{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Nota 10 ── */
+.nota10-banner {
+  background:linear-gradient(135deg,rgba(201,168,76,.12) 0%,rgba(201,168,76,.04) 100%);
+  border:1px solid rgba(201,168,76,.3);border-radius:12px;
+  padding:1.25rem 1.5rem;margin-bottom:1.5rem;
+}
+.nota10-title { font-size:1rem;font-weight:600;color:var(--gold-dark);margin:0 0 .75rem;display:flex;align-items:center;gap:.5rem; }
+.nota10-grid { display:flex;gap:.75rem;flex-wrap:wrap; }
+.nota10-pill {
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.4rem .9rem;border-radius:20px;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.2);
+  font-size:.8rem;font-weight:600;color:var(--gold-dark);
+}
+.nota10-pill img { width:24px;height:24px;border-radius:50%;object-fit:cover; }
+.nota10-pill-ph { width:24px;height:24px;border-radius:50%;background:rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--gold-dark); }
+
+/* ── Barra de frequência ── */
+.freq-bar-wrap { background:var(--border);border-radius:20px;height:6px;width:100px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:.4rem; }
+.freq-bar { height:100%;border-radius:20px; }
+.freq-bar.high   { background:#27ae60; }
+.freq-bar.medium { background:#f39c12; }
+.freq-bar.low    { background:#e74c3c; }
+
+/* ── Badge de conquista ── */
+.pres-badge { display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600;margin:.1rem; }
+
+[data-theme="dark"] .nota10-banner { background:rgba(201,168,76,.06);border-color:rgba(201,168,76,.15); }
+[data-theme="dark"] .nota10-pill { background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.15); }
+[data-theme="dark"] .freq-bar-wrap { background:rgba(255,255,255,.08); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+  <!-- Topbar -->
+  <div class="manage-topbar" style="margin-bottom:1.25rem">
+    <a href="{% url 'culto_manage' %}" class="btn btn-outline">
+      <i class="fa fa-arrow-left"></i> Voltar aos cultos
+    </a>
+    <span class="text-muted" style="font-size:.85rem">
+      <i class="fa fa-database" style="color:var(--gold-dark)"></i>
+      Baseado em {{ total_cultos }} culto{{ total_cultos|pluralize }} registrado{{ total_cultos|pluralize }}
+    </span>
+  </div>
+
+  <!-- Alunos Nota 10 -->
+  {% with nota10s=relatorio|dictsort:"nota10" %}
+  {% if relatorio %}
+  <div class="nota10-banner">
+    <div class="nota10-title">
+      <i class="fa fa-medal"></i> Alunos Nota 10
+      <small style="font-weight:400;color:var(--text-muted);font-size:.78rem">(≥ 85% de presença e 4+ cultos seguidos)</small>
+    </div>
+    <div class="nota10-grid">
+      {% for r in relatorio %}
+      {% if r.nota10 %}
+      <span class="nota10-pill">
+        {% if r.member.photo %}
+        <img src="{{ r.member.photo.url }}" alt="">
+        {% else %}
+        <div class="nota10-pill-ph"><i class="fa fa-user"></i></div>
+        {% endif %}
+        {{ r.member.full_name }}
+        <span style="opacity:.7">{{ r.pct }}%</span>
+      </span>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <!-- Tabela completa -->
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Membro</th>
+          <th>Frequência</th>
+          <th class="hide-mobile">Presenças</th>
+          <th class="hide-mobile">Sequência</th>
+          <th>Conquistas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in relatorio %}
+        <tr>
+          <!-- Posição -->
+          <td style="font-size:.8rem;color:var(--text-muted);font-weight:600">
+            {% if forloop.counter == 1 %}<i class="fa fa-medal" style="color:#C9A84C"></i>
+            {% elif forloop.counter == 2 %}<i class="fa fa-medal" style="color:#9a9a9a"></i>
+            {% elif forloop.counter == 3 %}<i class="fa fa-medal" style="color:#cd7f32"></i>
+            {% else %}{{ forloop.counter }}{% endif %}
+          </td>
+
+          <!-- Membro -->
+          <td>
+            <div style="display:flex;align-items:center;gap:.6rem">
+              {% if r.member.photo %}
+              <img src="{{ r.member.photo.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">
+              {% else %}
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <i class="fa fa-user" style="font-size:.75rem;color:var(--text-muted)"></i>
+              </div>
+              {% endif %}
+              <div>
+                <strong class="td-title">{{ r.member.full_name }}</strong>
+                {% if r.nota10 %}<span style="font-size:.65rem;color:var(--gold-dark);font-weight:600;margin-left:.3rem">★ Nota 10</span>{% endif %}
+              </div>
+            </div>
+          </td>
+
+          <!-- Frequência % -->
+          <td>
+            <span style="font-size:.9rem;font-weight:600;
+              color:{% if r.pct >= 85 %}#27ae60{% elif r.pct >= 60 %}#f39c12{% else %}#e74c3c{% endif %}">
+              {{ r.pct }}%
+            </span>
+            <span class="freq-bar-wrap">
+              <span class="freq-bar {% if r.pct >= 85 %}high{% elif r.pct >= 60 %}medium{% else %}low{% endif %}"
+                    style="width:{{ r.pct }}%"></span>
+            </span>
+          </td>
+
+          <!-- Contagem -->
+          <td class="hide-mobile" style="font-size:.85rem">
+            <span style="color:var(--text-heading);font-weight:600">{{ r.presentes }}</span>
+            <span class="text-muted"> / {{ r.total }}</span>
+          </td>
+
+          <!-- Sequência -->
+          <td class="hide-mobile">
+            {% if r.streak > 0 %}
+            <span style="font-size:.85rem;font-weight:600;color:{% if r.streak >= 10 %}#e74c3c{% elif r.streak >= 5 %}#f39c12{% else %}var(--text-muted){% endif %}">
+              <i class="fa fa-fire" style="font-size:.75rem"></i> {{ r.streak }} seguido{{ r.streak|pluralize }}
+            </span>
+            {% else %}
+            <span class="text-muted" style="font-size:.82rem">—</span>
+            {% endif %}
+          </td>
+
+          <!-- Conquistas -->
+          <td>
+            {% for badge in r.badges %}
+            <span class="pres-badge" style="background:{{ badge.color }}18;color:{{ badge.color }};border:1px solid {{ badge.color }}30">
+              <i class="fa {{ badge.icon }}" style="font-size:.65rem"></i>
+              {{ badge.label }}
+            </span>
+            {% empty %}
+            <span class="text-muted" style="font-size:.75rem">—</span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+          Nenhum dado de presença ainda. Comece registrando um culto.
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

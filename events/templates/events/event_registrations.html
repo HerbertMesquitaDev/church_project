@@ -1,0 +1,88 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Inscritos — {{ event.title }}{% endblock %}
+{% block page_title %}Inscritos: {{ event.title }}{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+    <div>
+        <p style="color:var(--text-muted);font-size:.85rem;margin:0">
+            <i class="fa fa-calendar"></i> {{ event.display_date }}
+            {% if event.max_spots %} &nbsp;·&nbsp; <strong>{{ confirmed.count }}/{{ event.max_spots }}</strong> vagas{% endif %}
+            {% if event.waitlist_count %} &nbsp;·&nbsp; {{ event.waitlist_count }} na fila{% endif %}
+        </p>
+    </div>
+    <a href="{% url 'event_detail' event.slug %}" class="btn btn-outline btn-sm">
+        <i class="fa fa-arrow-left"></i> Voltar ao evento
+    </a>
+</div>
+
+{% if event.max_spots %}
+<div class="event-spots-bar" style="margin-bottom:1.5rem;height:10px;border-radius:5px">
+    <div class="event-spots-fill" style="width:{% widthratio confirmed.count event.max_spots 100 %}%;border-radius:5px"></div>
+</div>
+{% endif %}
+
+<!-- Confirmados -->
+<div class="section-label-sm" style="margin-bottom:.75rem">
+    <i class="fa fa-check-circle" style="color:#27ae60"></i> Confirmados ({{ confirmed.count }})
+</div>
+<div class="manage-table-wrap" style="margin-bottom:2rem">
+    <table class="manage-table">
+        <thead><tr><th>Membro</th><th>E-mail</th><th>Inscrito em</th></tr></thead>
+        <tbody>
+        {% for reg in confirmed %}
+        <tr>
+            <td><strong class="td-title">{{ reg.user.get_full_name|default:reg.user.username }}</strong></td>
+            <td class="td-sub">{{ reg.user.email }}</td>
+            <td class="td-sub">{{ reg.created_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="table-empty">Nenhum inscrito confirmado.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if waitlist %}
+<div class="section-label-sm" style="margin-bottom:.75rem">
+    <i class="fa fa-clock" style="color:var(--gold-dark)"></i> Lista de Espera ({{ waitlist.count }})
+</div>
+<div class="manage-table-wrap" style="margin-bottom:2rem">
+    <table class="manage-table">
+        <thead><tr><th>#</th><th>Membro</th><th>E-mail</th><th>Entrou em</th></tr></thead>
+        <tbody>
+        {% for reg in waitlist %}
+        <tr>
+            <td class="td-sub">{{ forloop.counter }}º</td>
+            <td><strong class="td-title">{{ reg.user.get_full_name|default:reg.user.username }}</strong></td>
+            <td class="td-sub">{{ reg.user.email }}</td>
+            <td class="td-sub">{{ reg.created_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if cancelled %}
+<div class="section-label-sm" style="margin-bottom:.75rem;opacity:.6">
+    <i class="fa fa-times-circle" style="color:#e74c3c"></i> Cancelados ({{ cancelled.count }})
+</div>
+<div class="manage-table-wrap">
+    <table class="manage-table" style="opacity:.7">
+        <thead><tr><th>Membro</th><th>E-mail</th><th>Cancelado em</th></tr></thead>
+        <tbody>
+        {% for reg in cancelled %}
+        <tr>
+            <td><strong class="td-title">{{ reg.user.get_full_name|default:reg.user.username }}</strong></td>
+            <td class="td-sub">{{ reg.user.email }}</td>
+            <td class="td-sub">{{ reg.updated_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

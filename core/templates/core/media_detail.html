@@ -1,0 +1,128 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ item.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block meta_description %}{{ item.meta_description|default:item.description|truncatechars:160 }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block og_title %}{{ item.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block og_description %}{{ item.meta_description|default:item.description|truncatechars:160 }}{% endblock %}
+{% block og_image_tag %}{% if item.thumbnail %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ item.thumbnail.url }}">{% endif %}{% endblock %}
+{% block twitter_title %}{{ item.title }}{% endblock %}
+{% block twitter_image_tag %}{% if item.thumbnail %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ item.thumbnail.url }}">{% endif %}{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:7rem">
+    <div class="container">
+        <div class="media-detail-layout">
+
+            <article class="media-detail-main">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb" style="margin-bottom:1.5rem">
+                    <a href="{% url 'home' %}">Início</a>
+                    <span>/</span>
+                    <a href="{% url 'media_list' %}">Midiateca</a>
+                    <span>/</span>
+                    <span>{{ item.title|truncatechars:40 }}</span>
+                </div>
+
+                <!-- Badges -->
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+                    {% if item.category %}
+                    <span class="media-type-badge media-type-{{ item.media_type }}">
+                        {% if item.media_type == 'video' %}Vídeo
+                        {% elif item.media_type == 'audio' %}Áudio
+                        {% elif item.media_type == 'pdf' %}PDF
+                        {% elif item.media_type == 'live' %}<i class="fa fa-circle" style="font-size:.55rem;vertical-align:middle"></i> Ao Vivo
+                        {% endif %}
+                    </span>
+                    <span class="media-cat-label" style="font-size:.8rem;padding:.2rem .65rem;background:rgba(201,168,76,0.1);border-radius:20px;color:var(--gold-dark)">{{ item.category.name }}</span>
+                    {% endif %}
+                    {% if item.visibility == 'members' %}
+                    <span style="font-size:.75rem;padding:.2rem .65rem;background:rgba(41,128,185,0.1);border-radius:20px;color:#2980b9"><i class="fa fa-lock"></i> Exclusivo membros</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="media-detail-title">{{ item.title }}</h1>
+
+                <div class="media-detail-meta">
+                    {% if item.speaker %}<span><i class="fa fa-user-tie"></i> {{ item.speaker }}</span>{% endif %}
+                    {% if item.pub_date %}<span><i class="fa fa-calendar"></i> {{ item.pub_date|date:"d \d\e F \d\e Y" }}</span>{% endif %}
+                </div>
+
+                <!-- Player / Conteúdo -->
+                {% if item.media_type == 'video' or item.media_type == 'live' %}
+                    {% if item.video_url %}
+                    <div class="media-player-wrap">
+                        <iframe src="{{ item.get_embed_url }}" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+                    {% endif %}
+
+                {% elif item.media_type == 'audio' %}
+                    {% if item.audio_file %}
+                    <div class="media-audio-wrap">
+                        {% if item.thumbnail %}<img src="{{ item.thumbnail.url }}" alt="" class="media-audio-cover">{% endif %}
+                        <audio controls class="media-audio-player">
+                            <source src="{{ item.audio_file.url }}">
+                            Seu navegador não suporta áudio.
+                        </audio>
+                    </div>
+                    {% endif %}
+
+                {% elif item.media_type == 'pdf' %}
+                    {% if item.pdf_file %}
+                    <div class="media-pdf-wrap">
+                        {% if item.thumbnail %}<img src="{{ item.thumbnail.url }}" alt="" style="width:100%;max-width:300px;border-radius:6px;margin-bottom:1rem;">{% endif %}
+                        <a href="{{ item.pdf_file.url }}" target="_blank" class="btn btn-primary">
+                            <i class="fa fa-download"></i> Baixar PDF
+                        </a>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if item.description %}
+                <div class="media-description">
+                    <h3>Sobre este conteúdo</h3>
+                    <div class="prose">{{ item.description|linebreaks }}</div>
+                </div>
+                {% endif %}
+
+                <div style="margin-top:2rem">
+                    <a href="{% url 'media_list' %}" class="btn btn-outline">
+                        <i class="fa fa-arrow-left"></i> Voltar para Midiateca
+                    </a>
+                </div>
+            </article>
+
+            <!-- Aside -->
+            <aside class="media-detail-aside">
+                {% if related %}
+                <div class="aside-card">
+                    <h4>Mais conteúdos</h4>
+                    {% for r in related %}
+                    <a href="{% url 'media_detail' r.pk %}" class="media-aside-item">
+                        {% if r.thumbnail %}
+                            <img src="{{ r.thumbnail.url }}" alt="">
+                        {% else %}
+                            <div class="media-aside-no-thumb">
+                                {% if r.media_type == 'audio' %}<i class="fa fa-headphones"></i>
+                                {% elif r.media_type == 'pdf' %}<i class="fa fa-file-pdf"></i>
+                                {% else %}<i class="fa fa-play"></i>{% endif %}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <span class="media-type-badge media-type-{{ r.media_type }}" style="font-size:.65rem;padding:.1rem .4rem;">
+                                {% if r.media_type == 'video' %}Vídeo{% elif r.media_type == 'audio' %}Áudio{% elif r.media_type == 'pdf' %}PDF{% else %}Ao Vivo{% endif %}
+                            </span>
+                            <strong>{{ r.title|truncatechars:50 }}</strong>
+                            {% if r.speaker %}<small>{{ r.speaker }}</small>{% endif %}
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </aside>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

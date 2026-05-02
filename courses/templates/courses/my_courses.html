@@ -1,0 +1,58 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Meus Cursos{% endblock %}
+{% block page_title %}Meus Cursos{% endblock %}
+
+{% block content %}
+<div class="course-grid">
+    {% for item in data %}
+    {% with course=item.enrollment.course %}
+    <div class="course-card">
+        <a href="{% url 'course_detail' course.slug %}" class="course-card-link">
+            {% if course.cover %}
+            <div class="course-card-img"><img src="{{ course.cover.url }}" alt="{{ course.title }}"></div>
+            {% else %}
+            <div class="course-card-img course-card-no-img"><i class="fa fa-graduation-cap"></i></div>
+            {% endif %}
+            <div class="course-card-body">
+                {% if course.category %}<span class="course-cat-badge"><i class="fa {{ course.category.icon }}"></i> {{ course.category.name }}</span>{% endif %}
+                <h3>{{ course.title }}</h3>
+                <div style="margin-top:.5rem">
+                    <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-muted);margin-bottom:.3rem">
+                        <span>Progresso</span><span>{{ item.pct }}%</span>
+                    </div>
+                    <div class="progress"><div class="progress-bar" style="width:{{ item.pct }}%"></div></div>
+                </div>
+                <small class="text-muted">Inscrito em {{ item.enrollment.enrolled_at|date:"d/m/Y" }}</small>
+            </div>
+        </a>
+        <div class="course-card-action">
+            <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary btn-sm" style="width:100%;justify-content:center">
+                <i class="fa fa-play"></i> {% if item.pct == 0 %}Começar{% elif item.pct == 100 %}Rever curso{% else %}Continuar{% endif %}
+            </a>
+        </div>
+    </div>
+    {% endwith %}
+    {% empty %}
+    <div style="grid-column:1/-1;text-align:center;padding:3rem" class="text-muted">
+        <i class="fa fa-graduation-cap" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:1rem"></i>
+        Você ainda não está inscrito em nenhum curso.
+        <br><a href="{% url 'course_list' %}" class="btn btn-primary" style="margin-top:1rem">Ver cursos disponíveis</a>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.course-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.25rem; }
+.course-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+.course-card-link { text-decoration:none; flex:1; }
+.course-card-img { aspect-ratio:16/9; overflow:hidden; background:var(--surface-alt,#FAF7F2); }
+.course-card-img img { width:100%; height:100%; object-fit:cover; }
+.course-card-no-img { display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:rgba(201,168,76,.3); }
+.course-card-body { padding:1rem 1.1rem .75rem; display:flex; flex-direction:column; gap:.4rem; }
+.course-card-body h3 { font-size:.95rem; font-weight:600; color:var(--text-heading,#1A2340); line-height:1.3; margin:0; }
+.course-cat-badge { font-size:.7rem; background:rgba(201,168,76,.12); color:var(--gold-dark,#8B6914); padding:.15rem .55rem; border-radius:20px; display:inline-flex; align-items:center; gap:.25rem; width:fit-content; }
+.course-card-action { padding:.6rem 1.1rem .9rem; border-top:1px solid var(--border,rgba(201,168,76,.1)); }
+[data-theme="dark"] .course-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .course-card-body h3 { color:#E8E4DC; }
+</style>
+{% endblock %}

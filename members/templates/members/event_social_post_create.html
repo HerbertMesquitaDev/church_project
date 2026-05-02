@@ -1,0 +1,232 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Publicar Evento — {{ event.title }}{% endblock %}
+{% block page_title %}Publicar Evento nas Redes Sociais{% endblock %}
+
+{% block extra_css %}
+<style>
+.social-layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+@media(max-width:900px){ .social-layout { grid-template-columns:1fr; } }
+
+/* Prévia do evento */
+.event-preview-card {
+    background:var(--card-bg,#fff); border:1px solid var(--border);
+    border-radius:12px; overflow:hidden; margin-bottom:1.5rem;
+}
+.event-preview-img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+.event-preview-img-ph {
+    width:100%; aspect-ratio:16/9; background:var(--surface-alt);
+    display:flex; align-items:center; justify-content:center;
+}
+.event-preview-img-ph i { font-size:3rem; color:rgba(201,168,76,.3); }
+.event-preview-body { padding:1rem 1.25rem; }
+.event-preview-title { font-size:1rem; font-weight:600; color:var(--text-heading); margin:0 0 .4rem; }
+.event-preview-meta  { font-size:.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:.2rem; }
+.event-preview-meta i { color:var(--gold-dark); width:14px; }
+.event-no-img-warn {
+    background:rgba(243,156,18,.1); border:1px solid rgba(243,156,18,.3);
+    border-radius:8px; padding:.65rem .9rem; font-size:.78rem; color:#946b00;
+    display:flex; align-items:center; gap:.5rem; margin-bottom:1rem;
+}
+
+/* Painel direito */
+.social-config-panel {
+    background:var(--card-bg,#fff); border:1px solid var(--border);
+    border-radius:12px; padding:1.5rem; position:sticky; top:1rem;
+}
+.social-config-panel h3 { font-size:.95rem; margin:0 0 1.25rem; color:var(--text-heading); }
+.platform-toggle { display:flex; gap:.5rem; margin-bottom:1rem; }
+.plat-btn { flex:1; padding:.55rem .5rem; border:2px solid var(--border); border-radius:8px; background:none; cursor:pointer; font-size:.8rem; font-weight:600; color:var(--text-muted); transition:.15s; display:flex; flex-direction:column; align-items:center; gap:.25rem; }
+.plat-btn i { font-size:1.1rem; }
+.plat-btn.ig.active { background:rgba(225,48,108,.1); border-color:#E1306C; color:#E1306C; }
+.plat-btn.fb.active { background:rgba(24,119,242,.1);  border-color:#1877F2; color:#1877F2; }
+.plat-btn.both.active { background:linear-gradient(135deg,rgba(225,48,108,.08),rgba(24,119,242,.08)); border-color:var(--gold); color:var(--gold-dark); }
+.preview-box { background:var(--surface-alt); border-radius:8px; padding:.75rem; font-size:.78rem; color:var(--text-muted); line-height:1.6; max-height:120px; overflow:auto; white-space:pre-wrap; word-break:break-all; }
+.cfg-status { display:inline-flex; align-items:center; gap:.35rem; font-size:.75rem; font-weight:600; padding:.2rem .6rem; border-radius:20px; }
+.cfg-ok  { background:rgba(39,174,96,.1);  color:#1a7a40; }
+.cfg-nok { background:rgba(231,76,60,.1);  color:#c0392b; }
+.char-counter { font-size:.72rem; color:var(--text-muted); text-align:right; margin-top:.25rem; }
+.char-counter.warn { color:#e74c3c; }
+.submit-group { display:flex; gap:.5rem; flex-direction:column; margin-top:1.25rem; }
+
+[data-theme="dark"] .social-config-panel { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .social-config-panel h3 { color:#E8E4DC; }
+[data-theme="dark"] .event-preview-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .event-preview-title { color:#E8E4DC; }
+[data-theme="dark"] .event-preview-img-ph { background:#25252D; }
+[data-theme="dark"] .plat-btn { border-color:rgba(201,168,76,.15); color:#9A9690; }
+[data-theme="dark"] .plat-btn.ig.active { background:rgba(225,48,108,.12); border-color:#E1306C; color:#E1306C; }
+[data-theme="dark"] .plat-btn.fb.active { background:rgba(24,119,242,.12);  border-color:#1877F2; color:#1877F2; }
+[data-theme="dark"] .plat-btn.both.active { border-color:#D4A94E; color:#D4A94E; }
+[data-theme="dark"] .preview-box { background:#25252D; color:#C8C4BC; }
+[data-theme="dark"] .event-no-img-warn { background:rgba(243,156,18,.07); border-color:rgba(243,156,18,.18); color:#D4A94E; }
+[data-theme="dark"] .cfg-ok  { background:rgba(39,174,96,.1);  color:#58d68d; }
+[data-theme="dark"] .cfg-nok { background:rgba(231,76,60,.1);  color:#e87c6f; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem" class="text-muted">
+  <a href="{% url 'event_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-calendar-alt"></i> Eventos</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <span>{{ event.title|truncatechars:40 }}</span>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <span>Publicar</span>
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<form method="post" id="socialForm">
+{% csrf_token %}
+
+<div class="social-layout">
+
+  <!-- ── Painel esquerdo ── -->
+  <div>
+
+    <!-- Prévia do evento -->
+    <div class="section-label-sm" style="margin-bottom:.6rem">Evento selecionado</div>
+    <div class="event-preview-card">
+      {% if event.image %}
+      <img src="{{ event.image.url }}" class="event-preview-img" alt="{{ event.title }}">
+      {% else %}
+      <div class="event-preview-img-ph"><i class="fa fa-calendar-alt"></i></div>
+      {% endif %}
+      <div class="event-preview-body">
+        <div class="event-preview-title">{{ event.title }}</div>
+        <div class="event-preview-meta">
+          <span><i class="fa fa-calendar"></i> {{ event.date|date:"d/m/Y \à\s H:i" }}</span>
+          {% if event.location %}<span><i class="fa fa-map-marker-alt"></i> {{ event.location }}</span>{% endif %}
+          {% if event.category %}<span><i class="fa fa-tag"></i> {{ event.category.name }}</span>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if not event.image %}
+    <div class="event-no-img-warn">
+      <i class="fa fa-triangle-exclamation"></i>
+      Este evento não tem imagem. O Instagram exige uma imagem para publicar.
+      O Facebook publicará apenas com texto e link.
+      <a href="{% url 'event_edit' event.pk %}" style="color:inherit;font-weight:600;margin-left:.25rem">Adicionar imagem →</a>
+    </div>
+    {% endif %}
+
+    <!-- Legenda -->
+    <div class="form-group" style="margin-top:1rem">
+      <div class="section-label-sm" style="margin-bottom:.5rem">Legenda do post</div>
+      <p class="form-hint" style="margin:.2rem 0 .75rem">A legenda foi gerada automaticamente com os dados do evento. Edite à vontade.</p>
+      <textarea name="caption" id="captionField" class="form-input" rows="8"
+        maxlength="2200" oninput="updatePreview();updateCounter(this,2200,'captionCounter')">{{ auto_caption }}</textarea>
+      <div class="char-counter" id="captionCounter">0 / 2200</div>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="form-group">
+      <label style="font-size:.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+        Hashtags <small style="font-weight:400">(uma por linha, sem #)</small>
+      </label>
+      <textarea name="hashtags" id="hashtagField" class="form-input" rows="3"
+        placeholder="igrejaevangelica&#10;eventos&#10;comunidade"
+        oninput="updatePreview()">eventos
+igrejaevangelica
+comunidade</textarea>
+    </div>
+  </div>
+
+  <!-- ── Painel direito: configurações ── -->
+  <div class="social-config-panel">
+    <h3><i class="fa fa-share-nodes" style="color:var(--gold-dark)"></i> Configurações</h3>
+
+    <!-- Status de conexão -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      <span class="cfg-status {% if config.ig_configured %}cfg-ok{% else %}cfg-nok{% endif %}">
+        <i class="fab fa-instagram"></i> {% if config.ig_configured %}Conectado{% else %}Não configurado{% endif %}
+      </span>
+      <span class="cfg-status {% if config.fb_configured %}cfg-ok{% else %}cfg-nok{% endif %}">
+        <i class="fab fa-facebook"></i> {% if config.fb_configured %}Conectado{% else %}Não configurado{% endif %}
+      </span>
+      {% if not config.ig_configured or not config.fb_configured %}
+      <a href="{% url 'social_config' %}" style="font-size:.72rem;color:var(--gold-dark)"><i class="fa fa-gear"></i> Configurar</a>
+      {% endif %}
+    </div>
+
+    <!-- Plataforma -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Publicar em</label>
+      <div class="platform-toggle">
+        <button type="button" class="plat-btn ig" data-val="instagram" onclick="setPlatform('instagram')">
+          <i class="fab fa-instagram"></i> Instagram
+        </button>
+        <button type="button" class="plat-btn fb" data-val="facebook" onclick="setPlatform('facebook')">
+          <i class="fab fa-facebook"></i> Facebook
+        </button>
+        <button type="button" class="plat-btn both active" data-val="both" onclick="setPlatform('both')">
+          <i class="fa fa-share-nodes"></i> Ambos
+        </button>
+      </div>
+      <input type="hidden" name="platform" id="platformField" value="both">
+    </div>
+
+    <!-- Formato: sempre foto única para eventos -->
+    <input type="hidden" name="post_format" value="single">
+    <div style="background:var(--surface-alt);border-radius:8px;padding:.6rem .85rem;font-size:.78rem;color:var(--text-muted);margin-bottom:1rem">
+      <i class="fa fa-image" style="color:var(--gold-dark)"></i>
+      Formato: <strong>Foto única</strong> — a imagem do evento será usada como capa do post.
+    </div>
+
+    <!-- Agendamento -->
+    <div class="form-group" style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+        Agendar para <small style="font-weight:400">(opcional)</small>
+      </label>
+      <input type="datetime-local" name="scheduled_for" class="form-input" style="font-size:.85rem">
+      <small class="form-hint">Deixe vazio para publicar imediatamente.</small>
+    </div>
+
+    <!-- Prévia -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.35rem">Prévia</label>
+      <div class="preview-box" id="previewBox">{{ auto_caption }}</div>
+    </div>
+
+    <!-- Botões -->
+    <div class="submit-group">
+      <button type="submit" name="submit_action" value="publish" class="btn btn-primary">
+        <i class="fa fa-paper-plane"></i> Publicar agora
+      </button>
+      <button type="submit" name="submit_action" value="draft" class="btn btn-outline">
+        <i class="fa fa-floppy-disk"></i> Salvar rascunho
+      </button>
+      <a href="{% url 'event_manage' %}" class="btn btn-outline" style="text-align:center">Cancelar</a>
+    </div>
+  </div>
+
+</div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function setPlatform(val) {
+  document.getElementById('platformField').value = val;
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.plat-btn[data-val="${val}"]`).classList.add('active');
+}
+function updatePreview() {
+  const cap  = document.getElementById('captionField').value;
+  const tags = document.getElementById('hashtagField').value
+                 .split('\n').filter(t => t.trim())
+                 .map(t => '#' + t.trim().replace(/^#/,'')).join(' ');
+  document.getElementById('previewBox').textContent = cap + (tags ? '\n\n' + tags : '') || '—';
+}
+function updateCounter(el, max, id) {
+  const cnt = document.getElementById(id);
+  cnt.textContent = el.value.length + ' / ' + max;
+  cnt.classList.toggle('warn', el.value.length > max * 0.9);
+}
+updateCounter(document.getElementById('captionField'), 2200, 'captionCounter');
+</script>
+{% endblock %}

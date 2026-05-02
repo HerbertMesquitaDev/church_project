@@ -1,0 +1,653 @@
+{% extends 'members/base_members.html' %}
+{% load static %}
+{% block title %}Aniversariantes{% endblock %}
+{% block page_title %}Aniversariantes{% endblock %}
+
+{% block content %}
+<div class="bday-wrap">
+
+    <!-- ── FILTRO DE PERÍODO ── -->
+    <form method="get" class="bday-filter" id="filterForm">
+        <div class="bday-filter-row">
+            <div class="bday-filter-group">
+                <label><i class="fa fa-calendar-day"></i> De</label>
+                <input type="date" name="de" value="{{ data_ini|date:'Y-m-d' }}" class="bday-input" id="inputDe">
+            </div>
+            <div class="bday-filter-sep">—</div>
+            <div class="bday-filter-group">
+                <label><i class="fa fa-calendar-day"></i> Até</label>
+                <input type="date" name="ate" value="{{ data_fim|date:'Y-m-d' }}" class="bday-input" id="inputAte">
+            </div>
+            <div class="bday-filter-shortcuts">
+                <button type="button" class="bday-shortcut" onclick="setRange(1,7)">1–7</button>
+                <button type="button" class="bday-shortcut" onclick="setRange(8,15)">8–15</button>
+                <button type="button" class="bday-shortcut" onclick="setRange(16,23)">16–23</button>
+                <button type="button" class="bday-shortcut" onclick="setRange(24,31)">24–31</button>
+                <button type="button" class="bday-shortcut" onclick="setWeek()">Esta semana</button>
+                <button type="button" class="bday-shortcut" onclick="setMonth()">Mês inteiro</button>
+            </div>
+            <button type="submit" class="bday-btn-buscar">
+                <i class="fa fa-search"></i> Buscar
+            </button>
+        </div>
+    </form>
+
+    <!-- ── RESULTADO ── -->
+    {% if aniversariantes %}
+
+    <form id="slideForm" method="get" action="{% url 'birthday_slide' %}" target="_blank">
+        <!-- datas para contexto no slide -->
+        <input type="hidden" name="de" value="{{ data_ini|date:'Y-m-d' }}">
+        <input type="hidden" name="ate" value="{{ data_fim|date:'Y-m-d' }}">
+        <!-- data individual por pessoa -->
+        {% for a in aniversariantes %}
+        <input type="hidden" name="date_{{ a.profile.id }}" value="{{ a.data|date:'Y-m-d' }}">
+        {% endfor %}
+        <!-- tema escolhido -->
+        <input type="hidden" name="theme" id="themeInput" value="navy">
+
+        <!-- Cabeçalho da tabela -->
+        <div class="bday-table-header">
+            <div class="bday-table-header-left">
+                <label class="bday-check-all-label">
+                    <input type="checkbox" id="checkAll" onchange="toggleAll(this)">
+                    <span>Selecionar todos</span>
+                </label>
+                <span class="bday-count">
+                    <span id="selectedCount">0</span> de {{ total }} selecionado(s)
+                </span>
+            </div>
+            <button type="submit" class="bday-btn-slide" id="btnSlide" disabled>
+                <i class="fa fa-display"></i> Gerar Slideshow
+            </button>
+        </div>
+
+        <!-- Lista de aniversariantes -->
+        <div class="bday-list">
+            {% for a in aniversariantes %}
+            <label class="bday-item {% if a.hoje %}bday-item-hoje{% endif %}" for="chk_{{ a.profile.id }}">
+                <input
+                    type="checkbox"
+                    name="ids"
+                    value="{{ a.profile.id }}"
+                    id="chk_{{ a.profile.id }}"
+                    class="bday-checkbox"
+                    onchange="updateCount()"
+                    checked
+                >
+
+                <div class="bday-item-photo">
+                    {% if a.profile.photo %}
+                        <img src="{{ a.profile.photo.url }}" alt="{{ a.profile.full_name }}">
+                    {% else %}
+                        <div class="bday-item-avatar"><i class="fa fa-user"></i></div>
+                    {% endif %}
+                    {% if a.hoje %}
+                    <span class="bday-hoje-dot" title="Hoje!"></span>
+                    {% endif %}
+                </div>
+
+                <div class="bday-item-info">
+                    <strong>{{ a.profile.full_name }}</strong>
+                    <span>
+                        <i class="fa fa-cake-candles"></i>
+                        {{ a.data|date:"d/m (l)" }}
+                        {% if a.hoje %}<em class="bday-hoje-tag">🎂 Hoje!</em>{% endif %}
+                    </span>
+                </div>
+
+                <div class="bday-item-versiculo">
+                    <i class="fa fa-bible"></i>
+                    <span>{{ a.versiculo_ref }}</span>
+                </div>
+
+                <div class="bday-item-check">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <!-- ── PAINEL DE TEMAS ── -->
+        <div class="bday-themes-panel">
+            <div class="bday-themes-header">
+                <i class="fa fa-palette"></i>
+                <span>Tema do Slideshow</span>
+            </div>
+            <div class="bday-themes-grid">
+                {% for key, t in slide_themes.items %}
+                <button
+                    type="button"
+                    class="bday-theme-btn {% if forloop.first %}bday-theme-active{% endif %}"
+                    data-theme="{{ key }}"
+                    onclick="selectTheme('{{ key }}', this)"
+                    title="{{ t.label }}"
+                >
+                    <span class="bday-theme-swatch bday-theme-{{ key }}"></span>
+                    <span class="bday-theme-label">{{ t.label }}</span>
+                    <i class="fa fa-check bday-theme-check"></i>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Rodapé com botão principal -->
+        <div class="bday-footer">
+            <span class="bday-footer-info">
+                <i class="fa fa-circle-info"></i>
+                Marque quem deve aparecer no slide e clique em "Gerar Slideshow"
+            </span>
+            <button type="submit" class="bday-btn-slide bday-btn-slide-lg" id="btnSlide2" disabled>
+                <i class="fa fa-display"></i> Gerar Slideshow com <span id="selectedCount2">0</span> pessoa(s)
+            </button>
+        </div>
+
+    </form>
+
+    {% else %}
+    <div class="bday-empty">
+        <i class="fa fa-birthday-cake"></i>
+        <h3>Nenhum aniversariante encontrado</h3>
+        <p>No período de <strong>{{ data_ini|date:"d/m/Y" }}</strong> a <strong>{{ data_fim|date:"d/m/Y" }}</strong> não há aniversários cadastrados.</p>
+        <p class="bday-empty-tip">Verifique se os membros têm a data de nascimento preenchida no perfil.</p>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.bday-wrap { display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* ── FILTRO ── */
+.bday-filter {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.bday-filter-row {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.bday-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.bday-filter-group label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted, #6B6B6B);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.4rem;
+}
+
+.bday-input {
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--border, rgba(201,168,76,0.25));
+    border-radius: 6px;
+    background: var(--surface-alt, #FAF7F2);
+    color: var(--text, #2C2C2C);
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.bday-input:focus { outline: none; border-color: var(--gold, #C9A84C); }
+
+.bday-filter-sep {
+    padding-bottom: 0.6rem;
+    color: var(--text-muted, #6B6B6B);
+    font-weight: 300;
+}
+
+.bday-filter-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: flex-end;
+    padding-bottom: 0.1rem;
+}
+
+.bday-shortcut {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border, rgba(201,168,76,0.3));
+    border-radius: 20px;
+    background: transparent;
+    color: var(--gold, #C9A84C);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.bday-shortcut:hover {
+    background: var(--gold, #C9A84C);
+    color: #fff;
+    border-color: var(--gold, #C9A84C);
+}
+
+.bday-btn-buscar {
+    padding: 0.6rem 1.4rem;
+    background: var(--navy, #1A2340);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: inherit;
+    transition: all 0.2s;
+    margin-left: auto;
+}
+
+.bday-btn-buscar:hover { background: var(--gold, #C9A84C); }
+
+/* ── CABEÇALHO DA TABELA ── */
+.bday-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-radius: 10px 10px 0 0;
+    padding: 0.9rem 1.25rem;
+    border-bottom: none;
+}
+
+.bday-table-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.bday-check-all-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-heading, #1A2340);
+}
+
+.bday-check-all-label input { accent-color: var(--gold, #C9A84C); width: 16px; height: 16px; }
+
+.bday-count {
+    font-size: 0.8rem;
+    color: var(--text-muted, #6B6B6B);
+}
+
+/* ── BOTÃO SLIDE ── */
+.bday-btn-slide {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gold, #C9A84C);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.3rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.bday-btn-slide:disabled {
+    background: var(--border, rgba(201,168,76,0.25));
+    color: var(--text-muted, #999);
+    cursor: not-allowed;
+}
+
+.bday-btn-slide:not(:disabled):hover { background: var(--gold-dark, #8B6914); transform: translateY(-1px); }
+
+.bday-btn-slide-lg {
+    padding: 0.75rem 1.75rem;
+    font-size: 0.95rem;
+}
+
+/* ── LISTA ── */
+.bday-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.bday-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.25rem;
+    background: var(--card-bg, #fff);
+    border-bottom: 1px solid var(--border, rgba(201,168,76,0.12));
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.bday-item:last-child { border-bottom: none; }
+.bday-item:hover { background: rgba(201,168,76,0.04); }
+
+.bday-item:has(.bday-checkbox:checked) {
+    background: rgba(201,168,76,0.07);
+    border-left: 3px solid var(--gold, #C9A84C);
+}
+
+.bday-item-hoje {
+    background: rgba(201,168,76,0.06);
+}
+
+.bday-checkbox {
+    accent-color: var(--gold, #C9A84C);
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* Foto */
+.bday-item-photo {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.bday-item-photo img,
+.bday-item-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border, rgba(201,168,76,0.2));
+    display: block;
+}
+
+.bday-item-avatar {
+    background: var(--surface-alt, #FAF7F2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    color: var(--gold, #C9A84C);
+}
+
+.bday-hoje-dot {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 14px; height: 14px;
+    background: var(--gold, #C9A84C);
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 6px rgba(201,168,76,0.6);
+}
+
+/* Info */
+.bday-item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.bday-item-info strong {
+    font-size: 0.95rem;
+    color: var(--text-heading, #1A2340);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bday-item-info span {
+    font-size: 0.8rem;
+    color: var(--text-muted, #6B6B6B);
+    display: flex; align-items: center; gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.bday-item-info span i { color: var(--gold, #C9A84C); }
+
+.bday-hoje-tag {
+    color: var(--gold, #C9A84C) !important;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* Versículo */
+.bday-item-versiculo {
+    font-size: 0.75rem;
+    color: var(--text-muted, #6B6B6B);
+    display: flex; align-items: center; gap: 0.4rem;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.bday-item-versiculo i { color: var(--gold, #C9A84C); }
+
+/* Ícone check */
+.bday-item-check {
+    flex-shrink: 0;
+    font-size: 1.1rem;
+    color: var(--gold, #C9A84C);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.bday-item:has(.bday-checkbox:checked) .bday-item-check { opacity: 1; }
+
+/* ── PAINEL DE TEMAS ── */
+.bday-themes-panel {
+    background: var(--surface-alt, #FAF7F2);
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-top: none;
+    padding: 1rem 1.25rem;
+}
+
+.bday-themes-header {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted, #6B6B6B);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.4rem;
+}
+
+.bday-themes-header i { color: var(--gold, #C9A84C); }
+
+.bday-themes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.bday-theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    border: 1.5px solid var(--border, rgba(201,168,76,0.25));
+    border-radius: 20px;
+    background: var(--card-bg, #fff);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: var(--text, #2C2C2C);
+    transition: all 0.2s;
+    position: relative;
+}
+
+.bday-theme-btn:hover {
+    border-color: var(--gold, #C9A84C);
+    background: rgba(201,168,76,0.06);
+}
+
+.bday-theme-active {
+    border-color: var(--gold, #C9A84C) !important;
+    background: rgba(201,168,76,0.1) !important;
+    color: var(--text-heading, #1A2340);
+    font-weight: 500;
+}
+
+.bday-theme-check {
+    display: none;
+    color: var(--gold, #C9A84C);
+    font-size: 0.7rem;
+}
+
+.bday-theme-active .bday-theme-check { display: inline; }
+
+.bday-theme-swatch {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Swatches de cor por tema */
+.bday-theme-navy     { background: linear-gradient(135deg, #1A2340, #2D3A6B); }
+.bday-theme-wine     { background: linear-gradient(135deg, #1a1010, #3d1a00); }
+.bday-theme-forest   { background: linear-gradient(135deg, #0a1a0a, #1a3d1a); }
+.bday-theme-purple   { background: linear-gradient(135deg, #1a0a2e, #3d1a6b); }
+.bday-theme-charcoal { background: linear-gradient(135deg, #1a1a1a, #2d2d2d); }
+.bday-theme-teal     { background: linear-gradient(135deg, #0a1a1a, #1a3d3d); }
+
+/* ── RODAPÉ ── */
+.bday-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 1rem 1.25rem;
+}
+
+.bday-footer-info {
+    font-size: 0.8rem;
+    color: var(--text-muted, #6B6B6B);
+    display: flex; align-items: center; gap: 0.5rem;
+}
+
+/* ── VAZIO ── */
+.bday-empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--border, rgba(201,168,76,0.2));
+    border-radius: 10px;
+}
+.bday-empty i { font-size: 3rem; color: rgba(201,168,76,0.3); display: block; margin-bottom: 1rem; }
+.bday-empty h3 { margin-bottom: 0.5rem; color: var(--text-heading, #1A2340); }
+.bday-empty p { color: var(--text-muted, #6B6B6B); font-size: 0.88rem; margin-top: 0.4rem; }
+.bday-empty-tip { font-style: italic; opacity: 0.7; }
+
+/* ── DARK MODE ── */
+[data-theme="dark"] .bday-filter,
+[data-theme="dark"] .bday-table-header,
+[data-theme="dark"] .bday-item,
+[data-theme="dark"] .bday-footer,
+[data-theme="dark"] .bday-empty {
+    background: #1E1E24;
+    border-color: rgba(201,168,76,0.1);
+}
+[data-theme="dark"] .bday-item:has(.bday-checkbox:checked) { background: rgba(201,168,76,0.08); }
+[data-theme="dark"] .bday-item:hover { background: rgba(255,255,255,0.03); }
+[data-theme="dark"] .bday-input { background: #2a2a34; border-color: rgba(201,168,76,0.15); color: #E8E4DC; }
+[data-theme="dark"] .bday-item-info strong,
+[data-theme="dark"] .bday-check-all-label,
+[data-theme="dark"] .bday-empty h3 { color: #E8E4DC; }
+[data-theme="dark"] .bday-footer { background: #16161c; }
+[data-theme="dark"] .bday-hoje-dot { border-color: #1E1E24; }
+[data-theme="dark"] .bday-item-avatar { background: #2a2a34; }
+[data-theme="dark"] .bday-themes-panel { background: #16161c; border-color: rgba(201,168,76,0.1); }
+[data-theme="dark"] .bday-theme-btn { background: #1E1E24; color: #E8E4DC; border-color: rgba(201,168,76,0.15); }
+[data-theme="dark"] .bday-theme-active { background: rgba(201,168,76,0.12) !important; }
+
+@media (max-width: 640px) {
+    .bday-item-versiculo { display: none; }
+    .bday-filter-row { flex-direction: column; align-items: stretch; }
+    .bday-btn-buscar { width: 100%; justify-content: center; margin-left: 0; }
+    .bday-themes-grid { gap: 0.4rem; }
+    .bday-theme-label { font-size: 0.72rem; }
+}
+</style>
+
+<script>
+// Atalhos de data
+function setRange(d1, d2) {
+    const de = document.getElementById('inputDe');
+    const ate = document.getElementById('inputAte');
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const lastDay = new Date(year, today.getMonth() + 1, 0).getDate();
+    const fim = Math.min(d2, lastDay);
+    de.value  = `${year}-${month}-${String(d1).padStart(2,'0')}`;
+    ate.value = `${year}-${month}-${String(fim).padStart(2,'0')}`;
+}
+
+function setWeek() {
+    const today = new Date();
+    const dow = today.getDay() === 0 ? 6 : today.getDay() - 1;
+    const mon = new Date(today); mon.setDate(today.getDate() - dow);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    document.getElementById('inputDe').value  = mon.toISOString().slice(0,10);
+    document.getElementById('inputAte').value = sun.toISOString().slice(0,10);
+}
+
+function setMonth() {
+    const today = new Date();
+    const y = today.getFullYear();
+    const m = String(today.getMonth()+1).padStart(2,'0');
+    const last = new Date(y, today.getMonth()+1, 0).getDate();
+    document.getElementById('inputDe').value  = `${y}-${m}-01`;
+    document.getElementById('inputAte').value = `${y}-${m}-${last}`;
+}
+
+// Seleção de tema
+function selectTheme(key, btn) {
+    document.querySelectorAll('.bday-theme-btn').forEach(b => b.classList.remove('bday-theme-active'));
+    btn.classList.add('bday-theme-active');
+    document.getElementById('themeInput').value = key;
+}
+
+// Contagem de selecionados
+function updateCount() {
+    const boxes   = document.querySelectorAll('.bday-checkbox');
+    const checked = document.querySelectorAll('.bday-checkbox:checked').length;
+    const total   = boxes.length;
+
+    document.getElementById('selectedCount').textContent  = checked;
+    document.getElementById('selectedCount2').textContent = checked;
+
+    const disabled = checked === 0;
+    document.getElementById('btnSlide').disabled  = disabled;
+    document.getElementById('btnSlide2').disabled = disabled;
+
+    const allCheck = document.getElementById('checkAll');
+    allCheck.indeterminate = checked > 0 && checked < total;
+    allCheck.checked = checked === total;
+}
+
+function toggleAll(master) {
+    document.querySelectorAll('.bday-checkbox').forEach(cb => cb.checked = master.checked);
+    updateCount();
+}
+
+// Inicializa
+document.addEventListener('DOMContentLoaded', updateCount);
+</script>
+{% endblock %}

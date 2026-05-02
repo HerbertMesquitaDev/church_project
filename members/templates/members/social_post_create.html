@@ -1,0 +1,286 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Publicar no Instagram/Facebook — {{ album.title }}{% endblock %}
+{% block page_title %}Publicar nas Redes Sociais{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Layout dois painéis ── */
+.social-layout { display:grid; grid-template-columns:1fr 360px; gap:1.5rem; align-items:start; }
+@media(max-width:900px){ .social-layout { grid-template-columns:1fr; } }
+
+/* ── Seleção de fotos ── */
+.photo-selector { display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr)); gap:.5rem; }
+.photo-sel-item { position:relative; aspect-ratio:1; cursor:pointer; border-radius:8px; overflow:hidden; border:2px solid transparent; transition:.15s; }
+.photo-sel-item img { width:100%;height:100%;object-fit:cover;display:block; }
+.photo-sel-item input[type=checkbox] { display:none; }
+.photo-sel-item .sel-overlay { position:absolute;inset:0;background:rgba(201,168,76,0);transition:.15s;display:flex;align-items:center;justify-content:center; }
+.photo-sel-item .sel-check { width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;opacity:0;transform:scale(.6);transition:.15s; }
+.photo-sel-item.selected { border-color:var(--gold); }
+.photo-sel-item.selected .sel-overlay { background:rgba(201,168,76,.25); }
+.photo-sel-item.selected .sel-check { opacity:1;transform:scale(1); }
+.photo-sel-item .sel-num { position:absolute;top:4px;left:4px;background:var(--gold);color:#fff;font-size:.68rem;font-weight:700;width:20px;height:20px;border-radius:50%;display:none;align-items:center;justify-content:center; }
+.photo-sel-item.selected .sel-num { display:flex; }
+.sel-actions { display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap; }
+
+/* ── Painel direito: configurações ── */
+.social-config-panel { background:var(--card-bg,#fff); border:1px solid var(--border); border-radius:12px; padding:1.5rem; position:sticky; top:1rem; }
+.social-config-panel h3 { font-size:.95rem;margin:0 0 1.25rem;color:var(--text-heading); }
+.platform-toggle { display:flex;gap:.5rem;margin-bottom:1rem; }
+.plat-btn { flex:1;padding:.55rem .5rem;border:2px solid var(--border);border-radius:8px;background:none;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--text-muted);transition:.15s;display:flex;flex-direction:column;align-items:center;gap:.25rem; }
+.plat-btn i { font-size:1.1rem; }
+.plat-btn.ig { border-color:rgba(225,48,108,.2); }
+.plat-btn.fb { border-color:rgba(24,119,242,.2); }
+.plat-btn.ig.active { background:rgba(225,48,108,.1);border-color:#E1306C;color:#E1306C; }
+.plat-btn.fb.active { background:rgba(24,119,242,.1);border-color:#1877F2;color:#1877F2; }
+.config-warn { background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.3);border-radius:8px;padding:.65rem .85rem;font-size:.78rem;color:#946b00;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem; }
+.preview-box { background:var(--surface-alt);border-radius:8px;padding:.75rem;font-size:.78rem;color:var(--text-muted);line-height:1.5;max-height:100px;overflow:auto;white-space:pre-wrap;word-break:break-all; }
+.format-radio { display:flex;gap:.5rem;flex-wrap:wrap; }
+.fmt-pill { flex:1;min-width:80px;padding:.4rem .5rem;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;text-align:center;font-size:.75rem;font-weight:600;color:var(--text-muted);transition:.15s; }
+.fmt-pill input { display:none; }
+.fmt-pill:has(input:checked) { border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--gold-dark); }
+.char-counter { font-size:.72rem;color:var(--text-muted);text-align:right;margin-top:.25rem; }
+.char-counter.warn { color:#e74c3c; }
+.submit-group { display:flex;gap:.5rem;flex-direction:column;margin-top:1.25rem; }
+.btn-ig  { background:linear-gradient(135deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);color:#fff;border:none; }
+.btn-fb  { background:#1877F2;color:#fff;border:none; }
+.btn-both{ background:linear-gradient(90deg,#dc2743,#1877F2);color:#fff;border:none; }
+
+/* ── Status de config ── */
+.cfg-status { display:inline-flex;align-items:center;gap:.35rem;font-size:.75rem;font-weight:600;padding:.2rem .6rem;border-radius:20px; }
+.cfg-ok   { background:rgba(39,174,96,.1); color:#1a7a40; }
+.cfg-nok  { background:rgba(231,76,60,.1); color:#c0392b; }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .social-config-panel { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .social-config-panel h3 { color:#E8E4DC; }
+[data-theme="dark"] .plat-btn { border-color:rgba(201,168,76,.15);color:#9A9690; }
+[data-theme="dark"] .plat-btn.ig.active { background:rgba(225,48,108,.12);border-color:#E1306C;color:#E1306C; }
+[data-theme="dark"] .plat-btn.fb.active { background:rgba(24,119,242,.12);border-color:#1877F2;color:#1877F2; }
+[data-theme="dark"] .config-warn { background:rgba(243,156,18,.08);border-color:rgba(243,156,18,.2);color:#D4A94E; }
+[data-theme="dark"] .preview-box { background:#25252D;color:#C8C4BC; }
+[data-theme="dark"] .fmt-pill { border-color:rgba(201,168,76,.15);color:#9A9690; }
+[data-theme="dark"] .cfg-ok  { background:rgba(39,174,96,.1);color:#58d68d; }
+[data-theme="dark"] .cfg-nok { background:rgba(231,76,60,.1);color:#e87c6f; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem" class="text-muted">
+  <a href="{% url 'album_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-images"></i> Álbuns</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <a href="{% url 'album_photos' album.pk %}" style="color:var(--gold);text-decoration:none">{{ album.title }}</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <span>Publicar</span>
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<form method="post" id="socialForm">
+{% csrf_token %}
+
+<div class="social-layout">
+
+  <!-- ── Painel esquerdo: seleção de fotos ── -->
+  <div>
+    <div class="section-label-sm">1. Selecione as fotos</div>
+    <p class="form-hint" style="margin:.4rem 0 .75rem">Clique para selecionar. Instagram: máx. 10 fotos (carrossel). Facebook: sem limite.</p>
+
+    <div class="sel-actions">
+      <button type="button" class="btn btn-outline" onclick="selectAll()" style="font-size:.8rem;padding:.35rem .85rem"><i class="fa fa-check-square"></i> Todas</button>
+      <button type="button" class="btn btn-outline" onclick="clearAll()" style="font-size:.8rem;padding:.35rem .85rem"><i class="fa fa-square"></i> Nenhuma</button>
+      <span id="selCount" style="margin-left:auto;font-size:.82rem;color:var(--text-muted);align-self:center">0 foto(s) selecionada(s)</span>
+    </div>
+
+    <div class="photo-selector" id="photoGrid">
+      {% for photo in photos %}
+      <label class="photo-sel-item" id="wrap_{{ photo.pk }}">
+        <input type="checkbox" name="photo_ids" value="{{ photo.pk }}" onchange="updateSelection()">
+        <img src="{{ photo.image.url }}" alt="" loading="lazy">
+        <div class="sel-overlay">
+          <div class="sel-check"><i class="fa fa-check"></i></div>
+        </div>
+        <div class="sel-num" id="num_{{ photo.pk }}"></div>
+      </label>
+      {% empty %}
+      <p class="text-muted">Este álbum não tem fotos ainda. <a href="{% url 'album_photos' album.pk %}">Adicionar fotos</a></p>
+      {% endfor %}
+    </div>
+
+    <!-- Legenda -->
+    <div class="form-group" style="margin-top:1.5rem">
+      <div class="section-label-sm" style="margin-bottom:.5rem">2. Legenda</div>
+      <textarea name="caption" id="captionField" class="form-input" rows="4"
+        placeholder="Escreva a legenda do post..." maxlength="2200"
+        oninput="updatePreview();updateCounter(this,2200,'captionCounter')">{% if album.description %}{{ album.description }}{% endif %}</textarea>
+      <div class="char-counter" id="captionCounter">0 / 2200</div>
+    </div>
+
+    <!-- Hashtags -->
+    <div class="form-group">
+      <label style="font-size:.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+        Hashtags <small style="font-weight:400">(uma por linha, sem #)</small>
+      </label>
+      <textarea name="hashtags" id="hashtagField" class="form-input" rows="3"
+        placeholder="igrejaevangelica&#10;adoracao&#10;comunidade"
+        oninput="updatePreview()"></textarea>
+    </div>
+  </div>
+
+  <!-- ── Painel direito: config + publicar ── -->
+  <div class="social-config-panel">
+    <h3><i class="fa fa-share-nodes" style="color:var(--gold-dark)"></i> Configurações de Publicação</h3>
+
+    <!-- Status de conexão -->
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      <span class="cfg-status {% if config.ig_configured %}cfg-ok{% else %}cfg-nok{% endif %}">
+        <i class="fab fa-instagram"></i>
+        {% if config.ig_configured %}Conectado{% else %}Não configurado{% endif %}
+      </span>
+      <span class="cfg-status {% if config.fb_configured %}cfg-ok{% else %}cfg-nok{% endif %}">
+        <i class="fab fa-facebook"></i>
+        {% if config.fb_configured %}Conectado{% else %}Não configurado{% endif %}
+      </span>
+      {% if not config.ig_configured or not config.fb_configured %}
+      <a href="{% url 'social_config' %}" style="font-size:.72rem;color:var(--gold-dark)">
+        <i class="fa fa-gear"></i> Configurar
+      </a>
+      {% endif %}
+    </div>
+
+    {% if not config.site_base_url %}
+    <div class="config-warn">
+      <i class="fa fa-triangle-exclamation"></i>
+      URL pública do site não configurada — as APIs precisam dela para acessar as fotos.
+      <a href="{% url 'social_config' %}">Configurar agora</a>
+    </div>
+    {% endif %}
+
+    <!-- Plataforma -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Publicar em</label>
+      <div class="platform-toggle" id="platformBtns">
+        <button type="button" class="plat-btn ig active" data-val="instagram" onclick="setPlatform('instagram')">
+          <i class="fab fa-instagram"></i> Instagram
+        </button>
+        <button type="button" class="plat-btn fb" data-val="facebook" onclick="setPlatform('facebook')">
+          <i class="fab fa-facebook"></i> Facebook
+        </button>
+        <button type="button" class="plat-btn ig fb active" data-val="both" onclick="setPlatform('both')">
+          <i class="fa fa-share-nodes"></i> Ambos
+        </button>
+      </div>
+      <input type="hidden" name="platform" id="platformField" value="both">
+    </div>
+
+    <!-- Formato -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.5rem">Formato</label>
+      <div class="format-radio">
+        <label class="fmt-pill"><input type="radio" name="post_format" value="single"> <i class="fa fa-image"></i><br>Foto única</label>
+        <label class="fmt-pill"><input type="radio" name="post_format" value="carousel" checked> <i class="fa fa-images"></i><br>Carrossel</label>
+        <label class="fmt-pill"><input type="radio" name="post_format" value="album_fb"> <i class="fab fa-facebook"></i><br>Álbum FB</label>
+      </div>
+    </div>
+
+    <!-- Agendamento -->
+    <div class="form-group" style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+        Agendar para <small style="font-weight:400">(opcional)</small>
+      </label>
+      <input type="datetime-local" name="scheduled_for" class="form-input" style="font-size:.85rem">
+      <small class="form-hint">Deixe vazio para publicar imediatamente ao clicar "Publicar agora".</small>
+    </div>
+
+    <!-- Prévia da legenda -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.35rem">Prévia da legenda</label>
+      <div class="preview-box" id="previewBox">—</div>
+    </div>
+
+    <!-- Botões de ação -->
+    <div class="submit-group">
+      <button type="submit" name="submit_action" value="publish" class="btn btn-primary" id="btnPublish"
+        onclick="document.getElementById('socialForm').submit_action='publish'">
+        <i class="fa fa-paper-plane"></i> Publicar agora
+      </button>
+      <button type="submit" name="submit_action" value="draft" class="btn btn-outline">
+        <i class="fa fa-floppy-disk"></i> Salvar como rascunho
+      </button>
+      <a href="{% url 'album_photos' album.pk %}" class="btn btn-outline" style="text-align:center">
+        Cancelar
+      </a>
+    </div>
+  </div>
+
+</div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// ── Seleção de fotos ──
+let selOrder = [];
+
+function updateSelection() {
+  const boxes = document.querySelectorAll('input[name="photo_ids"]');
+  selOrder = [];
+  boxes.forEach(cb => { if(cb.checked) selOrder.push(cb.value); });
+
+  boxes.forEach(cb => {
+    const wrap = document.getElementById('wrap_' + cb.value);
+    const num  = document.getElementById('num_' + cb.value);
+    const idx  = selOrder.indexOf(cb.value);
+    wrap.classList.toggle('selected', cb.checked);
+    num.textContent = idx >= 0 ? idx + 1 : '';
+  });
+
+  document.getElementById('selCount').textContent = selOrder.length + ' foto(s) selecionada(s)';
+
+  // Aviso Instagram > 10
+  const warn = document.getElementById('igWarn');
+  if(warn) warn.style.display = selOrder.length > 10 ? 'flex' : 'none';
+}
+
+function selectAll() {
+  document.querySelectorAll('input[name="photo_ids"]').forEach(cb => { cb.checked = true; });
+  updateSelection();
+}
+function clearAll() {
+  document.querySelectorAll('input[name="photo_ids"]').forEach(cb => { cb.checked = false; });
+  updateSelection();
+}
+
+// ── Plataforma ──
+function setPlatform(val) {
+  document.getElementById('platformField').value = val;
+  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll(`.plat-btn[data-val="${val}"]`).forEach(b => b.classList.add('active'));
+}
+
+// ── Prévia da legenda ──
+function updatePreview() {
+  const cap   = document.getElementById('captionField').value;
+  const tags  = document.getElementById('hashtagField').value
+                  .split('\n').filter(t => t.trim())
+                  .map(t => '#' + t.trim().replace(/^#/, '')).join(' ');
+  const full  = cap + (tags ? '\n\n' + tags : '');
+  document.getElementById('previewBox').textContent = full || '—';
+}
+
+// ── Contador de caracteres ──
+function updateCounter(el, max, counterId) {
+  const cnt = document.getElementById(counterId);
+  const len = el.value.length;
+  cnt.textContent = len + ' / ' + max;
+  cnt.classList.toggle('warn', len > max * 0.9);
+}
+
+// Init
+updatePreview();
+updateCounter(document.getElementById('captionField'), 2200, 'captionCounter');
+</script>
+{% endblock %}

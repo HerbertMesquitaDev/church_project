@@ -1,0 +1,182 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Configurações da Igreja{% endblock %}
+{% block page_title %}Configurações da Igreja{% endblock %}
+
+{% block extra_css %}
+<style>
+.cfg-tabs { display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap; }
+.cfg-tab  { padding:.45rem 1rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:.8rem;font-weight:500;cursor:pointer;transition:.15s; }
+.cfg-tab.active,.cfg-tab:hover { background:var(--gold);border-color:var(--gold);color:#fff; }
+.cfg-panel { display:none; }
+.cfg-panel.active { display:block; }
+.color-row { display:flex;align-items:center;gap:.6rem; }
+.color-row input[type=color] { width:38px;height:38px;border:1px solid var(--border);border-radius:var(--radius);padding:2px;cursor:pointer;background:var(--surface); }
+.cfg-preview-img { height:64px;border-radius:var(--radius);border:1px solid var(--border);object-fit:cover;display:block;margin-bottom:.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<div class="cfg-tabs">
+  <button class="cfg-tab active" onclick="showTab('basic',this)"><i class="fa fa-info-circle"></i> Informações</button>
+  <button class="cfg-tab" onclick="showTab('visual',this)"><i class="fa fa-palette"></i> Visual</button>
+  <button class="cfg-tab" onclick="showTab('social',this)"><i class="fa fa-share-alt"></i> Redes Sociais</button>
+  <button class="cfg-tab" onclick="showTab('pix',this)"><i class="fa fa-hand-holding-usd"></i> PIX / Banco</button>
+</div>
+
+<div id="tab-basic" class="cfg-panel active">
+  <div class="form-page-wrap">
+    <form method="post" enctype="multipart/form-data" class="members-form">
+      {% csrf_token %}
+      <input type="hidden" name="section" value="basic">
+      <p class="form-section-title">Dados da Igreja</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Nome da Igreja</label><input type="text" name="church_name" value="{{ settings.church_name }}"></div>
+        <div class="form-group"><label>Slogan</label><input type="text" name="tagline" value="{{ settings.tagline }}"></div>
+      </div>
+      <div class="form-group"><label>Sobre a Igreja</label><textarea name="about_text" rows="4">{{ settings.about_text }}</textarea></div>
+      <p class="form-section-title">Contato e Localização</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Endereço</label><input type="text" name="address" value="{{ settings.address }}"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" name="phone" value="{{ settings.phone }}"></div>
+        <div class="form-group"><label>E-mail</label><input type="email" name="email" value="{{ settings.email }}"></div>
+        <div class="form-group"><label>E-mail para Notificações</label><input type="email" name="notification_email" value="{{ settings.notification_email }}"></div>
+      </div>
+      <div class="form-group">
+        <label>Link do Google Maps</label>
+        <input type="url" name="maps_url" value="{{ settings.maps_url }}" placeholder="https://maps.app.goo.gl/...">
+        <span class="form-hint">Cole aqui o link de compartilhamento do Google Maps</span>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar Informações</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="tab-visual" class="cfg-panel">
+  <div class="form-page-wrap">
+    <form method="post" enctype="multipart/form-data" class="members-form">
+      {% csrf_token %}
+      <input type="hidden" name="section" value="visual">
+      <p class="form-section-title">Cores do Sistema</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Cor Primária</label>
+          <div class="color-row">
+            <input type="color" id="cp1" value="{{ settings.color_primary }}" oninput="document.getElementById('ct1').value=this.value">
+            <input type="text" id="ct1" name="color_primary" value="{{ settings.color_primary }}" maxlength="7" oninput="document.getElementById('cp1').value=this.value">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cor Secundária</label>
+          <div class="color-row">
+            <input type="color" id="cp2" value="{{ settings.color_secondary }}" oninput="document.getElementById('ct2').value=this.value">
+            <input type="text" id="ct2" name="color_secondary" value="{{ settings.color_secondary }}" maxlength="7" oninput="document.getElementById('cp2').value=this.value">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Cor de Destaque</label>
+          <div class="color-row">
+            <input type="color" id="cp3" value="{{ settings.color_accent }}" oninput="document.getElementById('ct3').value=this.value">
+            <input type="text" id="ct3" name="color_accent" value="{{ settings.color_accent }}" maxlength="7" oninput="document.getElementById('cp3').value=this.value">
+          </div>
+        </div>
+      </div>
+      <p class="form-section-title">Imagens</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Logo</label>
+          {% if settings.logo %}<img src="{{ settings.logo.url }}" class="cfg-preview-img">{% endif %}
+          <input type="file" name="logo" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Imagem Principal (Hero)</label>
+          {% if settings.hero_image %}<img src="{{ settings.hero_image.url }}" class="cfg-preview-img">{% endif %}
+          <input type="file" name="hero_image" accept="image/*">
+        </div>
+      </div>
+      <p class="form-section-title">Texto do Hero</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Título</label><input type="text" name="hero_title" value="{{ settings.hero_title }}"></div>
+        <div class="form-group"><label>Subtítulo</label><input type="text" name="hero_subtitle" value="{{ settings.hero_subtitle }}"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar Visual</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="tab-social" class="cfg-panel">
+  <div class="form-page-wrap">
+    <form method="post" class="members-form">
+      {% csrf_token %}
+      <input type="hidden" name="section" value="social">
+      <p class="form-section-title">Links das Redes Sociais</p>
+      <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877F2"></i> Facebook</label><input type="url" name="facebook_url" value="{{ settings.facebook_url }}" placeholder="https://facebook.com/suaigreja"></div>
+      <div class="form-group"><label><i class="fab fa-instagram" style="color:#E1306C"></i> Instagram</label><input type="url" name="instagram_url" value="{{ settings.instagram_url }}" placeholder="https://instagram.com/suaigreja"></div>
+      <div class="form-group"><label><i class="fab fa-youtube" style="color:#FF0000"></i> YouTube</label><input type="url" name="youtube_url" value="{{ settings.youtube_url }}" placeholder="https://youtube.com/@suaigreja"></div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar Redes Sociais</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="tab-pix" class="cfg-panel">
+  <div class="form-page-wrap">
+    <form method="post" class="members-form">
+      {% csrf_token %}
+      <input type="hidden" name="section" value="pix">
+      <p class="form-section-title">Chave PIX</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Chave PIX</label><input type="text" name="pix_key" value="{{ settings.pix_key }}" placeholder="CPF, CNPJ, e-mail ou telefone"></div>
+        <div class="form-group"><label>Nome do Titular PIX</label><input type="text" name="pix_name" value="{{ settings.pix_name }}"></div>
+      </div>
+      <p class="form-section-title">Dados Bancários</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Banco</label><input type="text" name="bank_name" value="{{ settings.bank_name }}"></div>
+        <div class="form-group"><label>Agência</label><input type="text" name="bank_agency" value="{{ settings.bank_agency }}"></div>
+        <div class="form-group"><label>Conta</label><input type="text" name="bank_account" value="{{ settings.bank_account }}"></div>
+        <div class="form-group"><label>Titular da Conta</label><input type="text" name="bank_holder" value="{{ settings.bank_holder }}"></div>
+      </div>
+      <div class="form-group">
+        <label>Texto de apresentação das ofertas</label>
+        <textarea name="offering_text" rows="3">{{ settings.offering_text }}</textarea>
+        <span class="form-hint">Mensagem exibida acima dos dados de pagamento no site</span>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem">
+        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar Dados Bancários</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.cfg-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cfg-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+// Mantém aba ativa após salvar
+const activeTab = sessionStorage.getItem('cfg_tab');
+if (activeTab) {
+  const btn = document.querySelector('.cfg-tab[onclick*="' + activeTab + '"]');
+  if (btn) showTab(activeTab, btn);
+}
+document.querySelectorAll('form').forEach(f => {
+  f.addEventListener('submit', function() {
+    sessionStorage.setItem('cfg_tab', this.querySelector('input[name=section]').value);
+  });
+});
+</script>
+{% endblock %}

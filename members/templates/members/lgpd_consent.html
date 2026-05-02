@@ -1,0 +1,332 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Privacidade & Uso de Imagem{% endblock %}
+{% block page_title %}Privacidade & Uso de Imagem{% endblock %}
+
+{% block content %}
+<div class="lgpd-wrap">
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Status atual -->
+    <div class="lgpd-status-card {% if profile.image_consent and not profile.image_consent_revoked %}lgpd-status-granted{% elif profile.image_consent_revoked %}lgpd-status-revoked{% else %}lgpd-status-pending{% endif %}">
+        <div class="lgpd-status-icon">
+            {% if profile.image_consent and not profile.image_consent_revoked %}
+                <i class="fa fa-check-circle"></i>
+            {% elif profile.image_consent_revoked %}
+                <i class="fa fa-times-circle"></i>
+            {% else %}
+                <i class="fa fa-question-circle"></i>
+            {% endif %}
+        </div>
+        <div class="lgpd-status-info">
+            <strong>
+                {% if profile.image_consent and not profile.image_consent_revoked %}
+                    Autorização concedida
+                {% elif profile.image_consent_revoked %}
+                    Autorização revogada
+                {% else %}
+                    Aguardando sua decisão
+                {% endif %}
+            </strong>
+            <span>
+                {% if profile.image_consent_date and not profile.image_consent_revoked %}
+                    Aceito em {{ profile.image_consent_date|date:"d/m/Y" }} às {{ profile.image_consent_date|date:"H:i" }}
+                {% elif profile.image_consent_revoked_date %}
+                    Revogado em {{ profile.image_consent_revoked_date|date:"d/m/Y" }} às {{ profile.image_consent_revoked_date|date:"H:i" }}
+                {% else %}
+                    Você ainda não se manifestou sobre este termo.
+                {% endif %}
+            </span>
+        </div>
+    </div>
+
+    <!-- Termo LGPD completo -->
+    <div class="lgpd-termo-card">
+        <div class="lgpd-termo-header">
+            <i class="fa fa-shield-alt"></i>
+            <div>
+                <h3>Termo de Autorização de Uso de Imagem</h3>
+                <span>Lei Geral de Proteção de Dados — Lei nº 13.709/2018 (LGPD)</span>
+            </div>
+        </div>
+
+        <div class="lgpd-termo-body" id="termoBody">
+
+            <div class="lgpd-termo-section">
+                <h4>1. Identificação do Controlador de Dados</h4>
+                <p>O controlador dos dados pessoais é a <strong>{{ site_settings.church_name }}</strong>{% if site_settings.address %}, localizada em {{ site_settings.address }}{% endif %}{% if site_settings.email %}, com e-mail de contato <strong>{{ site_settings.email }}</strong>{% endif %}. A igreja é responsável pelas decisões referentes ao tratamento dos seus dados pessoais, incluindo imagens e gravações.</p>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>2. Objeto da Autorização</h4>
+                <p>Este termo trata especificamente da autorização para captação, armazenamento, tratamento e divulgação de <strong>imagens fotográficas e/ou gravações em vídeo</strong> do(a) declarante, obtidas durante:</p>
+                <ul>
+                    <li>Cultos, celebrações e reuniões religiosas;</li>
+                    <li>Eventos, conferências e atividades promovidas pela igreja;</li>
+                    <li>Atividades de ministérios, grupos de estudo e células;</li>
+                    <li>Ações sociais, evangelísticas e comunitárias.</li>
+                </ul>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>3. Finalidade do Uso</h4>
+                <p>As imagens e gravações autorizadas poderão ser utilizadas exclusivamente para fins institucionais, religiosos e de comunicação da igreja, incluindo:</p>
+                <ul>
+                    <li>Publicação no site oficial da igreja;</li>
+                    <li>Divulgação nas redes sociais institucionais (Instagram, Facebook, YouTube e similares);</li>
+                    <li>Materiais impressos como folders, cartazes e boletins informativos;</li>
+                    <li>Transmissões ao vivo e conteúdo audiovisual publicado nos canais oficiais;</li>
+                    <li>Arquivos históricos e institucionais da igreja.</li>
+                </ul>
+                <p><strong>As imagens não serão cedidas, vendidas ou compartilhadas com terceiros para fins comerciais ou publicitários.</strong></p>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>4. Base Legal</h4>
+                <p>O tratamento dos dados (imagens) se fundamenta no <strong>consentimento livre, informado e inequívoco</strong> do titular, conforme previsto no Art. 7º, inciso I, da Lei nº 13.709/2018 (LGPD). O consentimento é a única base legal utilizada para esta finalidade específica.</p>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>5. Prazo de Retenção</h4>
+                <p>As imagens serão mantidas enquanto houver finalidade para seu uso institucional, ou até que o titular solicite a revogação do consentimento ou a exclusão dos dados. Imagens publicadas em formato impresso ou arquivadas como memória histórica poderão ser retidas por prazo indeterminado.</p>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>6. Direitos do Titular (Art. 18 da LGPD)</h4>
+                <p>Você, como titular dos dados, tem garantidos os seguintes direitos:</p>
+                <ul>
+                    <li><strong>Confirmação e acesso:</strong> saber se seus dados estão sendo tratados e ter acesso a eles;</li>
+                    <li><strong>Correção:</strong> solicitar a correção de dados incompletos, inexatos ou desatualizados;</li>
+                    <li><strong>Revogação do consentimento:</strong> retirar sua autorização a qualquer momento, sem prejuízo ao tratamento realizado anteriormente;</li>
+                    <li><strong>Eliminação:</strong> solicitar a exclusão dos dados tratados com base no consentimento;</li>
+                    <li><strong>Portabilidade:</strong> solicitar a portabilidade dos dados a outro fornecedor de serviço;</li>
+                    <li><strong>Informação:</strong> ser informado sobre as entidades com as quais seus dados foram compartilhados;</li>
+                    <li><strong>Oposição:</strong> opor-se ao tratamento realizado, quando este não estiver em conformidade com a lei.</li>
+                </ul>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>7. Como Revogar o Consentimento</h4>
+                <p>Você pode revogar este consentimento a qualquer momento diretamente por esta página, clicando no botão <strong>"Revogar Autorização"</strong> abaixo. A revogação não afeta a licitude do tratamento realizado antes da solicitação. Para solicitar a exclusão de imagens já publicadas, entre em contato através dos canais indicados neste termo.</p>
+            </div>
+
+            <div class="lgpd-termo-section">
+                <h4>8. Contato e Canal de Atendimento</h4>
+                <p>Para exercer seus direitos ou obter esclarecimentos sobre o tratamento dos seus dados pessoais, entre em contato através de:</p>
+                <ul>
+                    {% if site_settings.email %}<li>E-mail: <strong>{{ site_settings.email }}</strong></li>{% endif %}
+                    {% if site_settings.phone %}<li>Telefone/WhatsApp: <strong>{{ site_settings.phone }}</strong></li>{% endif %}
+                    {% if site_settings.address %}<li>Endereço: <strong>{{ site_settings.address }}</strong></li>{% endif %}
+                </ul>
+            </div>
+
+            <div class="lgpd-termo-section lgpd-termo-nota">
+                <i class="fa fa-info-circle"></i>
+                <p>Este termo está em conformidade com a Lei nº 13.709/2018 (LGPD) e foi elaborado com base nas diretrizes da Autoridade Nacional de Proteção de Dados (ANPD). A concessão do consentimento é <strong>voluntária</strong> e sua recusa não implica qualquer prejuízo à sua participação nas atividades da igreja.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Ação -->
+    <div class="lgpd-action-card">
+        {% if profile.image_consent and not profile.image_consent_revoked %}
+            <!-- Já autorizou — mostrar opção de revogar -->
+            <div class="lgpd-action-info">
+                <i class="fa fa-check-circle" style="color:#27ae60"></i>
+                <div>
+                    <strong>Você já autorizou o uso da sua imagem.</strong>
+                    <span>Se mudar de ideia, pode revogar sua autorização abaixo. A revogação não afeta imagens já publicadas antes desta data.</span>
+                </div>
+            </div>
+            <form method="post" onsubmit="return confirm('Tem certeza que deseja revogar a autorização de uso de imagem?')">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="revoke">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="fa fa-times-circle"></i> Revogar Autorização
+                </button>
+            </form>
+
+        {% elif profile.image_consent_revoked %}
+            <!-- Revogou — mostrar opção de conceder novamente -->
+            <div class="lgpd-action-info">
+                <i class="fa fa-times-circle" style="color:#e74c3c"></i>
+                <div>
+                    <strong>Sua autorização foi revogada.</strong>
+                    <span>Você pode conceder autorização novamente a qualquer momento, após ler o termo acima.</span>
+                </div>
+            </div>
+            <form method="post" id="grantForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="grant">
+                <label class="lgpd-check-label" id="grantLabel">
+                    <input type="checkbox" id="grantCheck" onchange="toggleGrantBtn(this)">
+                    <span>Li e compreendi o Termo de Autorização de Uso de Imagem acima e <strong>autorizo voluntariamente</strong> o uso da minha imagem.</span>
+                </label>
+                <button type="submit" class="btn btn-primary" id="grantBtn" disabled>
+                    <i class="fa fa-check-circle"></i> Conceder Autorização
+                </button>
+            </form>
+
+        {% else %}
+            <!-- Ainda não se manifestou -->
+            <div class="lgpd-action-info lgpd-action-warn">
+                <i class="fa fa-exclamation-circle"></i>
+                <div>
+                    <strong>Você ainda não se manifestou sobre este termo.</strong>
+                    <span>Leia o termo completo acima e decida se deseja autorizar o uso da sua imagem. Esta decisão é completamente voluntária.</span>
+                </div>
+            </div>
+            <form method="post" id="grantForm">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="grant">
+                <label class="lgpd-check-label" id="grantLabel">
+                    <input type="checkbox" id="grantCheck" onchange="toggleGrantBtn(this)">
+                    <span>Li e compreendi o Termo de Autorização de Uso de Imagem acima e <strong>autorizo voluntariamente</strong> o uso da minha imagem conforme descrito.</span>
+                </label>
+                <button type="submit" class="btn btn-primary" id="grantBtn" disabled>
+                    <i class="fa fa-check-circle"></i> Autorizar Uso da Minha Imagem
+                </button>
+            </form>
+
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+.lgpd-wrap { display:flex; flex-direction:column; gap:1.25rem; max-width:800px; }
+
+/* Status card */
+.lgpd-status-card {
+    display:flex; align-items:center; gap:1rem;
+    padding:1rem 1.4rem; border-radius:10px; border:1px solid;
+}
+.lgpd-status-granted  { background:rgba(39,174,96,.08);  border-color:rgba(39,174,96,.25);  }
+.lgpd-status-revoked  { background:rgba(231,76,60,.07);  border-color:rgba(231,76,60,.25);  }
+.lgpd-status-pending  { background:rgba(201,168,76,.08); border-color:rgba(201,168,76,.25); }
+
+.lgpd-status-icon { font-size:1.75rem; flex-shrink:0; }
+.lgpd-status-granted  .lgpd-status-icon { color:#27ae60; }
+.lgpd-status-revoked  .lgpd-status-icon { color:#e74c3c; }
+.lgpd-status-pending  .lgpd-status-icon { color:var(--gold,#C9A84C); }
+
+.lgpd-status-info { display:flex; flex-direction:column; gap:.2rem; }
+.lgpd-status-info strong { font-size:.95rem; color:var(--text-heading,#1A2340); font-weight:600; }
+.lgpd-status-info span   { font-size:.82rem; color:var(--text-muted,#6B6B6B); }
+
+/* Termo card */
+.lgpd-termo-card {
+    background:var(--card-bg,#fff);
+    border:1px solid var(--border,rgba(201,168,76,.2));
+    border-radius:10px; overflow:hidden;
+}
+
+.lgpd-termo-header {
+    background:var(--navy,#1A2340);
+    color:#fff; padding:1.25rem 1.5rem;
+    display:flex; align-items:center; gap:1rem;
+}
+.lgpd-termo-header i { font-size:1.5rem; color:var(--gold,#C9A84C); flex-shrink:0; }
+.lgpd-termo-header h3 { font-size:1rem; font-weight:600; margin:0 0 .2rem; color:#fff; }
+.lgpd-termo-header span { font-size:.75rem; color:rgba(255,255,255,.6); }
+
+.lgpd-termo-body {
+    padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;
+    max-height:500px; overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(201,168,76,.3) transparent;
+}
+.lgpd-termo-body::-webkit-scrollbar { width:5px; }
+.lgpd-termo-body::-webkit-scrollbar-thumb { background:rgba(201,168,76,.3); border-radius:3px; }
+
+.lgpd-termo-section h4 {
+    font-size:.85rem; font-weight:700; text-transform:uppercase;
+    letter-spacing:.05em; color:var(--navy,#1A2340);
+    margin-bottom:.6rem; padding-bottom:.4rem;
+    border-bottom:1px solid var(--border,rgba(201,168,76,.15));
+}
+.lgpd-termo-section p  { font-size:.875rem; color:var(--text,#2C2C2C); line-height:1.7; margin-bottom:.5rem; }
+.lgpd-termo-section ul { margin:.4rem 0 .4rem 1.25rem; }
+.lgpd-termo-section ul li { font-size:.875rem; color:var(--text,#2C2C2C); line-height:1.7; margin-bottom:.2rem; }
+
+.lgpd-termo-nota {
+    background:rgba(201,168,76,.06);
+    border:1px solid rgba(201,168,76,.2);
+    border-radius:8px; padding:.9rem 1rem;
+    display:flex; gap:.75rem; align-items:flex-start;
+}
+.lgpd-termo-nota i { color:var(--gold,#C9A84C); margin-top:.15rem; flex-shrink:0; }
+.lgpd-termo-nota p  { margin:0; font-size:.82rem; }
+
+/* Scroll indicator */
+.lgpd-scroll-hint {
+    text-align:center; padding:.5rem;
+    font-size:.75rem; color:var(--text-muted,#6B6B6B);
+    border-top:1px solid var(--border,rgba(201,168,76,.1));
+    display:flex; align-items:center; justify-content:center; gap:.4rem;
+}
+
+/* Action card */
+.lgpd-action-card {
+    background:var(--card-bg,#fff);
+    border:1px solid var(--border,rgba(201,168,76,.2));
+    border-radius:10px; padding:1.5rem;
+    display:flex; flex-direction:column; gap:1.25rem;
+}
+
+.lgpd-action-info {
+    display:flex; align-items:flex-start; gap:.9rem;
+    padding:.9rem 1rem;
+    background:rgba(39,174,96,.06);
+    border:1px solid rgba(39,174,96,.2);
+    border-radius:8px;
+}
+.lgpd-action-info.lgpd-action-warn {
+    background:rgba(201,168,76,.06);
+    border-color:rgba(201,168,76,.25);
+}
+.lgpd-action-info i { font-size:1.2rem; margin-top:.1rem; flex-shrink:0; }
+.lgpd-action-info i { color:#27ae60; }
+.lgpd-action-warn i { color:var(--gold,#C9A84C) !important; }
+.lgpd-action-info > div { display:flex; flex-direction:column; gap:.25rem; }
+.lgpd-action-info strong { font-size:.9rem; color:var(--text-heading,#1A2340); }
+.lgpd-action-info span   { font-size:.82rem; color:var(--text-muted,#6B6B6B); line-height:1.5; }
+
+.lgpd-check-label {
+    display:flex; align-items:flex-start; gap:.75rem;
+    padding:1rem 1.1rem;
+    background:var(--surface-alt,#FAF7F2);
+    border:2px solid var(--border,rgba(201,168,76,.2));
+    border-radius:8px; cursor:pointer;
+    transition:border-color .2s;
+}
+.lgpd-check-label:has(input:checked) { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.06); }
+.lgpd-check-label input { width:18px; height:18px; flex-shrink:0; margin-top:.1rem; accent-color:var(--gold,#C9A84C); cursor:pointer; }
+.lgpd-check-label span  { font-size:.875rem; color:var(--text,#2C2C2C); line-height:1.6; }
+
+/* Dark mode */
+[data-theme="dark"] .lgpd-status-info strong { color:#E8E4DC; }
+[data-theme="dark"] .lgpd-termo-card         { background:#1E1E24; }
+[data-theme="dark"] .lgpd-termo-section h4   { color:#E8E4DC; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .lgpd-termo-section p,
+[data-theme="dark"] .lgpd-termo-section li   { color:#C8C4BC; }
+[data-theme="dark"] .lgpd-action-card        { background:#1E1E24; }
+[data-theme="dark"] .lgpd-action-info strong { color:#E8E4DC; }
+[data-theme="dark"] .lgpd-check-label        { background:#25252D; }
+[data-theme="dark"] .lgpd-check-label span   { color:#C8C4BC; }
+[data-theme="dark"] .lgpd-termo-nota         { background:rgba(201,168,76,.05); }
+[data-theme="dark"] .lgpd-termo-nota p       { color:#9A9690; }
+</style>
+
+<script>
+function toggleGrantBtn(checkbox) {
+    const btn = document.getElementById('grantBtn');
+    if (btn) btn.disabled = !checkbox.checked;
+}
+</script>
+{% endblock %}

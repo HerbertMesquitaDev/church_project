@@ -1,0 +1,121 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Visitantes{% endblock %}
+{% block page_title %}Visitantes{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:1.5rem">
+    <div class="stat-card {% if total_new %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(231,76,60,0.1)"><i class="fa fa-door-open" style="color:#e74c3c"></i></div>
+        <div>
+            <span class="stat-number">{{ total_new }}</span>
+            <span class="stat-label">Não contatados</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-users" style="color:var(--gold-dark)"></i></div>
+        <div>
+            <span class="stat-number">{{ page_obj.paginator.count }}</span>
+            <span class="stat-label">Total de visitantes</span>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filter-bar" style="margin-bottom:1.25rem">
+    <form method="get" class="filter-form">
+        <div class="filter-field filter-field-grow">
+            <label class="filter-label">Buscar</label>
+            <div class="filter-input-icon">
+                <i class="fa fa-search"></i>
+                <input type="text" name="q" value="{{ q }}" placeholder="Nome, telefone ou e-mail…" class="filter-input">
+            </div>
+        </div>
+        <div class="filter-field">
+            <label class="filter-label">Status</label>
+            <select name="contacted" class="filter-input">
+                <option value="">Todos</option>
+                <option value="0" {% if contacted == '0' %}selected{% endif %}>Não contatados</option>
+                <option value="1" {% if contacted == '1' %}selected{% endif %}>Já contatados</option>
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary" style="padding:.55rem 1.1rem">
+                <i class="fa fa-filter"></i> Filtrar
+            </button>
+            {% if q or contacted %}
+            <a href="{% url 'visitor_manage' %}" class="btn btn-outline" style="padding:.55rem 1rem">
+                <i class="fa fa-times"></i> Limpar
+            </a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Tabela -->
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th>Visitou em</th>
+                <th>Como conheceu</th>
+                <th>Ministério</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for v in visitors %}
+        <tr class="{% if not v.contacted %}visitor-row-new{% endif %}">
+            <td>
+                <strong class="td-title">{{ v.name }}</strong>
+                {% if v.message %}<br><small class="td-sub">{{ v.message|truncatechars:50 }}</small>{% endif %}
+            </td>
+            <td>
+                {% if v.phone %}<div><i class="fa fa-phone" style="color:var(--gold-dark);width:14px"></i> {{ v.phone }}</div>{% endif %}
+                {% if v.email %}<div><i class="fa fa-envelope" style="color:var(--gold-dark);width:14px"></i> <small>{{ v.email }}</small></div>{% endif %}
+            </td>
+            <td>{{ v.visit_date|date:"d/m/Y" }}</td>
+            <td>
+                <span class="visitor-how-badge">{{ v.get_how_found_display }}</span>
+                {% if v.how_found_other %}<br><small class="td-sub">{{ v.how_found_other }}</small>{% endif %}
+            </td>
+            <td>
+                {% if v.wants_ministry %}
+                    <i class="fa fa-check" style="color:#27ae60"></i>
+                    {% if v.ministry_interest %}<small class="td-sub"> {{ v.ministry_interest }}</small>{% endif %}
+                {% else %}—{% endif %}
+            </td>
+            <td>
+                {% if v.contacted %}
+                    <span class="prayer-badge prayer-badge-answered"><i class="fa fa-check"></i> Contatado</span>
+                {% else %}
+                    <span class="prayer-badge prayer-badge-open"><i class="fa fa-clock"></i> Pendente</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{% url 'visitor_contacted' v.pk %}?next={{ request.get_full_path|urlencode }}"
+                   class="btn-action {% if v.contacted %}btn-reject{% else %}btn-approve{% endif %}"
+                   title="{% if v.contacted %}Marcar como não contatado{% else %}Marcar como contatado{% endif %}">
+                    <i class="fa {% if v.contacted %}fa-times{% else %}fa-check{% endif %}"></i>
+                    {% if v.contacted %}Desfazer{% else %}Contatado{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="table-empty">
+            <i class="fa fa-door-open"></i><br>
+            {% if q or contacted %}Nenhum visitante encontrado com os filtros aplicados.
+            {% else %}Nenhum visitante cadastrado ainda.{% endif %}
+        </td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'core/pagination.html' %}
+
+{% endblock %}

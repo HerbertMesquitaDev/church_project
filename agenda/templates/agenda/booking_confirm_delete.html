@@ -1,0 +1,32 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Confirmar Exclusão{% endblock %}
+{% block page_title %}Confirmar Ação{% endblock %}
+{% block content %}
+<div style="max-width:520px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
+  <div style="text-align:center;margin-bottom:1.5rem;">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(231,76,60,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+      <i class="fa fa-exclamation-triangle" style="font-size:1.5rem;color:#e74c3c;"></i>
+    </div>
+    <h3 style="color:var(--text-heading);margin-bottom:0.5rem;">
+      {% if request.user.is_staff or request.user.is_superuser %}Excluir agendamento?{% else %}Cancelar agendamento?{% endif %}
+    </h3>
+    <p style="color:var(--text-muted);font-size:0.9rem;">
+      <strong>{{ booking.title }}</strong><br>
+      {{ booking.location.name }} — {{ booking.date|date:"d/m/Y" }} das {{ booking.start_time|time:"H:i" }} às {{ booking.end_time|time:"H:i" }}
+    </p>
+    {% if not request.user.is_staff and not request.user.is_superuser %}
+    <p style="font-size:0.82rem;color:#f39c12;margin-top:0.5rem;">
+      <i class="fa fa-info-circle"></i> O agendamento será marcado como cancelado.
+    </p>
+    {% endif %}
+  </div>
+  <form method="post" style="display:flex;gap:1rem;justify-content:center;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c;">
+      <i class="fa fa-trash"></i>
+      {% if request.user.is_staff or request.user.is_superuser %}Excluir{% else %}Cancelar agendamento{% endif %}
+    </button>
+    <a href="{% url 'booking_detail' booking.pk %}" class="btn btn-outline">Voltar</a>
+  </form>
+</div>
+{% endblock %}

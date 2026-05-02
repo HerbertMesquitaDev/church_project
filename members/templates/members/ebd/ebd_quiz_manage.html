@@ -1,0 +1,279 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Quiz — {{ lesson.title }}{% endblock %}
+{% block page_title %}Quiz: {{ lesson.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.question-card { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem; }
+.question-num { width:28px;height:28px;border-radius:50%;background:var(--gold);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0; }
+.question-header { display:flex;align-items:flex-start;gap:.6rem;margin-bottom:.75rem; }
+.question-title { font-size:.95rem;font-weight:600;color:var(--text-heading);flex:1; }
+.choice-row { display:flex;align-items:center;gap:.6rem;padding:.45rem .75rem;border-radius:8px;border:1.5px solid var(--border);background:var(--surface-alt);margin-bottom:.4rem; }
+.choice-row.correct { border-color:#27ae60;background:rgba(39,174,96,.07); }
+.choice-letter { width:24px;height:24px;border-radius:50%;background:var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;flex-shrink:0; }
+.choice-row.correct .choice-letter { background:#27ae60;color:#fff; }
+.choice-input { flex:1;border:none;background:transparent;font-size:.88rem;color:var(--text);font-family:inherit;outline:none; }
+.q-actions { display:flex;gap:.35rem;flex-shrink:0; }
+.q-btn { width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--text-muted);transition:.15s; }
+.q-btn:hover { border-color:var(--gold);color:var(--gold-dark); }
+.q-btn.del:hover { border-color:#e74c3c;color:#e74c3c; }
+.edit-area { display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border); }
+.edit-area.open { display:block; }
+.quiz-config { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem; }
+.config-card { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1rem; }
+.config-label { font-size:.72rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem; }
+.add-question-form { background:var(--surface-alt);border:2px dashed var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem; }
+
+[data-theme="dark"] .question-card,.config-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .question-title { color:#E8E4DC; }
+[data-theme="dark"] .choice-row { background:#25252D;border-color:rgba(201,168,76,.12); }
+[data-theme="dark"] .choice-row.correct { border-color:#27ae60;background:rgba(39,174,96,.08); }
+[data-theme="dark"] .choice-input { color:#E8E4DC; }
+[data-theme="dark"] .choice-letter { background:rgba(201,168,76,.15);color:#9A9690; }
+[data-theme="dark"] .add-question-form { background:#1E1E24;border-color:rgba(201,168,76,.2); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.5rem;flex-wrap:wrap" class="text-muted">
+  <a href="{% url 'ebd_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-users"></i> Turmas</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <a href="{% url 'ebd_trimester_manage' class_pk=tri.ebd_class_id %}" style="color:var(--gold);text-decoration:none">{{ tri.ebd_class.name }}</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <a href="{% url 'ebd_lesson_manage' trimester_pk=tri.pk %}" style="color:var(--gold);text-decoration:none">{{ tri.title }}</a>
+  <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+  <span>Quiz</span>
+  {% if quiz.questions.count %}
+  <a href="{% url 'ebd_quiz_delete' lesson_pk=lesson.pk %}"
+     class="manage-btn manage-btn-del" style="margin-left:auto"
+     onclick="return confirm('Remover o quiz inteiro?')"
+     title="Remover quiz"><i class="fa fa-trash"></i></a>
+  {% endif %}
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<!-- ── Configurações ── -->
+<div class="section-label-sm" style="margin-bottom:.75rem">Configurações do Quiz</div>
+<form method="post" style="margin-bottom:1.5rem">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="save_config">
+  <div class="quiz-config">
+    <div class="config-card">
+      <div class="config-label">Nota mínima (%)</div>
+      <input type="number" name="passing_score" class="form-input"
+        value="{{ quiz.passing_score }}" min="0" max="100"
+        style="max-width:80px;font-size:1.1rem;font-weight:600;text-align:center">
+    </div>
+    <div class="config-card">
+      <div class="config-label">Tentativas (0 = ilimitado)</div>
+      <input type="number" name="max_attempts" class="form-input"
+        value="{{ quiz.max_attempts }}" min="0"
+        style="max-width:80px;font-size:1.1rem;font-weight:600;text-align:center">
+    </div>
+    <div class="config-card">
+      <div class="config-label">Após a tentativa</div>
+      <div class="form-check-group" style="margin-top:.4rem">
+        <input type="checkbox" id="show_answers" name="show_answers"
+          {% if quiz.show_answers %}checked{% endif %}>
+        <label for="show_answers" style="font-size:.85rem">Mostrar gabarito</label>
+      </div>
+    </div>
+    <div class="config-card" style="display:flex;align-items:flex-end">
+      <button type="submit" class="btn btn-outline" style="font-size:.82rem;width:100%">
+        <i class="fa fa-save"></i> Salvar configurações
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- ── Perguntas ── -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+  <div class="section-label-sm">Perguntas ({{ questions|length }})</div>
+  {% if questions %}
+  <span class="text-muted" style="font-size:.78rem">Clique em <i class="fa fa-pen"></i> para editar</span>
+  {% endif %}
+</div>
+
+{% for q in questions %}
+{% with letters="ABCDEFGHIJ" %}
+<div class="question-card">
+
+  <!-- Cabeçalho da pergunta -->
+  <div class="question-header">
+    <span class="question-num">{{ forloop.counter }}</span>
+    <div class="question-title">{{ q.text }}</div>
+    <div class="q-actions">
+      <button type="button" class="q-btn" onclick="toggleEdit({{ q.pk }})" title="Editar">
+        <i class="fa fa-pen"></i>
+      </button>
+      <!-- Form de excluir PERGUNTA — independente -->
+      <form method="post" style="display:inline"
+            onsubmit="return confirm('Remover esta pergunta?')">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete_question">
+        <input type="hidden" name="question_id" value="{{ q.pk }}">
+        <button type="submit" class="q-btn del"><i class="fa fa-trash"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Prévia das alternativas (leitura) -->
+  <div id="preview_{{ q.pk }}">
+    {% for c in q.choices.all %}
+    <div class="choice-row {% if c.is_correct %}correct{% endif %}">
+      <div class="choice-letter">{{ letters|slice:forloop.counter0|slice:"-1" }}</div>
+      <span style="font-size:.85rem">{{ c.text|default:"<em style='opacity:.4'>Vazia</em>" }}</span>
+      {% if c.is_correct %}<i class="fa fa-check" style="color:#27ae60;font-size:.8rem;margin-left:auto"></i>{% endif %}
+    </div>
+    {% endfor %}
+    {% if q.explanation %}
+    <div style="font-size:.78rem;color:var(--text-muted);margin-top:.4rem;padding:.4rem .65rem;background:rgba(201,168,76,.06);border-radius:6px;border-left:3px solid var(--gold)">
+      <i class="fa fa-lightbulb" style="color:var(--gold-dark)"></i> {{ q.explanation }}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Área de edição — UM form apenas para salvar pergunta + alternativas -->
+  <div class="edit-area" id="edit_{{ q.pk }}">
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="save_question">
+      <input type="hidden" name="question_id" value="{{ q.pk }}">
+
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Enunciado *</label>
+        <textarea name="question_text" class="form-input" rows="2" required>{{ q.text }}</textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom:1rem">
+        <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+          Alternativas — clique no círculo para marcar a correta
+        </label>
+        <div style="margin-top:.4rem">
+          {% for c in q.choices.all %}
+          <div class="choice-row" style="margin-bottom:.4rem">
+            <input type="radio" name="correct_choice" value="{{ c.pk }}"
+              {% if c.is_correct %}checked{% endif %}
+              required style="cursor:pointer;flex-shrink:0">
+            <div class="choice-letter">{{ letters|slice:forloop.counter0|slice:"-1" }}</div>
+            <input type="text" name="choice_text_{{ c.pk }}"
+              class="choice-input"
+              value="{{ c.text }}"
+              placeholder="Texto da alternativa...">
+          </div>
+          {% endfor %}
+
+          <!-- Nova alternativa dentro do mesmo form -->
+          <div class="choice-row" style="border-style:dashed;margin-bottom:.4rem">
+            <div class="choice-letter" style="opacity:.35">+</div>
+            <input type="text" name="new_choice_text"
+              class="choice-input"
+              placeholder="Nova alternativa (opcional — deixe vazio para não adicionar)">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:1rem">
+        <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">
+          Explicação <small style="font-weight:400">(mostrada após a tentativa)</small>
+        </label>
+        <textarea name="explanation" class="form-input" rows="2"
+          placeholder="Ex: A resposta correta é A porque...">{{ q.explanation }}</textarea>
+      </div>
+
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button type="submit" class="btn btn-primary" style="font-size:.82rem">
+          <i class="fa fa-save"></i> Salvar pergunta
+        </button>
+        <button type="button" class="btn btn-outline"
+          onclick="toggleEdit({{ q.pk }})" style="font-size:.82rem">
+          Fechar
+        </button>
+      </div>
+    </form>
+
+    <!-- Forms de excluir ALTERNATIVA — fora do form de salvar -->
+    {% if q.choices.count > 2 %}
+    <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px dashed var(--border)">
+      <span style="font-size:.72rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em">Remover alternativa</span>
+      <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem">
+        {% for c in q.choices.all %}
+        <form method="post" style="display:inline">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="delete_choice">
+          <input type="hidden" name="choice_id" value="{{ c.pk }}">
+          <button type="submit" class="btn btn-outline"
+            style="font-size:.72rem;padding:.25rem .6rem;color:#e74c3c;border-color:rgba(231,76,60,.3)"
+            onclick="return confirm('Remover alternativa?')">
+            <i class="fa fa-times"></i> {{ letters|slice:forloop.counter0|slice:"-1" }}
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endwith %}
+{% empty %}
+<div style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+  <i class="fa fa-circle-question" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+  Nenhuma pergunta ainda. Adicione a primeira abaixo.
+</div>
+{% endfor %}
+
+<!-- ── Nova pergunta ── -->
+<div class="add-question-form">
+  <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+    <i class="fa fa-plus-circle" style="color:var(--gold-dark)"></i>
+    <strong style="font-size:.9rem;color:var(--text-heading)">Nova Pergunta</strong>
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add_question">
+    <div class="form-group" style="margin-bottom:.75rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Enunciado *</label>
+      <textarea name="question_text" class="form-input" rows="2"
+        placeholder="Digite a pergunta..." required></textarea>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Explicação <small style="font-weight:400">(opcional)</small></label>
+      <input type="text" name="explanation" class="form-input"
+        placeholder="Explicação da resposta correta...">
+    </div>
+    <div style="background:rgba(201,168,76,.07);border-radius:8px;padding:.6rem .9rem;font-size:.78rem;color:var(--text-muted);margin-bottom:1rem">
+      <i class="fa fa-info-circle" style="color:var(--gold-dark)"></i>
+      4 alternativas vazias serão criadas. Clique em <strong>✏️</strong> para preenchê-las e marcar a correta.
+    </div>
+    <div style="display:flex;gap:.5rem">
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Adicionar pergunta
+      </button>
+      <a href="{% url 'ebd_lesson_manage' trimester_pk=tri.pk %}" class="btn btn-outline">
+        <i class="fa fa-arrow-left"></i> Voltar às lições
+      </a>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleEdit(pk) {
+  const area = document.getElementById('edit_' + pk);
+  const isOpen = area.classList.contains('open');
+  document.querySelectorAll('.edit-area.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) {
+    area.classList.add('open');
+    setTimeout(() => area.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  }
+}
+</script>
+{% endblock %}

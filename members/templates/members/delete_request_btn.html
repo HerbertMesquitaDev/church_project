@@ -1,0 +1,17 @@
+{# Include: botão de solicitar exclusão para colaboradores #}
+{# Uso: {% include 'members/delete_request_btn.html' with ct="media" oid=item.pk title=item.title %} #}
+{% if request.user.is_staff and not request.user.is_superuser %}
+<form method="post" action="{% url 'delete_request_create' %}" style="display:inline" onsubmit="return confirmRequest(this)">
+  {% csrf_token %}
+  <input type="hidden" name="content_type" value="{{ ct }}">
+  <input type="hidden" name="object_id" value="{{ oid }}">
+  <input type="hidden" name="object_title" value="{{ title }}">
+  <input type="hidden" name="reason" id="reason_{{ oid }}" value="">
+  <input type="hidden" name="next" value="{{ request.path }}">
+  <button type="submit" class="manage-btn" title="Solicitar exclusão ao admin"
+    style="background:rgba(243,156,18,.1);color:#946b00"
+    data-oid="{{ oid }}" data-title="{{ title }}">
+    <i class="fa fa-trash-arrow-up"></i>
+  </button>
+</form>
+{% endif %}

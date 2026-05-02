@@ -1,0 +1,17 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Cancelar inscrição{% endblock %}
+{% block page_title %}Cancelar inscrição{% endblock %}
+{% block content %}
+<div class="form-page-wrap" style="max-width:480px">
+    <div style="text-align:center;padding:2rem">
+        <i class="fa fa-exclamation-triangle" style="font-size:2.5rem;color:#e67e22;display:block;margin-bottom:1rem"></i>
+        <h3 style="margin-bottom:.5rem">Cancelar inscrição?</h3>
+        <p class="text-muted">Você perderá o progresso salvo no curso <strong>{{ course.title }}</strong>. Poderá se inscrever novamente a qualquer momento.</p>
+        <form method="post" style="display:flex;gap:.75rem;justify-content:center;margin-top:1.5rem">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Confirmar cancelamento</button>
+            <a href="{% url 'course_detail' course.slug %}" class="btn btn-outline">Voltar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

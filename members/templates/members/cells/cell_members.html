@@ -1,0 +1,146 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Membros — {{ cell.name }}{% endblock %}
+{% block page_title %}Membros: {{ cell.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.role-leader { background:rgba(201,168,76,.12);color:var(--gold-dark);display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600; }
+.role-member { background:rgba(41,128,185,.1);color:#2475a8;display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600; }
+[data-theme="dark"] .role-leader { background:rgba(201,168,76,.1);color:#D4A94E; }
+[data-theme="dark"] .role-member { background:rgba(41,128,185,.12);color:#5dade2; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem;flex-wrap:wrap" class="text-muted">
+    <a href="{% url 'cell_manage_dashboard' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-sitemap"></i> Células</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ cell.name }}</span>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>Membros</span>
+    <div style="margin-left:auto;display:flex;gap:.5rem">
+      <a href="{% url 'cell_detail' cell.pk %}" class="btn btn-outline" style="font-size:.8rem;padding:.35rem .85rem" target="_blank">
+        <i class="fa fa-eye"></i> Ver mural
+      </a>
+      <a href="{% url 'cell_edit_dashboard' cell.pk %}" class="btn btn-outline" style="font-size:.8rem;padding:.35rem .85rem">
+        <i class="fa fa-pencil"></i> Editar célula
+      </a>
+    </div>
+  </div>
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <!-- Pendentes -->
+  {% if pending %}
+  <div class="section-label-sm" style="margin-bottom:.6rem">
+    Aguardando aprovação
+    <span class="crud-badge crud-badge-alert" style="margin-left:.4rem">{{ pending|length }}</span>
+  </div>
+  <div class="manage-table-wrap" style="margin-bottom:1.5rem">
+    <table class="manage-table">
+      <thead><tr><th>Membro</th><th class="hide-mobile">E-mail</th><th class="hide-mobile">Pedido em</th><th>Ações</th></tr></thead>
+      <tbody>
+        {% for m in pending %}
+        <tr>
+          <td>
+            <strong>{{ m.user.get_full_name|default:m.user.username }}</strong>
+          </td>
+          <td class="hide-mobile text-muted">{{ m.user.email }}</td>
+          <td class="hide-mobile" style="font-size:.82rem;color:var(--gold-dark)">{{ m.joined_at|date:"d/m/Y" }}</td>
+          <td>
+            <div class="manage-actions">
+              <form method="post" style="display:inline">{% csrf_token %}
+                <input type="hidden" name="membership_id" value="{{ m.pk }}">
+                <button type="submit" name="action" value="approve" class="manage-btn" style="background:rgba(39,174,96,.1);color:#1a7a40" title="Aprovar">
+                  <i class="fa fa-check"></i>
+                </button>
+              </form>
+              <form method="post" style="display:inline">{% csrf_token %}
+                <input type="hidden" name="membership_id" value="{{ m.pk }}">
+                <button type="submit" name="action" value="reject" class="manage-btn manage-btn-del" title="Recusar">
+                  <i class="fa fa-times"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Membros aprovados -->
+  <div class="section-label-sm" style="margin-bottom:.6rem">Membros aprovados ({{ approved|length }})</div>
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead><tr><th>Membro</th><th class="hide-mobile">E-mail</th><th>Papel</th><th class="hide-mobile">Desde</th><th>Ações</th></tr></thead>
+      <tbody>
+        {% for m in approved %}
+        <tr>
+          <td><strong>{{ m.user.get_full_name|default:m.user.username }}</strong></td>
+          <td class="hide-mobile text-muted">{{ m.user.email }}</td>
+          <td>
+            {% if m.role == 'leader' %}
+            <span class="role-leader"><i class="fa fa-crown"></i> Líder</span>
+            {% else %}
+            <span class="role-member"><i class="fa fa-user"></i> Membro</span>
+            {% endif %}
+          </td>
+          <td class="hide-mobile" style="font-size:.82rem;color:var(--gold-dark)">{{ m.joined_at|date:"d/m/Y" }}</td>
+          <td>
+            <div class="manage-actions">
+              <form method="post" style="display:inline">{% csrf_token %}
+                <input type="hidden" name="membership_id" value="{{ m.pk }}">
+                {% if m.role == 'member' %}
+                <button type="submit" name="action" value="make_leader" class="manage-btn" title="Tornar líder" style="color:var(--gold-dark)">
+                  <i class="fa fa-crown"></i>
+                </button>
+                {% else %}
+                <button type="submit" name="action" value="make_member" class="manage-btn" title="Tornar membro" style="color:var(--text-muted)">
+                  <i class="fa fa-user"></i>
+                </button>
+                {% endif %}
+              </form>
+              <form method="post" style="display:inline" onsubmit="return confirm('Remover {{ m.user.get_full_name|default:m.user.username }} do grupo?')">{% csrf_token %}
+                <input type="hidden" name="membership_id" value="{{ m.pk }}">
+                <button type="submit" name="action" value="remove" class="manage-btn manage-btn-del" title="Remover do grupo">
+                  <i class="fa fa-user-minus"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhum membro aprovado ainda.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Histórico (saíram / rejeitados) -->
+  {% if others %}
+  <div class="section-label-sm" style="margin:1.5rem 0 .6rem">Histórico (saíram ou foram rejeitados)</div>
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead><tr><th>Membro</th><th>Status</th><th class="hide-mobile">Data</th></tr></thead>
+      <tbody>
+        {% for m in others %}
+        <tr>
+          <td>{{ m.user.get_full_name|default:m.user.username }}</td>
+          <td><span class="badge-grey">{{ m.get_status_display }}</span></td>
+          <td class="hide-mobile" style="font-size:.82rem;color:var(--text-muted)">{{ m.joined_at|date:"d/m/Y" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

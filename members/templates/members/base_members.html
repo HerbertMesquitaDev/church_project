@@ -1,0 +1,418 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Área de Membros{% endblock %} — {{ site_settings.church_name }}</title>
+    <meta name="description" content="{% block meta_description %}Área exclusiva para membros de {{ site_settings.church_name }}{% endblock %}">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/logo_icone.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/icon_192.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/members.css' %}">
+    <style>
+        :root {
+            --gold: {{ site_settings.color_primary }};
+            --navy: {{ site_settings.color_secondary }};
+            --gold-dark: {{ site_settings.color_accent }};
+            --text-heading: {{ site_settings.color_secondary }};
+        }
+        /* Garante que --text-heading fique legível no modo escuro,
+           independente da cor configurada no admin */
+        [data-theme="dark"] {
+            --text-heading: #E8E4DC;
+            --navy: #1A2340;
+        }
+        /* ── BUSCA GLOBAL ── */
+.global-search { position:relative; flex:1; max-width:380px; margin:0 1rem; }
+.global-search-input-wrap { display:flex; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:.35rem .75rem; gap:.5rem; transition:.15s; }
+.global-search-input-wrap:focus-within { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,168,76,.1); }
+.global-search-icon { color:var(--text-muted); font-size:.8rem; }
+.global-search-input { flex:1; border:none; outline:none; background:transparent; font-family:var(--font-body); font-size:.83rem; color:var(--text); }
+.global-search-input::placeholder { color:var(--text-muted); }
+.search-kbd { font-size:.65rem; color:var(--text-muted); background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:.1rem .35rem; font-family:monospace; }
+.global-search-dropdown { position:absolute; top:calc(100% + .5rem); left:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:200; display:none; max-height:420px; overflow-y:auto; }
+.global-search-dropdown.open { display:block; }
+.search-group-label { padding:.6rem 1rem .3rem; font-size:.65rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--text-muted); }
+.search-item { display:flex; align-items:center; gap:.75rem; padding:.6rem 1rem; cursor:pointer; text-decoration:none; color:var(--text); transition:.1s; }
+.search-item:hover, .search-item.active { background:rgba(201,168,76,.08); }
+.search-item-icon { width:28px; height:28px; border-radius:6px; background:rgba(201,168,76,.1); display:flex; align-items:center; justify-content:center; color:var(--gold); font-size:.75rem; flex-shrink:0; }
+.search-item-title { font-size:.82rem; font-weight:500; }
+.search-item-sub { font-size:.72rem; color:var(--text-muted); }
+.search-footer { padding:.6rem 1rem; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.search-footer a { font-size:.75rem; color:var(--gold-dark); text-decoration:none; }
+.search-footer span { font-size:.7rem; color:var(--text-muted); }
+.search-empty { padding:1.5rem; text-align:center; color:var(--text-muted); font-size:.82rem; }
+    </style>
+    {% block extra_css %}{% endblock %}
+    <script>!function(){var t=localStorage.getItem("church_theme")||"";if(t)document.documentElement.setAttribute("data-theme",t);}();</script>
+</head>
+<body class="members-body">
+<div class="members-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a href="{% url 'member_dashboard' %}">
+                <img src="{% static 'img/logo_horizontal.png' %}" alt="{{ site_settings.church_name }}" class="sidebar-logo-img">
+            </a>
+        </div>
+
+        <div class="sidebar-user">
+            {% if request.user.profile.photo %}
+                <img src="{{ request.user.profile.photo.url }}" alt="Foto">
+            {% else %}
+                <div class="sidebar-avatar"><i class="fa fa-user"></i></div>
+            {% endif %}
+            <div>
+                <strong>{{ request.user.first_name|default:request.user.username }}</strong>
+                <span>
+                    {% if request.user.is_superuser %}Administrador
+                    {% elif request.user.is_staff %}Colaborador
+                    {% else %}Membro{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- TODOS -->
+            <p class="sidebar-section-label">Geral</p>
+            <a href="{% url 'member_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'member_dashboard' %}active{% endif %}">
+                <i class="fa fa-home"></i> Dashboard
+            </a>
+            <a href="{% url 'church_settings' %}" class="sidebar-link {% if 'church_settings' in request.resolver_match.url_name %}active{% endif %}">
+    <i class="fa fa-church"></i> Configurações da Igreja
+</a>
+            <a href="{% url 'member_profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'member_profile' %}active{% endif %}">
+                <i class="fa fa-user-edit"></i> Meu Perfil
+            </a>
+            <a href="{% url 'lgpd_consent' %}" class="sidebar-link {% if request.resolver_match.url_name == 'lgpd_consent' %}active{% endif %}">
+                <i class="fa fa-shield-alt"></i> Privacidade & Imagem
+                {% with profile=request.user.profile %}
+                {% if not profile.image_consent and not profile.image_consent_revoked %}
+                <span class="sidebar-badge sidebar-badge-warn">!</span>
+                {% endif %}
+                {% endwith %}
+            </a>
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'event_manage' %}" class="sidebar-link {% if 'event' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-calendar"></i> Eventos
+            </a>
+            {% endif %}
+            <a href="{% url 'prayer_list' %}" class="sidebar-link {% if 'prayer' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-hands-praying"></i> Pedidos de Oração
+            </a>
+            <a href="{% url 'offering_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'offering_list' %}active{% endif %}">
+                <i class="fa fa-hand-holding-heart"></i> Dízimos & Ofertas
+            </a>
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'content_manage' %}" class="sidebar-link {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-book-open"></i> Conteúdos
+            </a>
+            {% else %}
+            <a href="{% url 'content_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'content_list' or request.resolver_match.url_name == 'content_detail' %}active{% endif %}">
+                <i class="fa fa-book-open"></i> Conteúdos
+            </a>
+            {% endif %}
+            <a href="{% url 'media_list' %}" class="sidebar-link {% if request.resolver_match.url_name in 'media_list,media_detail' %}active{% endif %}">
+                <i class="fa fa-photo-film"></i> Midiateca
+            </a>
+            <a href="{% url 'ebd_home' %}" class="sidebar-link {% if 'ebd' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-bible"></i> EBD
+            </a>
+            <a href="{% url 'ebd_my_progress' %}" class="sidebar-link {% if 'ebd_my_progress' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-certificate"></i> Meus Certificados
+            </a>
+            <a href="{% url 'cell_list' %}" class="sidebar-link {% if 'cell' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-users"></i> Células
+            </a>
+            <a href="{% url 'course_list' %}" class="sidebar-link {% if request.resolver_match.url_name in 'course_list,course_detail,lesson_detail,lesson_quiz,my_courses' %}active{% endif %}">
+                <i class="fa fa-graduation-cap"></i> Cursos
+            </a>
+            <a href="{% url 'my_courses' %}" class="sidebar-link {% if request.resolver_match.url_name == 'my_courses' %}active{% endif %}">
+                <i class="fa fa-bookmark"></i> Meus Cursos
+            </a>
+
+            <a href="{% url 'student_profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'student_profile' %}active{% endif %}">
+                <i class="fa fa-certificate"></i> Minha Jornada
+            </a>
+
+            <!-- STAFF -->
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-section-label">Colaborador</p>
+            <a href="{% url 'notice_list' %}" class="sidebar-link {% if 'notice' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-bell"></i> Avisos
+            </a>
+            <a href="{% url 'culto_manage' %}" class="sidebar-link {% if 'culto' in request.resolver_match.url_name or 'presenca' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-clipboard-check"></i> Presenças
+            </a>
+            <a href="{% url 'cell_manage_dashboard' %}" class="sidebar-link {% if 'cell_manage' in request.resolver_match.url_name or 'cell_create' in request.resolver_match.url_name or 'cell_edit' in request.resolver_match.url_name or 'cell_members' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-sitemap"></i> Células
+                {% if pending_cell_count %}<span class="sidebar-badge">{{ pending_cell_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'ebd_manage' %}" class="sidebar-link {% if 'ebd_manage' in request.resolver_match.url_name or 'ebd_class' in request.resolver_match.url_name or 'ebd_trimester' in request.resolver_match.url_name or 'ebd_lesson' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-bible"></i> EBD
+            </a>
+            <a href="{% url 'devotional_manage' %}" class="sidebar-link {% if 'devotional' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-sun"></i> Devocionais
+            </a>
+            <a href="{% url 'heroslide_manage' %}" class="sidebar-link {% if 'heroslide' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-panorama"></i> Página Principal
+            </a>
+
+            <a href="{% url 'media_manage' %}" class="sidebar-link {% if 'media_manage' in request.resolver_match.url_name or 'media_create' in request.resolver_match.url_name or 'media_edit' in request.resolver_match.url_name or 'media_delete' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-photo-film"></i> Midiateca
+            </a>
+            <a href="{% url 'album_manage' %}" class="sidebar-link {% if 'album' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-images"></i> Galeria de Fotos
+            </a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'social_config' %}" class="sidebar-link {% if 'social_config' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-share-nodes"></i> Redes Sociais
+            </a>
+            {% endif %}
+            <a href="{% url 'birthday_list' %}" class="sidebar-link {% if 'birthday' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-birthday-cake"></i> Aniversariantes
+            </a>
+            <a href="{% url 'manage_courses' %}" class="sidebar-link {% if 'manage_course' in request.resolver_match.url_name or 'manage_module' in request.resolver_match.url_name or 'manage_lesson' in request.resolver_match.url_name or 'manage_enrollment' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-graduation-cap"></i> Cursos
+            </a>
+            <a href="{% url 'members_manage' %}" class="sidebar-link {% if 'members_manage' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-users"></i> Membros
+            </a>
+            <a href="{% url 'offering_manage' %}" class="sidebar-link {% if 'offering_manage' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-chart-line"></i> Contribuições
+            </a>
+            <a href="{% url 'visitor_manage' %}" class="sidebar-link {% if 'visitor' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-door-open"></i> Visitantes
+                {% if pending_visitor_count %}<span class="sidebar-badge">{{ pending_visitor_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'prayer_manage' %}" class="sidebar-link {% if 'prayer_manage' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-pray"></i> Pedidos de Oração
+                {% if pending_prayer_count %}<span class="sidebar-badge">{{ pending_prayer_count }}</span>{% endif %}
+            </a>
+            <a href="{% url 'testimony_manage' %}" class="sidebar-link {% if 'testimony' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-hands-praying"></i> Testemunhos
+                {% if pending_testimony_count %}<span class="sidebar-badge">{{ pending_testimony_count }}</span>{% endif %}
+            </a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'exportar_centro' %}" class="sidebar-link {% if 'exportar' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-file-export"></i> Exportar Dados
+            </a>
+            <a href="{% url 'delete_request_manage' %}" class="sidebar-link {% if 'delete_request' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-trash"></i> Solicitações Exclusão
+                {% if pending_delete_count %}<span class="sidebar-badge">{{ pending_delete_count }}</span>{% endif %}
+            </a>
+            {% endif %}
+            <a href="{% url 'ministry_manage' %}" class="sidebar-link {% if 'ministry_manage' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-church"></i> Ministérios
+            </a>
+            {% endif %}
+
+            <!-- SUPERUSER -->
+            {% if request.user.is_superuser %}
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-section-label">Administrador</p>
+            <a href="{% url 'admin:index' %}" class="sidebar-link" target="_blank">
+                <i class="fa fa-cog"></i> Painel Admin do Django
+            </a>
+            <a href="{% url 'sa_dashboard' %}" class="sidebar-link {% if 'sa_' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-crown"></i> Super Admin
+            </a>
+
+            {% endif %}
+
+            <div class="sidebar-divider"></div>
+            <a href="{% url 'home' %}" class="sidebar-link">
+                <i class="fa fa-globe"></i> Ver Site
+            </a>
+            <a href="{% url 'member_logout' %}" class="sidebar-link sidebar-logout">
+                <i class="fa fa-sign-out-alt"></i> Sair
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="members-main">
+        <header class="members-topbar">
+            <button class="sidebar-toggle" id="sidebarToggle"><i class="fa fa-bars"></i></button>
+            <h1 class="topbar-title">{% block page_title %}{% endblock %}</h1>
+
+            <!-- BUSCA GLOBAL -->
+            <div class="global-search" id="globalSearch">
+              <div class="global-search-input-wrap">
+                <i class="fa fa-search global-search-icon"></i>
+                <input type="text" id="globalSearchInput" class="global-search-input"
+                       placeholder="Buscar... (Ctrl+K)" autocomplete="off">
+                <kbd class="search-kbd">Esc</kbd>
+              </div>
+              <div class="global-search-dropdown" id="searchDropdown"></div>
+            </div>
+
+
+            <button class="topbar-theme-btn" id="themeToggle" title="Alternar tema claro/escuro">
+                <i class="fa fa-moon icon-moon"></i>
+                <i class="fa fa-sun icon-sun"></i>
+                <span class="icon-label" style="font-size:.75rem;"></span>
+            </button>
+            <a href="{% url 'member_profile' %}" class="topbar-user">
+                {% if request.user.profile.photo %}
+                    <img src="{{ request.user.profile.photo.url }}" alt="">
+                {% else %}
+                    <div class="topbar-avatar"><i class="fa fa-user"></i></div>
+                {% endif %}
+                <span>{{ request.user.first_name|default:request.user.username }}</span>
+            </a>
+        </header>
+
+        <div class="members-content">
+            {% if messages %}
+            <div class="messages-wrap">
+                {% for msg in messages %}
+                <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+  var t=localStorage.getItem('church_theme')||'';
+  if(t) document.documentElement.setAttribute('data-theme',t);
+  var btn=document.getElementById('themeToggle');
+  if(btn) btn.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next=cur==='dark'?'':'dark';
+    document.documentElement.setAttribute('data-theme',next);
+    localStorage.setItem('church_theme',next);
+  });
+})();
+</script>
+<script>
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (toggle) toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+</script>
+{% block extra_js %}{% endblock %}
+<script>
+// ── BUSCA GLOBAL ──
+(function(){
+  const input    = document.getElementById('globalSearchInput');
+  const dropdown = document.getElementById('searchDropdown');
+  if (!input) return;
+
+  let timer = null;
+  let currentIndex = -1;
+
+  // Ctrl+K abre a busca
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+    if (e.key === 'Escape') {
+      closeDropdown();
+      input.blur();
+    }
+  });
+
+  input.addEventListener('input', function() {
+    clearTimeout(timer);
+    const q = this.value.trim();
+    if (q.length < 2) { closeDropdown(); return; }
+    timer = setTimeout(() => fetchResults(q), 250);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    const items = dropdown.querySelectorAll('.search-item');
+    if (e.key === 'ArrowDown') { e.preventDefault(); navigate(items, 1); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); navigate(items, -1); }
+    if (e.key === 'Enter') {
+      if (currentIndex >= 0 && items[currentIndex]) {
+        window.location = items[currentIndex].href;
+      } else {
+        window.location = '{% url "search" %}?q=' + encodeURIComponent(this.value);
+      }
+    }
+  });
+
+  function navigate(items, dir) {
+    if (!items.length) return;
+    items[currentIndex]?.classList.remove('active');
+    currentIndex = Math.max(0, Math.min(items.length - 1, currentIndex + dir));
+    items[currentIndex].classList.add('active');
+    items[currentIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  function fetchResults(q) {
+    fetch('{% url "search" %}?q=' + encodeURIComponent(q), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => renderDropdown(data, q));
+  }
+
+  function renderDropdown(data, q) {
+    currentIndex = -1;
+    if (!data.results || !data.results.length) {
+      dropdown.innerHTML = '<div class="search-empty"><i class="fa fa-search" style="opacity:.3;display:block;font-size:1.5rem;margin-bottom:.5rem"></i>Nenhum resultado para "' + q + '"</div>';
+      dropdown.classList.add('open');
+      return;
+    }
+
+    // Agrupa por categoria
+    const groups = {};
+    data.results.forEach(item => {
+      if (!groups[item.categoria]) groups[item.categoria] = [];
+      groups[item.categoria].push(item);
+    });
+
+    let html = '';
+    for (const [cat, items] of Object.entries(groups)) {
+      html += `<div class="search-group-label">${cat}</div>`;
+      items.forEach(item => {
+        html += `<a href="${item.url}" class="search-item">
+          <div class="search-item-icon"><i class="fa ${item.icon}"></i></div>
+          <div>
+            <div class="search-item-title">${item.title}</div>
+            ${item.subtitle ? `<div class="search-item-sub">${item.subtitle}</div>` : ''}
+          </div>
+        </a>`;
+      });
+    }
+
+    html += `<div class="search-footer">
+      <span>${data.results.length} resultado(s)</span>
+      <a href="{% url 'search' %}?q=${encodeURIComponent(q)}">Ver todos <i class="fa fa-arrow-right"></i></a>
+    </div>`;
+
+    dropdown.innerHTML = html;
+    dropdown.classList.add('open');
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('open');
+    currentIndex = -1;
+  }
+
+  // Fecha ao clicar fora
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('globalSearch').contains(e.target)) {
+      closeDropdown();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

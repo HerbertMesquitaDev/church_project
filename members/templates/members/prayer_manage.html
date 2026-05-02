@@ -1,0 +1,134 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Gerenciar Pedidos de Oração{% endblock %}
+{% block page_title %}Pedidos de Oração{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:2rem">
+    <div class="stat-card {% if open_private.count %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-lock" style="color:var(--gold-dark)"></i></div>
+        <div>
+            <span class="stat-number">{{ open_private.count }}</span>
+            <span class="stat-label">Privados em Aberto</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(41,128,185,0.1)"><i class="fa fa-users" style="color:#2980b9"></i></div>
+        <div>
+            <span class="stat-number">{{ open_members.count }}</span>
+            <span class="stat-label">Comunitários em Aberto</span>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(39,174,96,0.1)"><i class="fa fa-check-circle" style="color:#27ae60"></i></div>
+        <div>
+            <span class="stat-number">{{ answered.count }}</span>
+            <span class="stat-label">Respondidos</span>
+        </div>
+    </div>
+</div>
+
+<!-- Privados -->
+{% if open_private %}
+<div class="section-label-sm" style="margin-bottom:1rem;">
+    <i class="fa fa-lock" style="color:var(--gold-dark);margin-right:.4rem;"></i>
+    Pedidos Privados — somente a liderança vê
+</div>
+<div class="prayer-cards">
+    {% for pr in open_private %}
+    {% include 'members/prayer_card_staff.html' %}
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Comunitários -->
+{% if open_members %}
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">
+    <i class="fa fa-users" style="color:#2980b9;margin-right:.4rem;"></i>
+    Pedidos Comunitários — visíveis para membros
+</div>
+<div class="prayer-cards">
+    {% for pr in open_members %}
+    {% include 'members/prayer_card_staff.html' %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not open_private and not open_members %}
+<div class="empty-state" style="padding:2rem 0">
+    <i class="fa fa-hands-praying" style="color:var(--gold);font-size:2rem;opacity:.4;display:block;margin-bottom:.75rem;"></i>
+    <h3>Nenhum pedido em aberto</h3>
+</div>
+{% endif %}
+
+<!-- Respondidos -->
+{% if answered %}
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">
+    <i class="fa fa-check-circle" style="color:#27ae60;margin-right:.4rem;"></i>
+    Respondidos ({{ answered.count }})
+</div>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>Membro</th><th>Título</th><th>Resposta da liderança</th><th>Data</th></tr></thead>
+        <tbody>
+        {% for pr in answered %}
+        <tr>
+            <td><strong>{{ pr.profile.full_name }}</strong></td>
+            <td>{{ pr.title }}</td>
+            <td style="font-style:italic;color:var(--text-muted)">{{ pr.admin_note|default:"—" }}</td>
+            <td>{{ pr.created_at|date:"d/m/Y" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- Modal resposta -->
+<div id="respondModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border-radius:8px;padding:2rem;width:100%;max-width:460px;margin:1rem;border:1px solid var(--border);">
+        <h3 style="font-size:1.1rem;margin-bottom:1rem;" id="respondTitle">Responder pedido</h3>
+        <form method="post" id="respondForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="filter-label">Status</label>
+                <select name="status" class="filter-input" style="width:100%">
+                    <option value="open">Aberto</option>
+                    <option value="answered">Respondido</option>
+                    <option value="closed">Encerrado</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top:.75rem">
+                <label class="filter-label">Mensagem para o membro (opcional)</label>
+                <textarea name="admin_note" rows="3" class="form-input" placeholder="Ex: Estamos orando por você..."></textarea>
+            </div>
+            <div style="display:flex;gap:.8rem;margin-top:1.2rem;">
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <button type="button" class="btn btn-outline" onclick="closeRespond()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openRespond(pk, title, currentStatus, currentNote) {
+    document.getElementById('respondTitle').textContent = 'Responder: ' + title;
+    document.getElementById('respondForm').action = '/membros/oracao-gestao/' + pk + '/resp/';
+    var sel = document.getElementById('respondForm').querySelector('select[name=status]');
+    sel.value = currentStatus;
+    document.getElementById('respondForm').querySelector('textarea').value = currentNote;
+    var modal = document.getElementById('respondModal');
+    modal.style.display = 'flex';
+}
+function closeRespond() {
+    document.getElementById('respondModal').style.display = 'none';
+}
+document.getElementById('respondModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRespond();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Gerenciar Membros{% endblock %}
+{% block page_title %}Gerenciar Membros{% endblock %}
+
+{% block extra_css %}
+<style>
+.role-badge { display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .6rem;border-radius:20px;font-size:.68rem;font-weight:600; }
+.role-member       { background:rgba(41,128,185,.1);  color:#2475a8; }
+.role-collaborator { background:rgba(108,52,131,.12); color:#6c3483; }
+.role-admin        { background:rgba(231,76,60,.1);   color:#c0392b; }
+.approve-form      { display:flex;align-items:center;gap:.5rem;flex-wrap:wrap; }
+.role-select       { padding:.3rem .6rem;border:1px solid var(--border);border-radius:6px;font-size:.8rem;background:var(--surface-alt);color:var(--text);font-family:inherit; }
+
+[data-theme="dark"] .role-member       { background:rgba(41,128,185,.12); color:#5dade2; }
+[data-theme="dark"] .role-collaborator { background:rgba(108,52,131,.15); color:#a569bd; }
+[data-theme="dark"] .role-admin        { background:rgba(231,76,60,.12);  color:#e87c6f; }
+[data-theme="dark"] .role-select       { background:#25252D;border-color:rgba(201,168,76,.15);color:#E8E4DC; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<!-- ── Pendentes ── -->
+{% if pending %}
+<div class="section-label-sm">Aguardando Aprovação ({{ pending|length }})</div>
+<div class="manage-table-wrap">
+  <table class="manage-table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Usuário</th>
+        <th class="hide-mobile">E-mail</th>
+        <th class="hide-mobile">Cadastro</th>
+        <th>Grupo & Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in pending %}
+    <tr>
+      <td><strong>{{ p.full_name }}</strong></td>
+      <td>{{ p.user.username }}</td>
+      <td class="hide-mobile">{{ p.user.email }}</td>
+      <td class="hide-mobile" style="font-size:.82rem;color:var(--gold-dark)">{{ p.created_at|date:"d/m/Y" }}</td>
+      <td>
+        <form method="post" action="{% url 'member_approve' p.pk %}" class="approve-form">
+          {% csrf_token %}
+          <select name="role" class="role-select">
+            <option value="member">Membro</option>
+            <option value="collaborator">Colaborador</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button type="submit" class="btn-action btn-approve"><i class="fa fa-check"></i> Aprovar</button>
+        </form>
+        <form method="post" action="{% url 'member_reject' p.pk %}" style="display:inline;margin-top:.3rem" onsubmit="return confirm('Remover este cadastro?')">
+          {% csrf_token %}
+          <button type="submit" class="btn-action btn-reject"><i class="fa fa-times"></i> Rejeitar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state" style="padding:1.5rem 0">
+  <i class="fa fa-check-circle" style="color:var(--gold)"></i>
+  <h3>Nenhum cadastro pendente</h3>
+</div>
+{% endif %}
+
+<!-- ── Membros Ativos ── -->
+<div class="section-label-sm" style="margin-top:2.5rem">Membros Ativos ({{ page_obj.paginator.count }})</div>
+<div class="manage-table-wrap">
+  <table class="manage-table">
+    <thead>
+      <tr>
+        <th>Foto</th>
+        <th>Nome</th>
+        <th>Grupo</th>
+        <th class="hide-mobile">Ministérios</th>
+        <th class="hide-mobile">Batizado</th>
+        <th class="hide-mobile">Desde</th>
+        <th style="text-align:center">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in approved %}
+    <tr>
+      <td>
+        {% if p.photo %}<img src="{{ p.photo.url }}" class="member-thumb">
+        {% else %}<div class="member-thumb-placeholder"><i class="fa fa-user"></i></div>{% endif %}
+      </td>
+      <td>
+        <strong>{{ p.full_name }}</strong>
+        <br><small class="text-muted">{{ p.user.email }}</small>
+      </td>
+      <td>
+        <span class="role-badge role-{{ p.role }}">
+          {% if p.role == 'admin' %}<i class="fa fa-shield-alt"></i>
+          {% elif p.role == 'collaborator' %}<i class="fa fa-pen"></i>
+          {% else %}<i class="fa fa-user"></i>{% endif %}
+          {{ p.get_role_display }}
+        </span>
+      </td>
+      <td class="hide-mobile">
+        {% for mm in p.member_ministries.all %}
+        <span class="ministry-tag">{{ mm.ministry.name }}</span>
+        {% empty %}<span class="text-muted">—</span>{% endfor %}
+      </td>
+      <td class="hide-mobile" style="text-align:center">
+        {% if p.baptized %}<i class="fa fa-check text-success"></i>
+        {% else %}<span class="text-muted">—</span>{% endif %}
+      </td>
+      <td class="hide-mobile" style="font-size:.82rem;color:var(--text-muted)">{{ p.created_at|date:"d/m/Y" }}</td>
+      <td class="action-btns">
+        <a href="{% url 'member_edit' p.pk %}" class="btn-icon btn-edit" title="Editar / alterar grupo"><i class="fa fa-pen"></i></a>
+        <button class="btn-icon btn-delete" data-id="{{ p.pk }}" data-name="{{ p.full_name }}" title="Excluir"><i class="fa fa-trash"></i></button>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem">Nenhum membro ativo.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% include 'core/pagination.html' %}
+
+<!-- Modal exclusão -->
+<div id="deleteModal" class="custom-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+  <div class="modal-content" style="background:var(--bg-card,#fff);border-radius:12px;padding:2rem;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <i class="fa fa-exclamation-triangle" style="font-size:2.5rem;color:#e74c3c;display:block;margin-bottom:.75rem"></i>
+      <h3 style="margin:0 0 .5rem">Confirmar Exclusão</h3>
+      <p id="deleteText" style="color:var(--text-muted);margin:0"></p>
+    </div>
+    <form method="post" id="deleteForm">
+      {% csrf_token %}
+      <div style="display:flex;gap:1rem;justify-content:center">
+        <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c"><i class="fa fa-trash"></i> Excluir</button>
+        <button type="button" onclick="closeDeleteModal()" class="btn btn-outline">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.btn-delete').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const id = this.dataset.id, name = this.dataset.name;
+    document.getElementById('deleteText').textContent = 'Excluir o membro "' + name + '"? Esta ação não pode ser desfeita.';
+    document.getElementById('deleteForm').action = '/membros/gerenciar-membros/' + id + '/excluir/';
+    document.getElementById('deleteModal').style.display = 'flex';
+  });
+});
+function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; }
+document.getElementById('deleteModal').addEventListener('click', e => { if (e.target === document.getElementById('deleteModal')) closeDeleteModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDeleteModal(); });
+</script>
+{% endblock %}

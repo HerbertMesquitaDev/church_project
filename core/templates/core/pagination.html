@@ -1,0 +1,44 @@
+{% load pagination_tags %}
+{% if page_obj.has_other_pages %}
+<nav class="pagination-wrap" aria-label="Paginação">
+    <ul class="pagination">
+
+        {% if page_obj.has_previous %}
+        <li>
+            <a href="?{% url_replace page=page_obj.previous_page_number %}" class="page-btn">
+                <i class="fa fa-chevron-left"></i>
+            </a>
+        </li>
+        {% else %}
+        <li><span class="page-btn page-disabled"><i class="fa fa-chevron-left"></i></span></li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li><span class="page-btn page-current">{{ num }}</span></li>
+            {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+                <li><a href="?{% url_replace page=num %}" class="page-btn">{{ num }}</a></li>
+            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                <li><a href="?{% url_replace page=num %}" class="page-btn">{{ num }}</a></li>
+            {% elif num == page_obj.number|add:"-3" or num == page_obj.number|add:"3" %}
+                <li><span class="page-btn page-disabled">…</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li>
+            <a href="?{% url_replace page=page_obj.next_page_number %}" class="page-btn">
+                <i class="fa fa-chevron-right"></i>
+            </a>
+        </li>
+        {% else %}
+        <li><span class="page-btn page-disabled"><i class="fa fa-chevron-right"></i></span></li>
+        {% endif %}
+
+    </ul>
+    <p class="pagination-info">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        &mdash; {{ page_obj.paginator.count }} registro(s) no total
+    </p>
+</nav>
+{% endif %}

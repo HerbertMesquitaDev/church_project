@@ -1,0 +1,44 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ cell.name }}{% endblock %}
+{% block page_title %}{{ cell.name }}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px">
+    <div class="cell-preview-card">
+        {% if cell.cover %}<img src="{{ cell.cover.url }}" alt="" class="cell-preview-cover">{% endif %}
+        <div class="cell-preview-body">
+            <span class="cell-type-badge">{{ cell.get_cell_type_display }}</span>
+            <h2>{{ cell.name }}</h2>
+            {% if cell.description %}<p>{{ cell.description }}</p>{% endif %}
+            <div class="cell-info-list">
+                {% if cell.region %}<div class="cell-info-item"><i class="fa fa-map-marker-alt"></i> {{ cell.region }}</div>{% endif %}
+                {% if cell.meeting_day %}<div class="cell-info-item"><i class="fa fa-clock"></i> {{ cell.meeting_day }}</div>{% endif %}
+                {% if cell.meeting_place %}<div class="cell-info-item"><i class="fa fa-map-pin"></i> {{ cell.meeting_place }}</div>{% endif %}
+                <div class="cell-info-item"><i class="fa fa-users"></i> {{ cell.member_count }} membro{{ cell.member_count|pluralize:",s" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cell-join-box">
+        <div>
+            <strong>Quer participar deste grupo?</strong>
+            <p>Envie um pedido de entrada e aguarde a aprovação do líder.</p>
+        </div>
+        {% if membership and membership.status == 'pending' %}
+        <div class="cell-pending-notice">
+            <i class="fa fa-clock"></i> Pedido enviado — aguardando aprovação
+        </div>
+        {% elif membership and membership.status == 'rejected' %}
+        <a href="{% url 'cell_join' cell.pk %}" class="btn btn-outline">Tentar novamente</a>
+        {% else %}
+        <a href="{% url 'cell_join' cell.pk %}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Pedir para entrar
+        </a>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'cell_list' %}" class="btn btn-outline" style="margin-top:1rem">
+        <i class="fa fa-arrow-left"></i> Ver todos os grupos
+    </a>
+</div>
+{% endblock %}

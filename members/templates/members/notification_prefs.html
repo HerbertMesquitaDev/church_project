@@ -1,0 +1,82 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Notificações{% endblock %}
+{% block page_title %}Preferências de Notificação{% endblock %}
+
+{% block content %}
+<div style="max-width:560px">
+
+    <p style="color:var(--text-muted);margin-bottom:2rem">
+        Escolha quais e-mails deseja receber. Você pode alterar estas preferências a qualquer momento.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="notif-group">
+
+            <div class="notif-item">
+                <div class="notif-icon notif-icon-event"><i class="fa fa-calendar-check"></i></div>
+                <div class="notif-info">
+                    <strong>Novos Eventos</strong>
+                    <p>Receba um e-mail quando um novo evento for publicado.</p>
+                </div>
+                <label class="notif-toggle">
+                    <input type="checkbox" name="notify_events" {% if profile.notify_events %}checked{% endif %}>
+                    <span class="notif-track"><span class="notif-thumb"></span></span>
+                </label>
+            </div>
+
+            <div class="notif-item">
+                <div class="notif-icon notif-icon-reminder"><i class="fa fa-bell"></i></div>
+                <div class="notif-info">
+                    <strong>Lembrete de Eventos</strong>
+                    <p>Receba um lembrete 1 dia antes de cada evento.</p>
+                </div>
+                <label class="notif-toggle">
+                    <input type="checkbox" name="notify_reminders" {% if profile.notify_reminders %}checked{% endif %}>
+                    <span class="notif-track"><span class="notif-thumb"></span></span>
+                </label>
+            </div>
+
+            <div class="notif-item">
+                <div class="notif-icon notif-icon-notice"><i class="fa fa-exclamation-circle"></i></div>
+                <div class="notif-info">
+                    <strong>Avisos Urgentes</strong>
+                    <p>Receba e-mails apenas para avisos marcados como urgentes.</p>
+                </div>
+                <label class="notif-toggle">
+                    <input type="checkbox" name="notify_notices" {% if profile.notify_notices %}checked{% endif %}>
+                    <span class="notif-track"><span class="notif-thumb"></span></span>
+                </label>
+            </div>
+
+            <div class="notif-item">
+                <div class="notif-icon notif-icon-devotional"><i class="fa fa-bible"></i></div>
+                <div class="notif-info">
+                    <strong>Devocional Diário</strong>
+                    <p>Receba a palavra do dia todas as manhãs por e-mail.</p>
+                </div>
+                <label class="notif-toggle">
+                    <input type="checkbox" name="notify_devotional" {% if profile.notify_devotional %}checked{% endif %}>
+                    <span class="notif-track"><span class="notif-thumb"></span></span>
+                </label>
+            </div>
+
+        </div>
+
+        <div style="margin-top:1.5rem;display:flex;align-items:center;gap:1rem">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save"></i> Salvar Preferências
+            </button>
+            <a href="{% url 'member_dashboard' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+
+    <div class="notif-note">
+        <i class="fa fa-info-circle"></i>
+        <p>Os e-mails são enviados para <strong>{{ request.user.email }}</strong>.
+        Para alterar seu e-mail, acesse as <a href="{% url 'member_profile' %}">configurações do perfil</a>.</p>
+    </div>
+
+</div>
+{% endblock %}

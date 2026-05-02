@@ -1,0 +1,187 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.btn-mode {
+  flex:1;padding:.45rem .75rem;font-size:.82rem;font-weight:600;
+  border-radius:8px;border:1.5px solid var(--border);
+  background:none;cursor:pointer;transition:.15s;color:var(--text-muted);
+  display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+}
+.btn-mode:hover { border-color:var(--gold);color:var(--gold-dark); }
+.btn-mode.ativo-link  { border-color:#2475a8;background:rgba(41,128,185,.1);color:#2475a8; }
+.btn-mode.ativo-modal { border-color:var(--gold-dark);background:rgba(201,168,76,.12);color:var(--gold-dark); }
+.btn-group-mode { display:flex;gap:.5rem;margin-bottom:.75rem; }
+.slide-btn-box {
+  background:var(--surface-alt);border:1px solid var(--border);
+  border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1rem;
+}
+.slide-btn-label {
+  font-size:.72rem;font-weight:700;color:var(--gold-dark);
+  text-transform:uppercase;letter-spacing:.07em;
+  display:flex;align-items:center;gap:.4rem;margin-bottom:.9rem;
+}
+[data-theme="dark"] .slide-btn-box { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Imagem e Texto -->
+    <div class="form-section-title"><i class="fa fa-image"></i> Imagem e Texto</div>
+    <div class="form-group">
+      <label>Imagem de Fundo <small class="text-muted">(recomendado: 1920×1080px)</small></label>
+      {{ form.image }}
+      {% if slide and slide.image %}
+      <div style="margin-top:.6rem">
+        <img src="{{ slide.image.url }}" style="max-width:400px;width:100%;border-radius:6px;border:1px solid var(--border)">
+        <small class="text-muted">Envie outra para substituir.</small>
+      </div>
+      {% endif %}
+    </div>
+    <div class="form-grid">
+      <div class="form-group form-col-2">
+        <label>Título</label>{{ form.title }}
+      </div>
+      <div class="form-group form-col-2">
+        <label>Subtítulo <small class="text-muted">(opcional)</small></label>{{ form.subtitle }}
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="form-section-title"><i class="fa fa-mouse-pointer"></i> Botões <small style="text-transform:none;letter-spacing:0;font-weight:400">(opcional)</small></div>
+
+    <!-- 1º Botão -->
+    <div class="slide-btn-box">
+      <div class="slide-btn-label"><i class="fa fa-circle" style="font-size:.5rem"></i> 1º Botão</div>
+      <div class="form-group" style="margin-bottom:.8rem">
+        <label>Texto do botão</label>{{ form.button_text }}
+      </div>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label>Ao clicar este botão</label>
+        <div class="btn-group-mode">
+          <button type="button" class="btn-mode ativo-link" id="b1_link" onclick="trocar(1,'link')">
+            <i class="fa fa-link"></i> Ir para um link
+          </button>
+          <button type="button" class="btn-mode" id="b1_modal" onclick="trocar(1,'modal')">
+            <i class="fa fa-window-restore"></i> Abrir uma modal
+          </button>
+        </div>
+      </div>
+      <div id="area1_link">
+        <div class="form-group">
+          <label>URL do link</label>{{ form.button_url }}
+          <span class="form-hint">Ex: /eventos/ ou https://...</span>
+        </div>
+      </div>
+      <div id="area1_modal" style="display:none">
+        <div class="form-group">
+          <label>Conteúdo que aparece na modal</label>
+          <textarea name="button_modal_content" rows="6"
+            class="form-input"
+            style="width:100%;min-height:140px;display:block;resize:vertical"
+            placeholder="Digite aqui o texto que aparecerá na modal quando o visitante clicar no botão...">{{ form.button_modal_content.value|default:'' }}</textarea>
+          <span class="form-hint">Aceita texto simples ou HTML básico (&lt;b&gt;, &lt;br&gt;, &lt;p&gt;, &lt;ul&gt;...).</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2º Botão -->
+    <div class="slide-btn-box">
+      <div class="slide-btn-label"><i class="fa fa-circle" style="font-size:.5rem"></i> 2º Botão</div>
+      <div class="form-group" style="margin-bottom:.8rem">
+        <label>Texto do 2º botão</label>{{ form.button_text_2 }}
+      </div>
+      <div class="form-group" style="margin-bottom:.75rem">
+        <label>Ao clicar este botão</label>
+        <div class="btn-group-mode">
+          <button type="button" class="btn-mode ativo-link" id="b2_link" onclick="trocar(2,'link')">
+            <i class="fa fa-link"></i> Ir para um link
+          </button>
+          <button type="button" class="btn-mode" id="b2_modal" onclick="trocar(2,'modal')">
+            <i class="fa fa-window-restore"></i> Abrir uma modal
+          </button>
+        </div>
+      </div>
+      <div id="area2_link">
+        <div class="form-group">
+          <label>URL do 2º link</label>{{ form.button_url_2 }}
+          <span class="form-hint">Ex: /sobre/ ou https://...</span>
+        </div>
+      </div>
+      <div id="area2_modal" style="display:none">
+        <div class="form-group">
+          <label>Conteúdo que aparece na modal</label>
+          <textarea name="button_modal_content_2" rows="6"
+            class="form-input"
+            style="width:100%;min-height:140px;display:block;resize:vertical"
+            placeholder="Digite aqui o texto que aparecerá na modal do 2º botão...">{{ form.button_modal_content_2.value|default:'' }}</textarea>
+          <span class="form-hint">Aceita texto simples ou HTML básico.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Configurações -->
+    <div class="form-section-title"><i class="fa fa-cog"></i> Configurações</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Ordem de exibição</label>{{ form.order }}
+        <span class="form-hint">Menor número aparece primeiro</span>
+      </div>
+    </div>
+    <div class="form-check-group form-group">
+      {{ form.active }}<label for="{{ form.active.id_for_label }}">Banner ativo</label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+      <a href="{% url 'heroslide_manage' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function trocar(num, modo) {
+  var areaLink  = document.getElementById('area' + num + '_link');
+  var areaModal = document.getElementById('area' + num + '_modal');
+  var btnLink   = document.getElementById('b' + num + '_link');
+  var btnModal  = document.getElementById('b' + num + '_modal');
+
+  if (modo === 'modal') {
+    areaLink.style.display  = 'none';
+    areaModal.style.display = 'block';
+    btnLink.className  = 'btn-mode';
+    btnModal.className = 'btn-mode ativo-modal';
+    // Limpar e desabilitar campo de URL
+    var urlField = areaLink.querySelector('input');
+    if (urlField) { urlField.value = ''; urlField.disabled = true; }
+  } else {
+    areaLink.style.display  = 'block';
+    areaModal.style.display = 'none';
+    btnLink.className  = 'btn-mode ativo-link';
+    btnModal.className = 'btn-mode';
+    var urlField = areaLink.querySelector('input');
+    if (urlField) urlField.disabled = false;
+  }
+}
+
+// Ao carregar: checar se já tem conteúdo de modal salvo
+(function() {
+  // Busca os textareas pelo name
+  var allTA = document.getElementsByTagName('textarea');
+  for (var i = 0; i < allTA.length; i++) {
+    if (allTA[i].name === 'button_modal_content' && allTA[i].value.trim() !== '') {
+      trocar(1, 'modal');
+    }
+    if (allTA[i].name === 'button_modal_content_2' && allTA[i].value.trim() !== '') {
+      trocar(2, 'modal');
+    }
+  }
+})();
+</script>
+{% endblock %}

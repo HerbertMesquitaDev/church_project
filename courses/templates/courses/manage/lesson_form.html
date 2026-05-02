@@ -1,0 +1,42 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+    <div style="margin-bottom:.75rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_modules' module.course.pk %}" style="color:var(--gold)"><i class="fa fa-arrow-left"></i> {{ module.course.title }} › {{ module.title }}</a>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="members-form">
+        {% csrf_token %}
+
+        <div class="form-section-title"><i class="fa fa-info-circle"></i> Identificação</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.title.label }}</label>{{ form.title }}</div>
+            <div class="form-group form-col-2"><label>{{ form.description.label }}</label>{{ form.description }}</div>
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-play-circle"></i> Conteúdo</div>
+        <div class="form-group"><label>{{ form.body.label }}</label>{{ form.body }}</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.video_url.label }}</label>{{ form.video_url }}</div>
+            <div class="form-group"><label>{{ form.pdf_file.label }}</label>{{ form.pdf_file }}{% if lesson and lesson.pdf_file %}<small class="text-muted">Atual: <a href="{{ lesson.pdf_file.url }}" target="_blank">ver arquivo</a></small>{% endif %}</div>
+            <div class="form-group"><label>{{ form.audio_file.label }}</label>{{ form.audio_file }}</div>
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-cog"></i> Configurações</div>
+        <div class="form-grid">
+            <div class="form-group"><label>{{ form.duration.label }}</label>{{ form.duration }}<span class="form-hint">Em minutos</span></div>
+            <div class="form-group"><label>{{ form.order.label }}</label>{{ form.order }}</div>
+        </div>
+        <div class="form-check-group form-group">{{ form.published }}<label for="{{ form.published.id_for_label }}">Aula publicada</label></div>
+
+        {% if form.errors %}<div class="non-field-errors" style="margin-top:1rem">{% for f in form %}{% for e in f.errors %}<p><strong>{{ f.label }}:</strong> {{ e }}</p>{% endfor %}{% endfor %}</div>{% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <a href="{% url 'manage_lessons' module.pk %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

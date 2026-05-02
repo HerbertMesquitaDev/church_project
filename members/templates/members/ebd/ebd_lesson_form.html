@@ -1,0 +1,125 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }} — EBD{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.content-tabs { display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.25rem; }
+.content-tab  { padding:.55rem 1rem;font-size:.82rem;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s; }
+.content-tab.active { color:var(--gold-dark);border-bottom-color:var(--gold-dark); }
+.content-panel { display:none; }
+.content-panel.active { display:block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.5rem;flex-wrap:wrap" class="text-muted">
+    <a href="{% url 'ebd_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-users"></i> Turmas</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <a href="{% url 'ebd_trimester_manage' class_pk=tri.ebd_class_id %}" style="color:var(--gold);text-decoration:none">{{ tri.ebd_class.name }}</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <a href="{% url 'ebd_lesson_manage' trimester_pk=tri.pk %}" style="color:var(--gold);text-decoration:none">{{ tri.title }}</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ title }}</span>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Dados básicos -->
+    <div class="form-section-title">Identificação</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Número da Lição *</label>
+        <input type="number" name="number" class="form-input" value="{{ lesson.number|default:'' }}" min="1" max="99" style="max-width:100px" required>
+      </div>
+      <div class="form-group">
+        <label>Ordem de exibição</label>
+        <input type="number" name="order" class="form-input" value="{{ lesson.order|default:'0' }}" min="0" style="max-width:100px">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Título *</label>
+      <input type="text" name="title" class="form-input" value="{{ lesson.title|default:'' }}" placeholder="Título da lição" required>
+    </div>
+    <div class="form-group">
+      <label>Texto Bíblico Base</label>
+      <input type="text" name="scripture" class="form-input" value="{{ lesson.scripture|default:'' }}" placeholder="Ex: João 3:16-17">
+    </div>
+    <div class="form-group">
+      <label>Resumo público</label>
+      <textarea name="summary" class="form-input" rows="2" placeholder="Texto exibido na prévia pública da lição...">{{ lesson.summary|default:'' }}</textarea>
+    </div>
+
+    <!-- Conteúdo em abas -->
+    <div class="form-section-title" style="margin-top:1.5rem">Conteúdo</div>
+    <div class="content-tabs">
+      <div class="content-tab active" onclick="switchTab('texto', this)"><i class="fa fa-align-left"></i> Texto</div>
+      <div class="content-tab" onclick="switchTab('video', this)"><i class="fa fa-play"></i> Vídeo</div>
+      <div class="content-tab" onclick="switchTab('audio', this)"><i class="fa fa-music"></i> Áudio</div>
+      <div class="content-tab" onclick="switchTab('pdf', this)"><i class="fa fa-file-pdf"></i> PDF</div>
+    </div>
+
+    <div id="tab-texto" class="content-panel active">
+      <div class="form-group">
+        <textarea name="body" class="form-input" rows="10" placeholder="Conteúdo completo da aula em texto...">{{ lesson.body|default:'' }}</textarea>
+      </div>
+    </div>
+    <div id="tab-video" class="content-panel">
+      <div class="form-group">
+        <label>URL do Vídeo (YouTube / Vimeo)</label>
+        <input type="url" name="video_url" class="form-input" value="{{ lesson.video_url|default:'' }}" placeholder="https://www.youtube.com/watch?v=...">
+        <small class="form-hint">Cole o link normal do YouTube ou Vimeo — o embed é gerado automaticamente.</small>
+      </div>
+    </div>
+    <div id="tab-audio" class="content-panel">
+      <div class="form-group">
+        <label>Arquivo de Áudio</label>
+        {% if lesson.audio_file %}
+        <p style="font-size:.82rem;margin-bottom:.5rem"><i class="fa fa-music" style="color:var(--gold-dark)"></i> Atual: {{ lesson.audio_file.name|cut:"ebd/audio/" }}</p>
+        {% endif %}
+        <input type="file" name="audio_file" class="form-input" accept="audio/*">
+      </div>
+    </div>
+    <div id="tab-pdf" class="content-panel">
+      <div class="form-group">
+        <label>Arquivo PDF</label>
+        {% if lesson.pdf_file %}
+        <p style="font-size:.82rem;margin-bottom:.5rem"><i class="fa fa-file-pdf" style="color:#e74c3c"></i> Atual: {{ lesson.pdf_file.name|cut:"ebd/pdf/" }}</p>
+        {% endif %}
+        <input type="file" name="pdf_file" class="form-input" accept=".pdf">
+      </div>
+    </div>
+
+    <!-- Publicação -->
+    <div class="form-section-title" style="margin-top:1.5rem">Publicação</div>
+    <div class="form-check-group form-group">
+      <input type="checkbox" id="published" name="published" {% if lesson.published %}checked{% endif %}>
+      <label for="published">Publicar lição (visível para os alunos)</label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+      <a href="{% url 'ebd_lesson_manage' trimester_pk=tri.pk %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchTab(name, el) {
+  document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+}
+// Ativar aba correta se já tem conteúdo
+{% if lesson.video_url %}switchTab('video', document.querySelectorAll('.content-tab')[1]);{% endif %}
+{% if lesson.audio_file %}switchTab('audio', document.querySelectorAll('.content-tab')[2]);{% endif %}
+{% if lesson.pdf_file %}switchTab('pdf', document.querySelectorAll('.content-tab')[3]);{% endif %}
+</script>
+{% endblock %}

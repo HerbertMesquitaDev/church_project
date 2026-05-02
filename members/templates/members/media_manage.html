@@ -1,0 +1,269 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Midiateca — Gestão{% endblock %}
+{% block page_title %}Midiateca{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Badges de tipo de mídia ── */
+.media-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .2rem .6rem;
+    border-radius: 20px;
+    font-size: .68rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.media-type-video { background: rgba(231,76,60,.1);   color: #c0392b; }
+.media-type-audio { background: rgba(108,52,131,.12); color: #6c3483; }
+.media-type-pdf   { background: rgba(41,128,185,.1);  color: #2475a8; }
+.media-type-live  { background: rgba(231,76,60,.15);  color: #c0392b; }
+
+/* ── Thumbnail mini ── */
+.media-thumb {
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.media-thumb-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 6px;
+    background: rgba(201,168,76,.1);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.media-thumb-placeholder i { color: var(--gold); font-size: .85rem; }
+
+/* ── Visibilidade badge ── */
+.vis-badge {
+    display: inline-flex; align-items: center; gap: .25rem;
+    padding: .2rem .5rem; border-radius: 20px;
+    font-size: .7rem; font-weight: 600;
+}
+.vis-public  { background: rgba(39,174,96,.1);  color: #1a7a40; }
+.vis-members { background: rgba(201,168,76,.12); color: var(--gold-dark, #8B6914); }
+
+/* ── Stats rápidos ── */
+.media-stats {
+    display: flex; gap: .75rem; flex-wrap: wrap;
+}
+.media-stat-pill {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .3rem .8rem; border-radius: 20px;
+    background: var(--surface-alt); border: 1px solid var(--border);
+    font-size: .78rem; color: var(--text-muted);
+}
+.media-stat-pill strong { color: var(--text-heading); }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .media-type-video { background: rgba(231,76,60,.12);  color: #e87c6f; }
+[data-theme="dark"] .media-type-audio { background: rgba(108,52,131,.15); color: #a569bd; }
+[data-theme="dark"] .media-type-pdf   { background: rgba(41,128,185,.12); color: #5dade2; }
+[data-theme="dark"] .media-type-live  { background: rgba(231,76,60,.15);  color: #e87c6f; }
+[data-theme="dark"] .media-thumb-placeholder { background: #25252D; }
+[data-theme="dark"] .vis-public  { background: rgba(39,174,96,.1);  color: #58d68d; }
+[data-theme="dark"] .vis-members { background: rgba(201,168,76,.1);  color: #D4A94E; }
+[data-theme="dark"] .media-stat-pill { background: #1E1E24; border-color: rgba(201,168,76,.1); color: #9A9690; }
+[data-theme="dark"] .media-stat-pill strong { color: #E8E4DC; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+    <!-- ── Topbar: filtros + novo ── -->
+    <div class="manage-topbar">
+        <form method="get" class="manage-search-row">
+            <select name="secao" class="form-input" onchange="this.form.submit()" style="min-width:140px">
+                <option value="">Todas as seções</option>
+                {% for val, label in sections %}
+                <option value="{{ val }}" {% if section == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select name="tipo" class="form-input" onchange="this.form.submit()" style="min-width:140px">
+                <option value="">Todos os tipos</option>
+                {% for val, label in tipos %}
+                <option value="{{ val }}" {% if tipo == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select name="categoria" class="form-input" onchange="this.form.submit()" style="min-width:160px">
+                <option value="">Todas as categorias</option>
+                {% for cat in categories %}
+                <option value="{{ cat.pk }}" {% if cat_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <select name="pub" class="form-input" onchange="this.form.submit()" style="min-width:130px">
+                <option value="">Qualquer status</option>
+                <option value="1" {% if pub == '1' %}selected{% endif %}>Publicados</option>
+                <option value="0" {% if pub == '0' %}selected{% endif %}>Rascunhos</option>
+            </select>
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar título ou pregador…" class="form-input" style="flex:1;min-width:180px">
+            <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
+            {% if q or section or tipo or cat_id or pub %}
+            <a href="{% url 'media_manage' %}" class="btn btn-outline" title="Limpar filtros"><i class="fa fa-times"></i></a>
+            {% endif %}
+        </form>
+        <a href="{% url 'media_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Item</a>
+    </div>
+
+    <!-- ── Mensagens ── -->
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- ── Stats rápidos ── -->
+    <div class="media-stats">
+        <span class="media-stat-pill"><i class="fa fa-photo-film"></i> <strong>{{ total_count }}</strong> itens no total</span>
+        <span class="media-stat-pill"><i class="fa fa-check-circle" style="color:#27ae60"></i> <strong>{{ published_count }}</strong> publicados</span>
+        <span class="media-stat-pill"><i class="fa fa-star" style="color:var(--gold)"></i> <strong>{{ featured_count }}</strong> em destaque</span>
+        {% if q or section or tipo or cat_id or pub %}
+        <span class="media-stat-pill"><i class="fa fa-filter"></i> <strong>{{ page_obj.paginator.count }}</strong> resultado{{ page_obj.paginator.count|pluralize }}</span>
+        {% endif %}
+    </div>
+
+    <!-- ── Tabela ── -->
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th class="hide-mobile">Categoria</th>
+                    <th class="hide-mobile">Pregador / Autor</th>
+                    <th class="hide-mobile">Data</th>
+                    <th>Vis.</th>
+                    <th>Pub.</th>
+                    <th>★</th>
+                    <th style="width:120px">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <!-- Título + thumb -->
+                    <td>
+                        <div style="display:flex;align-items:center;gap:.65rem">
+                            {% if item.thumbnail %}
+                            <img src="{{ item.thumbnail.url }}" class="media-thumb" alt="">
+                            {% else %}
+                            <div class="media-thumb-placeholder">
+                                {% if item.media_type == 'video' or item.media_type == 'live' %}
+                                <i class="fa fa-play"></i>
+                                {% elif item.media_type == 'audio' %}
+                                <i class="fa fa-music"></i>
+                                {% elif item.media_type == 'pdf' %}
+                                <i class="fa fa-file-pdf"></i>
+                                {% else %}
+                                <i class="fa fa-photo-film"></i>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <span class="td-title">{{ item.title }}</span>
+                                {% if item.description %}
+                                <br><small class="text-muted">{{ item.description|truncatewords:8 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- Tipo -->
+                    <td>
+                        <span class="media-type-badge media-type-{{ item.media_type }}">
+                            {% if item.media_type == 'video' %}<i class="fa fa-play"></i>
+                            {% elif item.media_type == 'audio' %}<i class="fa fa-music"></i>
+                            {% elif item.media_type == 'pdf' %}<i class="fa fa-file-pdf"></i>
+                            {% elif item.media_type == 'live' %}<i class="fa fa-signal"></i>
+                            {% endif %}
+                            {{ item.get_media_type_display }}
+                        </span>
+                    </td>
+
+                    <!-- Categoria -->
+                    <td class="hide-mobile">
+                        {% if item.category %}
+                        <span>{{ item.category.name }}</span>
+                        <br><small class="text-muted">{{ item.category.get_section_display }}</small>
+                        {% else %}—{% endif %}
+                    </td>
+
+                    <!-- Pregador -->
+                    <td class="hide-mobile">{{ item.speaker|default:"—" }}</td>
+
+                    <!-- Data -->
+                    <td class="hide-mobile" style="white-space:nowrap;font-size:.85rem;color:var(--gold-dark)">
+                        {{ item.pub_date|date:"d/m/Y"|default:"—" }}
+                    </td>
+
+                    <!-- Visibilidade -->
+                    <td>
+                        {% if item.visibility == 'public' %}
+                        <span class="vis-badge vis-public" title="Público"><i class="fa fa-globe"></i> Público</span>
+                        {% else %}
+                        <span class="vis-badge vis-members" title="Só membros"><i class="fa fa-lock"></i> Membros</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Publicado -->
+                    <td>
+                        {% if item.published %}
+                        <i class="fa fa-check-circle" style="color:#27ae60" title="Publicado"></i>
+                        {% else %}
+                        <i class="fa fa-times-circle" style="color:#e74c3c" title="Rascunho"></i>
+                        {% endif %}
+                    </td>
+
+                    <!-- Destaque -->
+                    <td>
+                        <i class="fa fa-star" style="color:{% if item.featured %}var(--gold){% else %}rgba(128,128,128,.25){% endif %}" title="{% if item.featured %}Destaque{% else %}Sem destaque{% endif %}"></i>
+                    </td>
+
+                    <!-- Ações -->
+                    <td>
+                        <div class="manage-actions">
+                            <a href="{{ item.get_absolute_url }}" class="manage-btn manage-btn-view" title="Visualizar" target="_blank"><i class="fa fa-eye"></i></a>
+                            <a href="{% url 'media_edit' item.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                            {% if request.user.is_superuser %}
+                            <a href="{% url 'media_delete' item.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                            {% else %}
+                            {% include 'members/delete_request_btn.html' with ct="media" oid=item.pk title=item.title %}
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align:center;padding:3rem 2rem">
+                        <i class="fa fa-photo-film" style="font-size:2rem;opacity:.25;display:block;margin-bottom:.75rem"></i>
+                        <strong class="text-muted">Nenhum item encontrado.</strong>
+                        {% if q or section or tipo or cat_id or pub %}
+                        <br><small class="text-muted">Tente ajustar os filtros ou <a href="{% url 'media_manage' %}">limpar a busca</a>.</small>
+                        {% else %}
+                        <br><small class="text-muted"><a href="{% url 'media_create' %}">Adicionar primeiro item</a></small>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ── Paginação ── -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination-wrap">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&secao={{ section }}&tipo={{ tipo }}&categoria={{ cat_id }}&pub={{ pub }}" class="page-btn">&laquo;</a>
+        {% endif %}
+        <span class="page-info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&q={{ q }}&secao={{ section }}&tipo={{ tipo }}&categoria={{ cat_id }}&pub={{ pub }}" class="page-btn">&raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

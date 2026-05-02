@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Ministérios — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Nossa Comunidade</span>
+        <h1>Ministérios</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% for ministry in ministries %}
+        <div class="ministry-detail-block">
+            <div class="ministry-detail-header">
+                <div class="ministry-icon-lg">
+                    <i class="fa {{ ministry.icon }}"></i>
+                </div>
+                <div>
+                    <h2>{{ ministry.name }}</h2>
+                    <p>{{ ministry.description }}</p>
+                </div>
+            </div>
+
+            {% with members=ministry.members.all %}
+            {% if members %}
+            <div class="ministry-members-grid">
+                {% for mm in members %}
+                {% if mm.profile.approved %}
+                <div class="ministry-member-card">
+                    {% if mm.profile.photo %}
+                        <img src="{{ mm.profile.photo.url }}" alt="{{ mm.profile.full_name }}">
+                    {% else %}
+                        <div class="ministry-member-avatar">
+                            <i class="fa fa-user"></i>
+                        </div>
+                    {% endif %}
+                    <strong>{{ mm.profile.full_name }}</strong>
+                    {% if mm.role %}<span>{{ mm.role }}</span>{% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <i class="fa fa-users"></i>
+            <h3>Nenhum ministério cadastrado ainda.</h3>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

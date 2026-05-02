@@ -1,0 +1,327 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_settings.church_name }}{% endblock %}</title>
+
+    {# ── SEO ── #}
+    <meta name="description" content="{% block meta_description %}{{ site_settings.tagline|default:site_settings.church_name }}{% endblock %}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{% block canonical %}{{ request.build_absolute_uri }}{% endblock %}">
+
+    {# ── Open Graph ── #}
+    <meta property="og:type"        content="{% block og_type %}website{% endblock %}">
+    <meta property="og:site_name"   content="{{ site_settings.church_name }}">
+    <meta property="og:title"       content="{% block og_title %}{{ site_settings.church_name }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ site_settings.tagline|default:site_settings.church_name }}{% endblock %}">
+    <meta property="og:url"         content="{{ request.build_absolute_uri }}">
+    {% block og_image_tag %}{% if site_settings.logo %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_settings.logo.url }}">{% endif %}{% endblock %}
+
+    {# ── Twitter Card ── #}
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="{% block twitter_title %}{{ site_settings.church_name }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ site_settings.tagline|default:site_settings.church_name }}{% endblock %}">
+    {% block twitter_image_tag %}{% if site_settings.logo %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ site_settings.logo.url }}">{% endif %}{% endblock %}
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/logo_icone.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/icon_192.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --gold: {{ site_settings.color_primary }};
+            --navy: {{ site_settings.color_secondary }};
+            --gold-dark: {{ site_settings.color_accent }};
+            --text-heading: {{ site_settings.color_secondary }};
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-overlay" id="navOverlay"></div>
+<nav class="navbar premium-navbar" id="navbar">
+    <div class="nav-container">
+
+        <!-- LOGO -->
+        <a href="{% url 'home' %}" class="nav-logo">
+            {% if site_settings.logo %}
+                <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.church_name }}">
+            {% else %}
+                <img src="{% static 'img/logo_horizontal.png' %}" class="nav-logo-img">
+            {% endif %}
+        </a>
+
+        <!-- LINKS -->
+        <button class="nav-close" id="navClose"><i class="fa fa-times"></i></button>
+        <ul class="nav-links" id="navLinks">
+
+            <li><a href="{% url 'home' %}" class="nav-link">Início</a></li>
+            <li><a href="{% url 'about' %}" class="nav-link">Sobre</a></li>
+
+            <li class="has-submenu">
+                <a href="#" class="nav-link">Igreja ▾</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'ministries' %}">Ministérios</a></li>
+                    <li><a href="{% url 'cell_list' %}">Células</a></li>
+                    <li><a href="{% url 'ebd_home' %}">EBD</a></li>
+                </ul>
+            </li>
+
+            <li class="has-submenu">
+                <a href="#" class="nav-link">Eventos ▾</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'event_list' %}">Agenda</a></li>
+                    <li><a href="{% url 'agenda_view' %}">Locais</a></li>
+                </ul>
+            </li>
+
+            <li class="has-submenu">
+                <a href="#" class="nav-link">Conteúdos ▾</a>
+                <ul class="submenu">
+                    <li><a href="{% url 'media_list' %}">Midiateca</a></li>
+                    <li><a href="{% url 'gallery' %}">Galeria</a></li>
+                    <li><a href="{% url 'devotional_list' %}">Devocionais</a></li>
+                </ul>
+            </li>
+
+            <li><a href="{% url 'offering_page' %}" class="nav-link">Doações</a></li>
+            {% for nav_page in nav_pages %}
+            <li><a href="{{ nav_page.get_absolute_url }}" class="nav-link">{{ nav_page.title }}</a></li>
+            {% endfor %}
+            <li><a href="{% url 'contact' %}" class="nav-link">Contato</a></li>
+
+            <li class="nav-mobile-login">
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'member_dashboard' %}">Minha Área</a>
+                {% else %}
+                <a href="{% url 'member_login' %}">Entrar</a>
+                {% endif %}
+            </li>
+
+        </ul>
+
+        <!-- AÇÕES -->
+        <div class="nav-actions">
+
+            <button class="theme-toggle-btn" id="themeToggle">
+                <i class="fa fa-moon icon-moon"></i>
+                <i class="fa fa-sun icon-sun"></i>
+            </button>
+
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'member_dashboard' %}" class="btn-premium">
+                Minha Área
+            </a>
+            {% else %}
+            <a href="{% url 'member_login' %}" class="btn-premium">
+                Entrar
+            </a>
+            {% endif %}
+
+        </div>
+
+        <!-- MOBILE -->
+        <button class="nav-toggle" id="navToggle">
+            <span></span><span></span><span></span>
+        </button>
+
+    </div>
+</nav>
+<!-- CONTENT -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <img src="{% static 'img/logo_horizontal.png' %}" alt="{{ site_settings.church_name }}" class="footer-logo-img">
+            {% if site_settings.tagline %}
+                <p class="footer-tagline">{{ site_settings.tagline }}</p>
+            {% endif %}
+        </div>
+        <div class="footer-links">
+            <h4>Navegação</h4>
+            <ul>
+                <li><a href="{% url 'home' %}">Início</a></li>
+                <li><a href="{% url 'about' %}">Sobre</a></li>
+                <li><a href="{% url 'event_list' %}">Eventos</a></li>
+                <li><a href="{% url 'contact' %}">Contato</a></li>
+                <li><a href="{% url 'offering_page' %}">Doações</a></li>
+                <li><a href="{% url 'gallery' %}">Galeria</a></li>
+                <li><a href="{% url 'privacy_policy' %}">Política de Privacidade</a></li>
+                <li><a href="{% url 'visitor_form' %}">Registrar Visita</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h4>Contato</h4>
+            {% if site_settings.address %}<p><i class="fa fa-map-marker-alt"></i> {{ site_settings.address }}</p>{% endif %}
+            {% if site_settings.phone %}<p><i class="fa fa-phone"></i> {{ site_settings.phone }}</p>{% endif %}
+            {% if site_settings.email %}<p><i class="fa fa-envelope"></i> {{ site_settings.email }}</p>{% endif %}
+        </div>
+        <div class="footer-social">
+            <h4>Redes Sociais</h4>
+            <div class="social-icons">
+                {% if site_settings.facebook_url %}<a href="{{ site_settings.facebook_url }}" target="_blank"><i class="fab fa-facebook"></i></a>{% endif %}
+                {% if site_settings.instagram_url %}<a href="{{ site_settings.instagram_url }}" target="_blank"><i class="fab fa-instagram"></i></a>{% endif %}
+                {% if site_settings.youtube_url %}<a href="{{ site_settings.youtube_url }}" target="_blank"><i class="fab fa-youtube"></i></a>{% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+    <p>&copy; {% now "Y" %} {{ site_settings.church_name }}. Todos os direitos reservados.</p>
+    <p style="margin-top:.35rem;font-size:.75rem;opacity:.6">
+        Desenvolvido por <a href="https://seusite.com.br" target="_blank" style="color:var(--gold);text-decoration:none">Herbert Mesquita</a>
+    </p>
+</div>
+</footer>
+
+<script>
+(function(){
+  var t = localStorage.getItem('church_theme') || '';
+  if(t) document.documentElement.setAttribute('data-theme', t);
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+document.getElementById('themeToggle').addEventListener('click', function(){
+  var current = document.documentElement.getAttribute('data-theme');
+  var next = current === 'dark' ? '' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('church_theme', next);
+});
+
+// Navbar sólida em páginas sem hero escuro
+(function(){
+  var hasHero = document.querySelector('.hero, .page-hero');
+  if (!hasHero) {
+    document.getElementById('navbar').classList.add('navbar-solid');
+  }
+})();
+
+
+</script>
+<div id="session-modal" class="session-overlay">
+    <div class="session-modal">
+
+        <div class="session-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+
+        <h4>Sessão prestes a expirar</h4>
+
+        <p>
+            Por segurança, você será desconectado em 
+            <strong id="contador">60</strong> segundos.
+        </p>
+
+        <!-- Barra de progresso -->
+        <div class="progress session-progress">
+            <div id="progress-bar" class="progress-bar bg-warning" style="width: 100%"></div>
+        </div>
+
+        <div class="session-actions">
+            <button onclick="manterSessao()" class="btn btn-success">
+                Continuar conectado
+            </button>
+
+            <button onclick="window.location.href='/members/timeout/'" class="btn btn-outline-danger">
+                Encerrar sessão
+            </button>
+        </div>
+
+    </div>
+</div>
+
+{% block extra_js %}
+{% if request.user.is_authenticated %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+if (!window.sessionTimeoutLoaded) {
+    window.sessionTimeoutLoaded = true;
+
+    const TEMPO_TOTAL = 1800;  // 30 min de inatividade
+    const TEMPO_AVISO = 60;    // aviso nos últimos 60s
+
+    let tempoRestante = TEMPO_TOTAL;
+    let avisando = false;
+
+    const modal      = document.getElementById("session-modal");
+    const contadorEl = document.getElementById("contador");
+    const progressBar = document.getElementById("progress-bar");
+
+    function resetTimer() {
+        // Não reseta enquanto o aviso está sendo exibido
+        if (avisando) return;
+        tempoRestante = TEMPO_TOTAL;
+    }
+
+    function mostrarAviso() {
+        avisando = true;
+        if (modal) modal.classList.add("active");
+    }
+
+    function esconderAviso() {
+        avisando = false;
+        if (modal) modal.classList.remove("active");
+        if (contadorEl) contadorEl.innerText = TEMPO_AVISO;
+        if (progressBar) progressBar.style.width = "100%";
+    }
+
+    window.manterSessao = function() {
+        fetch(window.location.href, { method: 'GET', credentials: 'same-origin' })
+        .then(() => {
+            tempoRestante = TEMPO_TOTAL;
+            esconderAviso();
+        })
+        .catch(() => { esconderAviso(); });
+    };
+
+    setInterval(() => {
+        tempoRestante--;
+
+        // Mostrar aviso quando entrar nos últimos TEMPO_AVISO segundos
+        if (tempoRestante <= TEMPO_AVISO && !avisando) {
+            mostrarAviso();
+        }
+
+        // Atualiza contador e barra de progresso
+        if (avisando) {
+            if (contadorEl) contadorEl.innerText = Math.max(0, tempoRestante);
+            let pct = (tempoRestante / TEMPO_AVISO) * 100;
+            if (progressBar) progressBar.style.width = Math.max(0, pct) + "%";
+        }
+
+        // Sessão expirou — redireciona para logout
+        if (tempoRestante <= 0) {
+            window.location.href = "{% url 'session_timeout' %}";
+        }
+
+    }, 1000);
+
+    // Somente cliques, teclas e toques resetam — scroll NÃO reseta
+    // (evita que rolar a página home redefina o timer constantemente)
+    ['click', 'keypress', 'touchstart'].forEach(function(evt) {
+        document.addEventListener(evt, resetTimer, { passive: true });
+    });
+}
+
+});
+</script>
+{% endif %}
+{% endblock %}
+
+</body>
+</html>

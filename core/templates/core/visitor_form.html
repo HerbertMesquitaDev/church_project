@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %}
+{% block title %}Formulário de Visita — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Bem-vindo(a)</span>
+        <h1>Registre sua Visita</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container visitor-layout">
+
+        <div class="visitor-intro">
+            <h2>Que bom ter você conosco!</h2>
+            <p>Preencha o formulário abaixo para que possamos entrar em contato e conhecer melhor você. Prometemos não lotar sua caixa de entrada!</p>
+            <div class="visitor-perks">
+                <div class="visitor-perk"><i class="fa fa-heart"></i><span>Acolhimento personalizado</span></div>
+                <div class="visitor-perk"><i class="fa fa-users"></i><span>Conheça nossos ministérios</span></div>
+                <div class="visitor-perk"><i class="fa fa-pray"></i><span>Fique por dentro dos eventos</span></div>
+            </div>
+        </div>
+
+        <div class="visitor-form-wrap">
+            {% if success %}
+            <div class="visitor-success">
+                <div class="visitor-success-icon"><i class="fa fa-check-circle"></i></div>
+                <h3>Recebemos seu cadastro!</h3>
+                <p>Em breve alguém da nossa equipe entrará em contato. Que Deus abençoe você!</p>
+                <a href="{% url 'home' %}" class="btn btn-primary" style="margin-top:1.5rem">Voltar ao início</a>
+            </div>
+            {% else %}
+            <form method="post" class="visitor-form">
+                {% csrf_token %}
+
+                <div class="visitor-form-section">Seus dados</div>
+                <div class="visitor-grid">
+                    <div class="form-group visitor-full">
+                        <label class="contact-label">Nome completo *</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label class="contact-label">E-mail</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="form-group">
+                        <label class="contact-label">Telefone / WhatsApp</label>
+                        {{ form.phone }}
+                    </div>
+                    <div class="form-group">
+                        <label class="contact-label">Data que nos visitou *</label>
+                        {{ form.visit_date }}
+                    </div>
+                    <div class="form-group">
+                        <label class="contact-label">Como nos conheceu? *</label>
+                        {{ form.how_found }}
+                    </div>
+                    <div class="form-group visitor-full" id="other-field" style="display:none">
+                        <label class="contact-label">Como nos conheceu (detalhe)</label>
+                        {{ form.how_found_other }}
+                    </div>
+                </div>
+
+                <div class="visitor-form-section">Participação</div>
+                <div class="visitor-check-group">
+                    {{ form.wants_ministry }}
+                    <label for="{{ form.wants_ministry.id_for_label }}" class="visitor-check-label">
+                        Tenho interesse em participar de algum ministério
+                    </label>
+                </div>
+                <div class="form-group" id="ministry-field" style="margin-top:.75rem;display:none">
+                    <label class="contact-label">Qual ministério?</label>
+                    {{ form.ministry_interest }}
+                </div>
+
+                <div class="visitor-form-section">Mensagem</div>
+                <div class="form-group">
+                    <label class="contact-label">Deixe uma mensagem (opcional)</label>
+                    {{ form.message }}
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem;">
+                    <i class="fa fa-paper-plane"></i> Enviar Cadastro
+                </button>
+            </form>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var howFound = document.getElementById('{{ form.how_found.id_for_label }}');
+var otherField = document.getElementById('other-field');
+function toggleOther() {
+    otherField.style.display = howFound.value === 'other' ? 'block' : 'none';
+}
+howFound.addEventListener('change', toggleOther);
+toggleOther();
+
+var wantsMin = document.getElementById('{{ form.wants_ministry.id_for_label }}');
+var minField = document.getElementById('ministry-field');
+function toggleMinistry() {
+    minField.style.display = wantsMin.checked ? 'block' : 'none';
+}
+wantsMin.addEventListener('change', toggleMinistry);
+toggleMinistry();
+
+// Set today as default visit date
+var vd = document.querySelector('input[name=visit_date]');
+if (vd && !vd.value) vd.value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Trimestres — {{ cls.name }}{% endblock %}
+{% block page_title %}Trimestres: {{ cls.name }}{% endblock %}
+{% block content %}
+<div class="manage-wrap">
+
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem" class="text-muted">
+    <a href="{% url 'ebd_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-users"></i> Turmas</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ cls.name }}</span>
+    <a href="{% url 'ebd_trimester_create' class_pk=cls.pk %}" class="btn btn-primary" style="margin-left:auto;font-size:.82rem;padding:.35rem .9rem">
+      <i class="fa fa-plus"></i> Novo Trimestre
+    </a>
+  </div>
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr><th>Trimestre</th><th>Ano</th><th>Lições</th><th>Status</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for tri in trimesters %}
+        <tr>
+          <td><strong class="td-title">{{ tri.title }}</strong><br><small class="text-muted">{{ tri.get_quarter_display }}</small></td>
+          <td>{{ tri.year }}</td>
+          <td><span class="badge">{{ tri.lessons.count }} lição(ões)</span></td>
+          <td>
+            {% if tri.active %}<span class="badge-green">Ativo</span>
+            {% else %}<span class="badge-grey">Inativo</span>{% endif %}
+          </td>
+          <td>
+            <div class="manage-actions">
+              <a href="{% url 'ebd_lesson_manage' trimester_pk=tri.pk %}" class="manage-btn manage-btn-view" title="Lições"><i class="fa fa-book-open"></i></a>
+              <a href="{% url 'ebd_trimester_edit' tri.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+              {% if request.user.is_superuser %}
+              <a href="{% url 'ebd_trimester_delete' tri.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+          Nenhum trimestre cadastrado. <a href="{% url 'ebd_trimester_create' class_pk=cls.pk %}">Criar agora</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

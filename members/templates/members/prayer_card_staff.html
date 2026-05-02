@@ -1,0 +1,26 @@
+<div class="prayer-card prayer-staff-card">
+    <div class="prayer-card-icon"><i class="fa fa-cross" style="color:var(--gold)"></i></div>
+    <div class="prayer-card-body">
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem;">
+            <strong class="td-title">{{ pr.title }}</strong>
+            <span class="prayer-badge prayer-badge-{{ pr.visibility }}">
+                {% if pr.visibility == 'private' %}<i class="fa fa-lock"></i> Privado
+                {% else %}<i class="fa fa-users"></i> Membros{% endif %}
+            </span>
+        </div>
+        <p class="prayer-desc">{{ pr.description }}</p>
+        {% if pr.admin_note %}
+        <div class="prayer-admin-note">
+            <i class="fa fa-comment-dots"></i> <strong>Resposta:</strong> {{ pr.admin_note }}
+        </div>
+        {% endif %}
+        <small class="td-sub">
+            <i class="fa fa-user"></i> {{ pr.profile.full_name }} &nbsp;·&nbsp;
+            {{ pr.created_at|date:"d/m/Y \à\s H:i" }}
+        </small>
+    </div>
+    <button class="btn-action btn-approve"
+        onclick="openRespond({{ pr.pk }}, '{{ pr.title|escapejs }}', '{{ pr.status }}', '{{ pr.admin_note|escapejs }}')">
+        <i class="fa fa-reply"></i> Responder
+    </button>
+</div>

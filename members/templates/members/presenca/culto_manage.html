@@ -1,0 +1,108 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Presenças — Gestão{% endblock %}
+{% block page_title %}Controle de Presenças{% endblock %}
+
+{% block extra_css %}
+<style>
+.pct-bar-wrap { background:var(--border);border-radius:20px;height:6px;width:80px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:.5rem; }
+.pct-bar { height:100%;border-radius:20px;background:linear-gradient(90deg,var(--gold-dark),var(--gold)); }
+[data-theme="dark"] .pct-bar-wrap { background:rgba(255,255,255,.08); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+  <div class="manage-topbar">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <a href="{% url 'presenca_relatorio' %}" class="btn btn-outline">
+        <i class="fa fa-chart-bar"></i> Relatório de Frequência
+      </a>
+    </div>
+    <a href="{% url 'culto_create' %}" class="btn btn-primary">
+      <i class="fa fa-plus"></i> Registrar Culto
+    </a>
+  </div>
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tipo / Título</th>
+          <th>Membros</th>
+          <th class="hide-mobile">Visitantes</th>
+          <th class="hide-mobile">Frequência</th>
+          <th class="hide-mobile">Registrado por</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for culto in cultos %}
+        {% with cnt=culto.presence_count tot=culto.total_members %}
+        <tr>
+          <td style="white-space:nowrap;font-size:.85rem;color:var(--gold-dark);font-weight:600">
+            {{ culto.date|date:"d/m/Y" }}
+          </td>
+          <td>
+            <strong class="td-title">{{ culto.title|default:culto.get_culto_type_display }}</strong>
+            {% if culto.title %}<br><small class="text-muted">{{ culto.get_culto_type_display }}</small>{% endif %}
+          </td>
+          <td>
+            <span style="font-size:1rem;font-weight:600;color:var(--text-heading)">{{ cnt }}</span>
+            <span class="text-muted" style="font-size:.8rem">/ {{ tot }}</span>
+          </td>
+          <td class="hide-mobile">
+            {% if culto.visitor_count %}
+            <span style="font-size:.9rem;font-weight:600;color:#2475a8">{{ culto.visitor_count }}</span>
+            {% if culto.visitor_names %}
+            <span class="badge" title="{{ culto.visitor_names }}" style="cursor:help;margin-left:.25rem">
+              <i class="fa fa-list" style="font-size:.6rem"></i>
+            </span>
+            {% endif %}
+            {% else %}
+            <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td class="hide-mobile">
+            {% if tot %}
+            {% widthratio cnt tot 100 as pct %}
+            <span style="font-size:.82rem;color:var(--text-muted)">{{ pct }}%</span>
+            <span class="pct-bar-wrap"><span class="pct-bar" style="width:{{ pct }}%"></span></span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="hide-mobile text-muted" style="font-size:.82rem">
+            {{ culto.created_by.get_short_name|default:"—" }}
+          </td>
+          <td>
+            <div class="manage-actions">
+              <a href="{% url 'culto_chamada' culto.pk %}" class="manage-btn manage-btn-edit" title="Fazer chamada">
+                <i class="fa fa-clipboard-check"></i>
+              </a>
+              {% if request.user.is_superuser %}
+              <a href="{% url 'culto_delete' culto.pk %}" class="manage-btn manage-btn-del" title="Excluir">
+                <i class="fa fa-trash"></i>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align:center;padding:3rem;color:var(--text-muted)">
+            <i class="fa fa-clipboard-check" style="font-size:2rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+            Nenhum culto registrado ainda.
+            <br><a href="{% url 'culto_create' %}" class="btn btn-primary" style="margin-top:.75rem">Registrar primeiro culto</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

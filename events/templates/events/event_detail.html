@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ event.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block meta_description %}{{ event.meta_description|default:event.short_description|default:event.description|truncatechars:160 }}{% endblock %}
+{% block og_type %}event{% endblock %}
+{% block og_title %}{{ event.title }} — {{ site_settings.church_name }}{% endblock %}
+{% block og_description %}{{ event.meta_description|default:event.short_description|default:event.description|truncatechars:160 }}{% endblock %}
+{% block og_image_tag %}{% if event.image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}">{% endif %}{% endblock %}
+{% block twitter_title %}{{ event.title }}{% endblock %}
+{% block twitter_description %}{{ event.meta_description|default:event.short_description|truncatechars:160 }}{% endblock %}
+{% block twitter_image_tag %}{% if event.image %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ event.image.url }}">{% endif %}{% endblock %}
+
+{% block content %}
+<section class="event-detail">
+    <div class="container">
+        <div class="event-detail-layout">
+            <div class="event-detail-main">
+                <div class="breadcrumb">
+                    <a href="{% url 'home' %}">Início</a>
+                    <span>/</span>
+                    <a href="{% url 'event_list' %}">Eventos</a>
+                    <span>/</span>
+                    <span>{{ event.title }}</span>
+                </div>
+
+                {% if event.image %}
+                <div class="event-detail-img">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                </div>
+                {% endif %}
+
+                {% if event.category %}
+                <span class="event-badge-lg" style="background:{{ event.category.color }}">{{ event.category.name }}</span>
+                {% endif %}
+                <h1 class="event-detail-title">{{ event.title }}</h1>
+
+                <div class="event-detail-meta">
+                    <span><i class="fa fa-calendar"></i> {{ event.date|date:"d \d\e F \d\e Y" }}</span>
+                    <span><i class="fa fa-clock"></i> {{ event.date|date:"H:i" }}</span>
+                    {% if event.end_date %}<span><i class="fa fa-hourglass-end"></i> até {{ event.end_date|date:"H:i" }}</span>{% endif %}
+                    {% if event.location %}<span><i class="fa fa-map-marker-alt"></i> {{ event.location }}</span>{% endif %}
+                    {% if event.recurrence != 'none' %}<span><i class="fa fa-redo"></i> {{ event.get_recurrence_display }}</span>{% endif %}
+                </div>
+
+                <div class="event-detail-body">
+                    {{ event.description|linebreaks }}
+                </div>
+
+                {% if event.requires_registration or event.registration_link %}
+                <div class="event-register">
+                    {% if event.requires_registration %}
+                        {% if user_registration and user_registration.status == 'confirmed' %}
+                        <div class="event-reg-status event-reg-confirmed">
+                            <i class="fa fa-check-circle"></i> Você está inscrito!
+                        </div>
+                        <a href="{% url 'event_cancel_registration' event.slug %}" class="btn btn-outline btn-sm" style="margin-top:.5rem">Cancelar inscrição</a>
+                        {% elif user_registration and user_registration.status == 'waitlist' %}
+                        <div class="event-reg-status event-reg-waitlist">
+                            <i class="fa fa-clock"></i> Você está na lista de espera
+                        </div>
+                        <a href="{% url 'event_cancel_registration' event.slug %}" class="btn btn-outline btn-sm" style="margin-top:.5rem">Sair da lista</a>
+                        {% elif request.user.is_authenticated %}
+                            {% if event.registration_open %}
+                            <a href="{% url 'event_register' event.slug %}" class="btn btn-primary btn-lg">
+                                {% if event.is_full %}<i class="fa fa-list"></i> Entrar na Lista de Espera
+                                {% else %}<i class="fa fa-ticket-alt"></i> Fazer Inscrição{% endif %}
+                            </a>
+                            {% else %}
+                            <div class="event-reg-status event-reg-closed"><i class="fa fa-lock"></i> Inscrições encerradas</div>
+                            {% endif %}
+                        {% else %}
+                        <a href="{% url 'member_login' %}?next={{ request.path }}" class="btn btn-primary btn-lg">
+                            <i class="fa fa-sign-in-alt"></i> Entre para se inscrever
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary btn-lg">
+                        <i class="fa fa-ticket-alt"></i> Fazer Inscrição
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <aside class="event-detail-aside">
+                <div class="aside-card">
+                    <h4>Detalhes do Evento</h4>
+                    <ul class="aside-list">
+                        <li><i class="fa fa-calendar"></i> <span>{{ event.date|date:"d/m/Y" }}</span></li>
+                        <li><i class="fa fa-clock"></i> <span>{{ event.date|date:"H:i" }}</span></li>
+                        {% if event.location %}<li><i class="fa fa-map-marker-alt"></i> <span>{{ event.location }}</span></li>{% endif %}
+                        {% if event.address %}<li><i class="fa fa-road"></i> <span>{{ event.address }}</span></li>{% endif %}
+                    </ul>
+                    {% if event.requires_registration %}
+                        {% if event.max_spots %}
+                        <div class="event-spots-bar">
+                            <div class="event-spots-fill" style="width:{% widthratio confirmed_count event.max_spots 100 %}%"></div>
+                        </div>
+                        <small style="color:var(--text-muted);font-size:.75rem;display:block;margin-bottom:.75rem">
+                            {{ confirmed_count }}/{{ event.max_spots }} vagas
+                            {% if waitlist_count %} · {{ waitlist_count }} na fila{% endif %}
+                        </small>
+                        {% endif %}
+                        {% if user_registration and user_registration.status == 'confirmed' %}
+                        <div class="event-reg-status event-reg-confirmed" style="margin-bottom:.5rem"><i class="fa fa-check-circle"></i> Inscrito</div>
+                        {% elif user_registration and user_registration.status == 'waitlist' %}
+                        <div class="event-reg-status event-reg-waitlist" style="margin-bottom:.5rem"><i class="fa fa-clock"></i> Lista de espera</div>
+                        {% elif request.user.is_authenticated and event.registration_open %}
+                        <a href="{% url 'event_register' event.slug %}" class="btn btn-primary btn-full">
+                            {% if event.is_full %}Entrar na lista de espera{% else %}Inscrever-se{% endif %}
+                        </a>
+                        {% elif not request.user.is_authenticated %}
+                        <a href="{% url 'member_login' %}?next={{ request.path }}" class="btn btn-primary btn-full">Entre para se inscrever</a>
+                        {% endif %}
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                        <a href="{% url 'event_registrations_list' event.slug %}" class="btn btn-outline btn-full" style="margin-top:.5rem;font-size:.8rem">
+                            <i class="fa fa-list"></i> Ver inscritos ({{ confirmed_count }})
+                        </a>
+                        {% endif %}
+                    {% elif event.registration_link %}
+                    <a href="{{ event.registration_link }}" target="_blank" class="btn btn-primary btn-full">Inscrever-se</a>
+                    {% endif %}
+                </div>
+
+                {% if related %}
+                <div class="aside-card">
+                    <h4>Outros Eventos</h4>
+                    {% for r in related %}
+                    <a href="{{ r.get_absolute_url }}" class="related-event-link">
+                        <div class="related-date">
+                            <span>{{ r.date|date:"d" }}</span>
+                            <span>{{ r.date|date:"M" }}</span>
+                        </div>
+                        <div>
+                            <strong>{{ r.title }}</strong>
+                            <small>{{ r.date|date:"H:i" }}</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

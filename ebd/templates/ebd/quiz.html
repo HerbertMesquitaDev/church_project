@@ -1,0 +1,103 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Quiz — {{ lesson.title }}{% endblock %}
+{% block page_title %}Quiz — Lição {{ lesson.number }}{% endblock %}
+
+{% block content %}
+<div style="max-width:720px">
+    <div class="ebd-quiz-header">
+        <h2>{{ lesson.title }}</h2>
+        <p>
+            {{ quiz.question_count }} pergunta{{ quiz.question_count|pluralize:",s" }}
+            &nbsp;·&nbsp; Nota mínima: {{ quiz.passing_score }}%
+            {% if quiz.max_attempts %}&nbsp;·&nbsp; Tentativa {{ attempt_count|add:1 }} de {{ quiz.max_attempts }}{% endif %}
+        </p>
+    </div>
+
+    <form method="post" id="quizForm">
+        {% csrf_token %}
+
+        {% for q in questions %}
+        <div class="ebd-question-card" id="qcard_{{ q.pk }}">
+            <div class="ebd-question-num">{{ forloop.counter }}</div>
+            <div class="ebd-question-body">
+                <p class="ebd-question-text">{{ q.text }}</p>
+                <div class="ebd-choices">
+                    {% for choice in q.choices.all %}
+                    <label class="ebd-choice" for="choice_{{ choice.pk }}">
+                        <input type="radio"
+                               id="choice_{{ choice.pk }}"
+                               name="q_{{ q.pk }}"
+                               value="{{ choice.pk }}">
+                        <span class="ebd-choice-text">{{ choice.text }}</span>
+                    </label>
+                    {% empty %}
+                    <p style="color:var(--text-muted);font-size:.85rem;font-style:italic;">
+                        Nenhuma alternativa cadastrada para esta pergunta.
+                    </p>
+                    {% endfor %}
+                </div>
+                <div class="ebd-choice-error" id="err_{{ q.pk }}" style="display:none;color:#e74c3c;font-size:.8rem;margin-top:.4rem;">
+                    <i class="fa fa-exclamation-circle"></i> Selecione uma alternativa.
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="ebd-quiz-submit">
+            <button type="button" onclick="submitQuiz()" class="btn btn-primary" style="padding:1rem 2.5rem">
+                <i class="fa fa-paper-plane"></i> Enviar Respostas
+            </button>
+            <a href="{% url 'ebd_lesson_detail' lesson.pk %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function submitQuiz() {
+    var questions = document.querySelectorAll('[id^="qcard_"]');
+    var valid = true;
+
+    questions.forEach(function(card) {
+        var qpk = card.id.replace('qcard_', '');
+        var selected = card.querySelector('input[type=radio]:checked');
+        var errEl = document.getElementById('err_' + qpk);
+
+        if (!selected) {
+            valid = false;
+            errEl.style.display = 'block';
+            card.style.borderColor = '#e74c3c';
+        } else {
+            errEl.style.display = 'none';
+            card.style.borderColor = '';
+        }
+    });
+
+    if (valid) {
+        document.getElementById('quizForm').submit();
+    } else {
+        // Scroll to first unanswered
+        var first = document.querySelector('[id^="qcard_"]');
+        document.querySelectorAll('[id^="qcard_"]').forEach(function(card) {
+            var qpk = card.id.replace('qcard_', '');
+            if (!card.querySelector('input:checked')) {
+                first = card;
+                return;
+            }
+        });
+        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+// Clear error on selection
+document.querySelectorAll('.ebd-choice input[type=radio]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        var name = this.name;
+        var qpk = name.replace('q_', '');
+        document.getElementById('err_' + qpk).style.display = 'none';
+        document.getElementById('qcard_' + qpk).style.borderColor = '';
+    });
+});
+</script>
+{% endblock %}

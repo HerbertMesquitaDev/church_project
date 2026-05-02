@@ -1,0 +1,160 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Publicações — {{ album.title }}{% endblock %}
+{% block page_title %}Publicações Sociais{% endblock %}
+
+{% block extra_css %}
+<style>
+.sp-status { display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:20px;font-size:.7rem;font-weight:600; }
+.sp-draft     { background:rgba(149,165,166,.15); color:var(--text-muted); }
+.sp-published { background:rgba(39,174,96,.1);   color:#1a7a40; }
+.sp-failed    { background:rgba(231,76,60,.1);   color:#c0392b; }
+.sp-partial   { background:rgba(243,156,18,.1);  color:#946b00; }
+.sp-queued    { background:rgba(41,128,185,.1);  color:#2475a8; }
+.plat-icon { font-size:1rem;margin-right:.2rem; }
+.plat-icon.ig { color:#E1306C; }
+.plat-icon.fb { color:#1877F2; }
+.sp-thumbs { display:flex;gap:.3rem;flex-wrap:wrap; }
+.sp-thumb { width:32px;height:32px;border-radius:4px;object-fit:cover; }
+.sp-thumb-more { width:32px;height:32px;border-radius:4px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--text-muted);font-weight:600; }
+.sp-link { font-size:.75rem;color:var(--gold-dark);text-decoration:none;display:inline-flex;align-items:center;gap:.25rem; }
+.sp-link:hover { text-decoration:underline; }
+.sp-error { font-size:.72rem;color:#c0392b;max-width:200px;word-break:break-word; }
+
+[data-theme="dark"] .sp-draft     { background:rgba(149,165,166,.1);  color:#9A9690; }
+[data-theme="dark"] .sp-published { background:rgba(39,174,96,.1);   color:#58d68d; }
+[data-theme="dark"] .sp-failed    { background:rgba(231,76,60,.1);   color:#e87c6f; }
+[data-theme="dark"] .sp-partial   { background:rgba(243,156,18,.08); color:#D4A94E; }
+[data-theme="dark"] .sp-error     { color:#e87c6f; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem" class="text-muted">
+    <a href="{% url 'album_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-images"></i> Álbuns</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <a href="{% url 'album_photos' album.pk %}" style="color:var(--gold);text-decoration:none">{{ album.title }}</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>Publicações</span>
+    <a href="{% url 'social_post_create' album_pk=album.pk %}" class="btn btn-primary" style="margin-left:auto;font-size:.82rem;padding:.35rem .9rem">
+      <i class="fa fa-plus"></i> Nova Publicação
+    </a>
+  </div>
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr>
+          <th>Fotos</th>
+          <th>Plataforma</th>
+          <th>Status</th>
+          <th class="hide-mobile">Legenda</th>
+          <th class="hide-mobile">Links</th>
+          <th class="hide-mobile">Criado em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sp in posts %}
+        <tr>
+          <!-- Thumbnails -->
+          <td>
+            <div class="sp-thumbs">
+              {% for p in sp.photos.all|slice:":4" %}
+              <img src="{{ p.image.url }}" class="sp-thumb" alt="">
+              {% endfor %}
+              {% if sp.photos.count > 4 %}
+              <div class="sp-thumb-more">+{{ sp.photos.count|add:"-4" }}</div>
+              {% endif %}
+            </div>
+          </td>
+
+          <!-- Plataforma -->
+          <td>
+            {% if sp.platform == 'instagram' or sp.platform == 'both' %}
+            <i class="fab fa-instagram plat-icon ig" title="Instagram"></i>
+            {% endif %}
+            {% if sp.platform == 'facebook' or sp.platform == 'both' %}
+            <i class="fab fa-facebook plat-icon fb" title="Facebook"></i>
+            {% endif %}
+          </td>
+
+          <!-- Status -->
+          <td>
+            <span class="sp-status sp-{{ sp.status }}">
+              {% if sp.status == 'published' %}<i class="fa fa-check"></i>
+              {% elif sp.status == 'failed' %}<i class="fa fa-times"></i>
+              {% elif sp.status == 'partial' %}<i class="fa fa-exclamation"></i>
+              {% elif sp.status == 'queued' %}<i class="fa fa-clock"></i>
+              {% else %}<i class="fa fa-pen"></i>{% endif %}
+              {{ sp.get_status_display }}
+            </span>
+            {% if sp.ig_error %}
+            <div class="sp-error" title="{{ sp.ig_error }}"><i class="fab fa-instagram"></i> {{ sp.ig_error|truncatewords:6 }}</div>
+            {% endif %}
+            {% if sp.fb_error %}
+            <div class="sp-error" title="{{ sp.fb_error }}"><i class="fab fa-facebook"></i> {{ sp.fb_error|truncatewords:6 }}</div>
+            {% endif %}
+          </td>
+
+          <!-- Legenda -->
+          <td class="hide-mobile" style="max-width:200px">
+            <span style="font-size:.82rem;color:var(--text-muted)">{{ sp.caption|truncatewords:10 }}</span>
+          </td>
+
+          <!-- Links -->
+          <td class="hide-mobile">
+            {% if sp.ig_permalink %}
+            <a href="{{ sp.ig_permalink }}" target="_blank" class="sp-link"><i class="fab fa-instagram"></i> Ver no IG</a><br>
+            {% endif %}
+            {% if sp.fb_permalink %}
+            <a href="{{ sp.fb_permalink }}" target="_blank" class="sp-link"><i class="fab fa-facebook"></i> Ver no FB</a>
+            {% endif %}
+            {% if not sp.ig_permalink and not sp.fb_permalink %}—{% endif %}
+          </td>
+
+          <!-- Data -->
+          <td class="hide-mobile" style="font-size:.82rem;color:var(--gold-dark);white-space:nowrap">
+            {{ sp.created_at|date:"d/m/Y H:i" }}
+            {% if sp.created_by %}<br><small class="text-muted">{{ sp.created_by.get_short_name }}</small>{% endif %}
+          </td>
+
+          <!-- Ações -->
+          <td>
+            <div class="manage-actions">
+              {% if sp.status != 'published' %}
+              <form method="post" action="{% url 'social_post_publish' sp.pk %}" style="display:inline" onsubmit="return confirm('Publicar agora?')">
+                {% csrf_token %}
+                <button type="submit" class="manage-btn" title="Publicar agora" style="background:rgba(39,174,96,.1);color:#1a7a40"><i class="fa fa-paper-plane"></i></button>
+              </form>
+              {% endif %}
+              <form method="post" action="{% url 'social_post_delete' sp.pk %}" style="display:inline" onsubmit="return confirm('Remover este registro?')">
+                {% csrf_token %}
+                <button type="submit" class="manage-btn manage-btn-del" title="Excluir registro"><i class="fa fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted)">
+            <i class="fa fa-share-nodes" style="font-size:2rem;opacity:.25;display:block;margin-bottom:.75rem"></i>
+            Nenhuma publicação para este álbum ainda.
+            <br><a href="{% url 'social_post_create' album_pk=album.pk %}" class="btn btn-primary" style="margin-top:.75rem">
+              <i class="fa fa-plus"></i> Criar primeira publicação
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

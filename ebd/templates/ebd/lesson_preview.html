@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ lesson.title }} — EBD{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:7rem">
+    <div class="container ebd-preview-layout">
+        <div class="ebd-preview-main">
+            <div class="breadcrumb" style="margin-bottom:1.5rem">
+                <a href="{% url 'ebd_home' %}">EBD</a>
+                <span>/</span>
+                <span>{{ lesson.trimester }}</span>
+                <span>/</span>
+                <span>Lição {{ lesson.number }}</span>
+            </div>
+            <span class="ebd-tri-label">Lição {{ lesson.number }}</span>
+            <h1 class="ebd-detail-title">{{ lesson.title }}</h1>
+            {% if lesson.scripture %}
+            <div class="ebd-scripture-block">
+                <i class="fa fa-bible"></i> {{ lesson.scripture }}
+            </div>
+            {% endif %}
+            {% if lesson.summary %}
+            <div class="ebd-summary">{{ lesson.summary|safe }}</div>
+            {% endif %}
+
+            <div class="ebd-locked-notice">
+                <i class="fa fa-lock fa-2x"></i>
+                <h3>Conteúdo completo para membros</h3>
+                <p>Faça login para acessar o estudo completo, vídeo, áudio, PDF e quiz.</p>
+                <a href="{% url 'member_login' %}?next={% url 'ebd_lesson_detail' lesson.pk %}" class="btn btn-primary">
+                    <i class="fa fa-sign-in-alt"></i> Entrar para estudar
+                </a>
+            </div>
+        </div>
+        <aside class="ebd-detail-aside">
+            <div class="aside-card">
+                <h4>Esta lição contém</h4>
+                <ul class="ebd-content-list">
+                    {% if lesson.body %}<li><i class="fa fa-align-left"></i> Estudo completo</li>{% endif %}
+                    {% if lesson.video_url %}<li><i class="fa fa-play-circle"></i> Vídeo da aula</li>{% endif %}
+                    {% if lesson.audio_file %}<li><i class="fa fa-headphones"></i> Áudio</li>{% endif %}
+                    {% if lesson.pdf_file %}<li><i class="fa fa-file-pdf"></i> PDF para baixar</li>{% endif %}
+                    {% if lesson.quiz %}<li><i class="fa fa-question-circle"></i> Quiz com certificado</li>{% endif %}
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

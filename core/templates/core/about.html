@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% block title %}Sobre — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Nossa História</span>
+        <h1>Sobre a Igreja</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container about-content">
+        <div class="about-text">
+            <div class="section-header text-left">
+                <h2 class="section-title">Quem Somos</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="prose">
+                {{ site_settings.about_text|default:"<p>Somos uma comunidade de fé comprometida com o amor de Deus e com o próximo.</p>"|safe }}
+            </div>
+        </div>
+        <div class="about-values">
+            <div class="value-item"><i class="fa fa-heart"></i><h4>Amor</h4><p>Amor a Deus e ao próximo em todas as nossas ações.</p></div>
+            <div class="value-item"><i class="fa fa-hands-praying"></i><h4>Fé</h4><p>Nossa fé é o alicerce de tudo o que fazemos.</p></div>
+            <div class="value-item"><i class="fa fa-users"></i><h4>Comunidade</h4><p>Juntos somos mais fortes. A família de Deus.</p></div>
+            <div class="value-item"><i class="fa fa-globe"></i><h4>Missão</h4><p>Levar o evangelho a cada canto do mundo.</p></div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

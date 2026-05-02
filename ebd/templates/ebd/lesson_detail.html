@@ -1,0 +1,95 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block page_title %}EBD — Lição {{ lesson.number }}{% endblock %}
+{% block meta_description %}{{ lesson.meta_description|default:lesson.summary|striptags|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<div style="max-width:860px">
+
+    <div class="breadcrumb" style="margin-bottom:1.5rem">
+        <a href="{% url 'ebd_home' %}">EBD</a>
+        <span>/</span>
+        <span>{{ lesson.trimester }}</span>
+        <span>/</span>
+        <span>Lição {{ lesson.number }}</span>
+    </div>
+
+    {% if certificate %}
+    <div class="ebd-cert-banner">
+        <i class="fa fa-certificate"></i>
+        <div>
+            <strong>Certificado emitido em {{ certificate.issued_at|date:"d/m/Y" }}</strong>
+            <p>Você concluiu esta lição com aprovação.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <span class="ebd-tri-label">{{ lesson.trimester }}</span>
+    <h1 class="ebd-detail-title">{{ lesson.title }}</h1>
+    {% if lesson.scripture %}
+    <div class="ebd-scripture-block"><i class="fa fa-bible"></i> {{ lesson.scripture }}</div>
+    {% endif %}
+
+    {% if lesson.video_url %}
+    <div class="media-player-wrap" style="margin:1.5rem 0">
+        <iframe src="{{ lesson.get_embed_url }}" frameborder="0" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+
+    {% if lesson.body %}
+    <div class="ebd-lesson-body prose">{{ lesson.body|safe }}</div>
+    {% endif %}
+
+    {% if lesson.audio_file %}
+    <div class="media-audio-wrap" style="margin:1.5rem 0">
+        <audio controls class="media-audio-player">
+            <source src="{{ lesson.audio_file.url }}">
+        </audio>
+    </div>
+    {% endif %}
+
+    {% if lesson.pdf_file %}
+    <div class="ebd-pdf-block">
+        <i class="fa fa-file-pdf"></i>
+        <div>
+            <strong>Material em PDF</strong>
+            <p>Baixe o material de estudo desta lição.</p>
+        </div>
+        <a href="{{ lesson.pdf_file.url }}" target="_blank" class="btn btn-outline">
+            <i class="fa fa-download"></i> Baixar PDF
+        </a>
+    </div>
+    {% endif %}
+
+    {% if has_quiz %}
+    <div class="ebd-quiz-cta">
+        <div class="ebd-quiz-cta-icon"><i class="fa fa-question-circle"></i></div>
+        <div>
+            <h3>Quiz desta lição</h3>
+            <p>{{ lesson.quiz.question_count }} pergunta{{ lesson.quiz.question_count|pluralize:",s" }} · Nota mínima: {{ lesson.quiz.passing_score }}%</p>
+            {% if last_attempt %}
+            <span class="ebd-last-score {% if last_attempt.passed %}ebd-passed{% else %}ebd-failed{% endif %}">
+                Última tentativa: {{ last_attempt.score }}% — {% if last_attempt.passed %}Aprovado{% else %}Reprovado{% endif %}
+            </span>
+            {% endif %}
+        </div>
+        {% if not certificate %}
+        <a href="{% url 'ebd_quiz' lesson.pk %}" class="btn btn-primary">
+            <i class="fa fa-play"></i> Fazer Quiz
+        </a>
+        {% else %}
+        <span class="ebd-cert-badge-lg"><i class="fa fa-certificate"></i> Certificado emitido</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div style="margin-top:2rem">
+        <a href="{% url 'ebd_home' %}" class="btn btn-outline">
+            <i class="fa fa-arrow-left"></i> Voltar para EBD
+        </a>
+        <a href="{% url 'ebd_my_progress' %}" class="btn btn-outline" style="margin-left:.5rem">
+            <i class="fa fa-chart-bar"></i> Meu Progresso
+        </a>
+    </div>
+</div>
+{% endblock %}

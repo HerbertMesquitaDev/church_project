@@ -1,0 +1,51 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Células{% endblock %}
+{% block page_title %}Grupos de Célula{% endblock %}
+
+{% block content %}
+
+{% if my_cells %}
+<div class="section-label-sm" style="margin-bottom:.75rem">Meus Grupos</div>
+<div class="cell-grid" style="margin-bottom:2.5rem">
+    {% for cell in my_cells %}
+    <a href="{% url 'cell_detail' cell.pk %}" class="cell-card cell-card-mine">
+        {% if cell.cover %}<img src="{{ cell.cover.url }}" alt="" class="cell-card-cover">{% endif %}
+        <div class="cell-card-body">
+            <span class="cell-type-badge">{{ cell.get_cell_type_display }}</span>
+            <h3>{{ cell.name }}</h3>
+            {% if cell.region %}<p class="cell-meta"><i class="fa fa-map-marker-alt"></i> {{ cell.region }}</p>{% endif %}
+            {% if cell.meeting_day %}<p class="cell-meta"><i class="fa fa-clock"></i> {{ cell.meeting_day }}</p>{% endif %}
+        </div>
+        <div class="cell-card-badge-mine"><i class="fa fa-check"></i> Participando</div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="section-label-sm" style="margin-bottom:.75rem">Todos os Grupos</div>
+<div class="cell-grid">
+    {% for cell in cells %}
+    <a href="{% url 'cell_detail' cell.pk %}" class="cell-card">
+        {% if cell.cover %}<img src="{{ cell.cover.url }}" alt="" class="cell-card-cover">{% else %}
+        <div class="cell-card-no-cover">
+            {% if cell.cell_type == 'ministry' %}<i class="fa fa-church"></i>
+            {% else %}<i class="fa fa-map-marker-alt"></i>{% endif %}
+        </div>{% endif %}
+        <div class="cell-card-body">
+            <span class="cell-type-badge">{{ cell.get_cell_type_display }}</span>
+            <h3>{{ cell.name }}</h3>
+            {% if cell.region %}<p class="cell-meta"><i class="fa fa-map-marker-alt"></i> {{ cell.region }}</p>{% endif %}
+            {% if cell.meeting_day %}<p class="cell-meta"><i class="fa fa-clock"></i> {{ cell.meeting_day }}</p>{% endif %}
+            <p class="cell-meta"><i class="fa fa-users"></i> {{ cell.member_count }} membro{{ cell.member_count|pluralize:",s" }}</p>
+        </div>
+        {% if cell.pk in pending %}
+        <div class="cell-card-badge-pending"><i class="fa fa-clock"></i> Pendente</div>
+        {% endif %}
+    </a>
+    {% empty %}
+    <div class="empty-state" style="grid-column:1/-1">
+        <i class="fa fa-users"></i><h3>Nenhum grupo disponível ainda.</h3>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

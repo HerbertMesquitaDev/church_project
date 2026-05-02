@@ -1,0 +1,4305 @@
+[
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "admin",
+    "permissions": [
+      [
+        "add_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "change_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "delete_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "view_logentry",
+        "admin",
+        "logentry"
+      ],
+      [
+        "add_group",
+        "auth",
+        "group"
+      ],
+      [
+        "change_group",
+        "auth",
+        "group"
+      ],
+      [
+        "delete_group",
+        "auth",
+        "group"
+      ],
+      [
+        "view_group",
+        "auth",
+        "group"
+      ],
+      [
+        "add_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "change_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "delete_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "view_permission",
+        "auth",
+        "permission"
+      ],
+      [
+        "add_user",
+        "auth",
+        "user"
+      ],
+      [
+        "change_user",
+        "auth",
+        "user"
+      ],
+      [
+        "delete_user",
+        "auth",
+        "user"
+      ],
+      [
+        "view_user",
+        "auth",
+        "user"
+      ],
+      [
+        "add_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "change_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "delete_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "view_contenttype",
+        "contenttypes",
+        "contenttype"
+      ],
+      [
+        "add_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "change_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "delete_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "view_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "add_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "change_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "delete_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "view_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "add_sitesettings",
+        "core",
+        "sitesettings"
+      ],
+      [
+        "change_sitesettings",
+        "core",
+        "sitesettings"
+      ],
+      [
+        "delete_sitesettings",
+        "core",
+        "sitesettings"
+      ],
+      [
+        "view_sitesettings",
+        "core",
+        "sitesettings"
+      ],
+      [
+        "add_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "change_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "delete_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "view_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "add_category",
+        "events",
+        "category"
+      ],
+      [
+        "change_category",
+        "events",
+        "category"
+      ],
+      [
+        "delete_category",
+        "events",
+        "category"
+      ],
+      [
+        "view_category",
+        "events",
+        "category"
+      ],
+      [
+        "add_event",
+        "events",
+        "event"
+      ],
+      [
+        "change_event",
+        "events",
+        "event"
+      ],
+      [
+        "delete_event",
+        "events",
+        "event"
+      ],
+      [
+        "view_event",
+        "events",
+        "event"
+      ],
+      [
+        "add_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "change_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "delete_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "view_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "add_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "change_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "delete_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "view_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "add_memberministry",
+        "members",
+        "memberministry"
+      ],
+      [
+        "change_memberministry",
+        "members",
+        "memberministry"
+      ],
+      [
+        "delete_memberministry",
+        "members",
+        "memberministry"
+      ],
+      [
+        "view_memberministry",
+        "members",
+        "memberministry"
+      ],
+      [
+        "add_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "change_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "delete_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "view_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "add_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "change_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "delete_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "view_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "add_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "change_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "delete_session",
+        "sessions",
+        "session"
+      ],
+      [
+        "view_session",
+        "sessions",
+        "session"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "colaborador",
+    "permissions": [
+      [
+        "add_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "change_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "view_heroslide",
+        "core",
+        "heroslide"
+      ],
+      [
+        "add_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "change_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "view_ministry",
+        "core",
+        "ministry"
+      ],
+      [
+        "add_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "change_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "view_testimony",
+        "core",
+        "testimony"
+      ],
+      [
+        "add_category",
+        "events",
+        "category"
+      ],
+      [
+        "change_category",
+        "events",
+        "category"
+      ],
+      [
+        "view_category",
+        "events",
+        "category"
+      ],
+      [
+        "add_event",
+        "events",
+        "event"
+      ],
+      [
+        "change_event",
+        "events",
+        "event"
+      ],
+      [
+        "view_event",
+        "events",
+        "event"
+      ],
+      [
+        "add_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "change_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "view_contentcategory",
+        "members",
+        "contentcategory"
+      ],
+      [
+        "add_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "change_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "view_exclusivecontent",
+        "members",
+        "exclusivecontent"
+      ],
+      [
+        "add_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "change_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "view_memberprofile",
+        "members",
+        "memberprofile"
+      ],
+      [
+        "add_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "change_notice",
+        "members",
+        "notice"
+      ],
+      [
+        "view_notice",
+        "members",
+        "notice"
+      ]
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "usuarios",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$OHRmVIaVZHjGMOmGmuxtcY$oswsc9YB/QS2qxVi0Zow1pEFxrHLw6nEy6aWDEIZjNo=",
+    "last_login": "2026-04-25T16:43:13.517Z",
+    "is_superuser": true,
+    "username": "herbert",
+    "first_name": "Herbert",
+    "last_name": "Mesquita",
+    "email": "herbertmesquita@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-13T03:29:37.741Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$cGO33hVP0c9eX5jKo3viwq$cWCx3gdVZrvV+hc3rbsfJ1o7rPnaXs20atcGkv3qa2Y=",
+    "last_login": "2026-04-25T16:34:49.292Z",
+    "is_superuser": false,
+    "username": "adeumaria",
+    "first_name": "Adeumaria",
+    "last_name": "Pitombeira",
+    "email": "adeumaria@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-13T04:00:46.227Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$JiKrCbUY9wDAA9IkREkbFV$NtMIy2AVlmQQ9yOWrP8iFSw4dMT+f9SSclc/TFo9AnI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "jlucas",
+    "first_name": "João Lucas",
+    "last_name": "Camargo",
+    "email": "jlucas@email.com.br",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-13T04:37:26.305Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$rbgCxHIxm8Od6wIZTloPFG$7p9DS53auzVlz/zIx6uaDfTr/RgOALL/btrF1n3XOxM=",
+    "last_login": "2026-04-20T17:57:03.230Z",
+    "is_superuser": false,
+    "username": "erick",
+    "first_name": "Erick",
+    "last_name": "Lincoln",
+    "email": "ericklincoln@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-17T15:23:24Z",
+    "groups": [
+      [
+        "colaborador"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$9wN2v6iIiWNqRCfVPKuuiA$O2ohNrndivUAm6cpl8Tc9HTpv641WCZQd/TQFDKqu5c=",
+    "last_login": "2026-04-25T17:16:09.843Z",
+    "is_superuser": false,
+    "username": "yohana",
+    "first_name": "Yohana",
+    "last_name": "Silva",
+    "email": "yohana@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-22T13:23:24.250Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$lQRBuRpcspnLeXH8pDcLOp$KbG+VLer6OYxbcAafrpfGZ/ixH1RrSnvQg3qDGlp/VA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Mendes",
+    "first_name": "Marcelo",
+    "last_name": "Mendes",
+    "email": "marcelomendes@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-22T14:12:49.023Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$720000$pJWD60Sf9KDgHV2e3SinCn$WCqXEsx4bdSZbUWTR0m4dNuAQ539K5zQ8S7trkSKxHk=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "awmesquita",
+    "first_name": "Alexandre",
+    "last_name": "Waleriano",
+    "email": "awmesquita@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-24T17:12:43.697Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "0zpq3pr3buqtc24w6mx02y0ih3g65t50",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hAo03bapXvPQICZWtSCKXRlvLs26UK3_73_XsK6rc52K7zaSGIUWpx-N-_CndMO6ObSNcuQU12jl7siD1rkJRM_zof7F5hdmb_vQAZYGQfUKuQJPamAvvOD8QgdaeLgPHDXDFMwjW7anoxuATVD4wB5jxYuJeZkY4rV1rhwqW55WjHqvu-1MoBGAioclHl_AIxWRoI:1wGXnP:OmfFUAAUGHLQu1Cw1bW-L6khS78n9Npko9CJWlG0lHw",
+    "expire_date": "2026-04-25T08:21:23.487Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "2kfprd6ei0ipnigi6jn2ofsupqj6530d",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyFsoUB79O43EGC3FrVgCj0Z_12b9KDXN_PmxZzf2uy2SqtLyEYG7PS7BR_vlHeAN5-vhceS25oC3xV-0MovBelxPty_wOzr_H1HlIqE9Ap7YWmyAUW0QYdBBqs0AlL0QZHuhinKDrreoIReWSDVeWVpj1aqNZXsUk7NtbRQbX55OjaCMQaEMABcajFoad8fi-hGfA:1wGX4h:ACC0_GHjtu0_kcq1foqWMjLJ9YWY7z2Y57h3mixJlWo",
+    "expire_date": "2026-04-25T07:35:11.369Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "3nyoewcfqku8gi2g9c47e19qgvzhg663",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYwGtcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVtJBAQYlIXeeNUQoRvAKQUy9D6IQkjxZ9T8Zatbmi7ydAa2jEPVpjralkl3JqrqVnrI2eL8cGiYhCmy3HtQCwSn--F4hFKg:1wGIgD:uQPfedEfENmNaPTQvUEDHONW0hDvBntd_0gzQwWNsys",
+    "expire_date": "2026-04-24T15:47:57.416Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "4g5sy64b4g7m00qx7nnfi6dosa3i61z9",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyGwCFt69O43kKVQi1owhZ6M_26b9KDXN_PmzRytbXJrjYtLgfVMstPv5ml4xLyDcKd8K3wouS3J813hB638WkJ8Xg73LzBRnbY3RK_CWUigoEQkY7zWSiGCVwBy7GQIRkjyaNF3pK1Vmyu6bgS0mgbcozXWmkp2KafmWppjbTS_HOslojFgUSIHbYyCzxfTA0T_:1wEYY1:LNGAuhpIMT6svevGIXlNdHImVmClxu96FJ2iCVyNHww",
+    "expire_date": "2026-04-19T20:18:17.288Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "5tuimv7o5hytvm5kir6plcrjjzspzlt1",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRjPFaK4UIXgHIycoQjJDksUdvSfe92lxh7QTYaxpxj9ZYayrZpZyaa-kZa6Pny7FBIhoE1IB8020nP1_TEUUE:1wExzb:cJslMOPXBTY21NfCnSZOmNXBWIVVl_Ne7noIIjUTvYM",
+    "expire_date": "2026-04-20T23:30:27.287Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "793eiu1h3uye6py4x826xrpnscctkqov",
+  "fields": {
+    "session_data": ".eJxVjEsOwiAUAO_C2hCg8IAu3XsG8vhoUQum0JXx7oakC93OTOZNHO59cXtLm8uRzESS0y_zGB6pDBHvWG6Vhlr6lj0dCT1so5ca0_N8tH-DBdsytiBAC4jXKUGykzdmsgomHQW3SgEyjByYsDpwmaQ1JprgvdIqohaS2TFtqbVci8sld9fzmlrH9eXIzLUGEIZZSyUYZaT6fAH7wUUU:1wEY7v:L2W9U4gHIWJO91Ux8mPsifKk6mdW9ZSsp_M9ASCK-ws",
+    "expire_date": "2026-04-19T19:50:19.485Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "7ff2wqr8apxfphn1ftcxdyn1n032lcde",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFgDYtdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9VfQQOiEVBRCRjPFaAyAqD0rJycoQjJDksUdvSfc9bK6wdlLYaxpxj9ZYayrZpZyaa-kZa6Pny7FBIhqj0FrgYGRnsft8ARgdRTo:1wEY4R:eagSemgsQQvbDYxaMg87Qpm8GEOdHxmNJBDNGzjELJo",
+    "expire_date": "2026-04-19T19:46:43.369Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "7ixyqw7gsikoswqqys1ye4bogzziq3h0",
+  "fields": {
+    "session_data": ".eJxVjMsOgjAQRf-la9PAUFqGpXu_oZk-RqpSDC0r478rCQvd3nPueQlLW53sVuJqUxCjAHH63Rz5e8w7CDfK10X6Jdc1Obkr8qBFXpYQH-fD_QtMVKbvO2ruegWGsfPsFQ-OgXqtUWF0SMqTYqea1rDvwRF4AIXMnQ4aAra4R0ssJS3ZppyqrWmOpdL8tGJsjdEaDGIrGzQD9u8PRz1GhQ:1wEY6B:xi_UrgrAr5T0IGhEsMhcDQjhD-47b8vmEsv-HRYLcdo",
+    "expire_date": "2026-04-19T19:48:31.100Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "9bddf44nsprrumogiien4ow4w2bx681x",
+  "fields": {
+    "session_data": ".eJxVjMsOgyAUBf-FdUN4CBdcdt9vIBfBSlvBCK6a_ns1cdFuz8yZN3G4tcltNa4uBdITTi6_m8fhGfMBwgPzvdCh5LYmTw-FnrTSWwnxdT3dv8CEddrfInoZOsYFBskiau2VkhJAeCkEHw0PQTOOHix4g8paubvMmFGAVTjAEa2x1lSySzk119Ica8N5caTnABoYNxqoYp2y5vMF0ttFAw:1wErJj:0B_SFiqHeD6Vg9WlCxpabx-NeW4NcZgCLyXc_GZPmCA",
+    "expire_date": "2026-04-20T16:22:47.523Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "bcf4sdzyq5d3vkot72odzeorou4f41kg",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGlnJxt-U9JzBWn-WGIiDYqdC3B0ipYD2zbx5MYdbm9xW0-pyZCMDdvrdPIZ7KjuINyzXhYeltDV7viv8oJVflpge58P9C0xYp-87KRqkAE12CBQEGU-AUikrbPIWRUBBXnS9piDBIwQAYYkGFRVE29s9WlOteSkul9xcy3OqDeenY2OvtTKdMUbzoZNSWXh_AI2bRrI:1wFJ9r:k8QpmLeeBWPFNz-iDmHSttqQJtjDv1dtRGJp-G-CJOU",
+    "expire_date": "2026-04-21T22:06:27.310Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "bwlivslmnmmcnirxm3yfn9765r7i9y29",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRjPFaK4UIXgHIycoQjJDksUdvSfe92lxh7QTYaxpxj9ZYayrZpZyaa-kZa6Pny7FBIhrUqgPLtbQI2ny-F-5FNg:1wF4jM:0eXHKzmQj152WivY82gGxINZgiw8ZqU7B8uJGJVgvs0",
+    "expire_date": "2026-04-21T06:42:08.523Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "c0bqm9zoxf352h5c5om3of4vpo5iw1eh",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEDZhdcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxggp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9ZfQq9J2QFFQXCcBrrRSi9EpKMRkRAnSCPFr0hrS1anM7YyaJVtOIe7TGWlPJLuXUXEvPWBs9X44NAhFAGuwt1z2CAfh8ARhfRUU:1wEYIP:ZRMCk5HTj3PWhbP7J5DFu5Lz-GSy14E2g1UDxmT7lAI",
+    "expire_date": "2026-04-19T20:01:09.553Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ddqw3x029vs1ofw5bhliukgi1ytjuw06",
+  "fields": {
+    "session_data": ".eJxVjDEOwjAMRe-SGUXUdVLMyM4ZItuJaQG1UtNOiLtDpQ6w_vfef7nE69KntZY5DdmdHbjD7yasjzJuIN95vE1ep3GZB_Gb4nda_XXK5XnZ3b-Dnmv_rUu0NiB0Rq2aop3EgEOMhFSEGJXRBI9NZxpAGBQAyayNOUKmhtz7A_mDOEg:1w6NXN:xudfCmw8jYXyY__dAjVIzN9ROmg5K7LbtelG2D6ZwmY",
+    "expire_date": "2026-04-11T06:52:49.662Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "dz1arnbeg99bozqkzhmsrq4tx53p99e1",
+  "fields": {
+    "session_data": ".eJxVjDsOAiEUAO9CbQjfB1jaewby4KGsGkiW3cp4d0OyhbYzk3mziPtW4z7KGhdiZ2bY6ZclzM_SpqAHtnvnubdtXRKfCT_s4NdO5XU52r9BxVHnFhQ4BXTTBUrQyXsdLGhHSgZrAQWSBKGCy9IUE7wnn1OyzhI6ZURgny-zAjal:1w37c4:-Yn7Ri74w8oSBElgUUf3tCbAT1-BerImUYToPlKpgXQ",
+    "expire_date": "2026-04-02T07:16:12.997Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "egg5e4p6nlrrryin57g8991w5tme3ku8",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSE-Zhdcps8Z0GJwTD44MriKcvfYkoukfTNv3szT2ia_1rT4HFnPJDv9boGGeyo7iDcq15kPc2lLDnxX-EErv8wxPc6H-xeYqE7bW6WgYyekoqhFIoBgjNaIKmil5GhljCAkBXQYLBnn9OYKa0eFztCAe7SmWvNcfC65-ZafqTZ6vjzrJSJY6KATHI2TAPj5AhgfRTw:1wFXf6:4FgvKpHqDT62V5xfSVDD5XX_DrreN7JiJrFWz7IDvPU",
+    "expire_date": "2026-04-22T13:35:40.764Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ehmxy4vai89ziv033jc45u3w42g1fskn",
+  "fields": {
+    "session_data": ".eJxVjDkOwyAUBe9CHSH47C7T5wzoY3BMFogMrqLcPbbkImnfzJs38bj22a8tLT5HMhBOTr9bwPGeyg7iDcu10rGWvuRAd4UetNFLjelxPty_wIxt3t6QgoiSccAoWEKtg1JCGANBAPDJ8hg14xiMM8Gick5sLrN2AuMUjmaPttRarsXnkrvv-Zlax-fLk4EbozVYyRS1IK3kny_S0UT7:1wEYCr:_3tf64qNnLpzJgVoTRk42hMAWbnH9tz2emYmyBdn8Q0",
+    "expire_date": "2026-04-19T19:55:25.830Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ezz2ifai023xz0zugf2h1hnwfzzztk0f",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDAsu0-cMaDE4Jh8cGVxFuXtsyUXSvpk3b-ZpbZNfa1p8jqxnwE6_W6DhnsoO4o3KdebDXNqSA98VftDKL3NMj_Ph_gUmqtP2limo2AmQFJVIZEzQWilEGZSUMFqI0QiggA6DJe2c2lxh7SjRaRpwj9ZUa56LzyU33_Iz1UbPl2c9IBprXAeaC9kJAfbzBRfERSc:1wFYu7:UAaeUSkQtTA3PQ0KjSW6q9mcZAWWyQsAV5IGGcA5eb8",
+    "expire_date": "2026-04-22T14:55:15.049Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "f1s1lg9yolgs5csrfjbypeimkru830aj",
+  "fields": {
+    "session_data": ".eJxVjs0KgzAQhN8l5yJrou6ux4LPETY_YmjVYuKp9N1bi4f2MjDzzcA8lZW9THbPcbMpqF616vKbOfG3uBzAr1usTpurYZZ0v57wbzFJnj51QCIHjTgSYBg1kKHOodYu-IbRSPB0qA4dMsFoIhJi05GJzEzfGznmnNbFpiUVW9Icc5H5YVVfI2IN0NZcGWBDQK83bmo_ZA:1wGX1b:cwWYXcpXU31cMpeA-mN7H-bJSZdoOjd-z1ICWCDIUmc",
+    "expire_date": "2026-04-25T07:31:59.318Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "he6dugyhmcc6xw7kklm3uatq0z566w9q",
+  "fields": {
+    "session_data": ".eJxVjDkOwyAUBe9CHSE-Oy7T5wzoY3BMFogMrqLcPbbkImnfzJs38bj22a8tLT5HMhAgp98t4HhPZQfxhuVa6VhLX3Kgu0IP2uilxvQ4H-5fYMY2b2-egoiSAccoWEKtg1JCGMOD4BwmCzFqBhiMM8Gick5sLrN24sYpHM0ebam1XIvPJXff8zO1js-XJwMYo61WAhwFJTWT8vMFF-hFLw:1wFXq3:TVjb67F7UdZplYTDbPl6SeNJ1BoL7EH5KBe_BQXlbQI",
+    "expire_date": "2026-04-22T13:46:59.170Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "hf84nf3ctr9k4f917ruhjyhna8t4ohsi",
+  "fields": {
+    "session_data": ".eJxVjDkOwyAUBe9CHSHgs7pMnzOgj8ExWSAyuIpy99iSi6R9M2_exOPaZ7-2tPgcyUA4Of1uAcd7KjuINyzXSsda-pID3RV60EYvNabH-XD_AjO2eXuLFCBKxgVGYAm1DkoBGCMCCMEny2PUjGMwzgSLyjnYXGbtJIxTOJo92lJruRafS-6-52dqHZ8vTwZujBZMSKUokxqkhc8XFytFJQ:1wClOh:XGBxh1HMBBy5PfOz3lKS67LaoZ8vHBJPkTxyuSPv_74",
+    "expire_date": "2026-04-14T21:36:15.051Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "hgoildrcr35s7u3qxtzvdmipphunpzrh",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRjPFaK4UIXgHIycoQjJDksUdvSfe92lxh7QTYaxpxj9ZYayrZpZyaa-kZa6Pny7FBIhorLGLHQdlOGPh8ARgFRTI:1wFJ82:A7XMbvmH4jIIFoMJ8p_2wjUQ6zNPYHiqOJNX-ddNKPk",
+    "expire_date": "2026-04-21T22:04:34.244Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "htg6m5nq50bvlop71visalnmerxzitlb",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgwE6_m6fxHvMOwo3ytfCx5LYkz3eFH7TySwnxcT7cv8BMdd7eMnoVOgGSghKRjPFaK4UovZISJgshGAHksUdvSfe92lxh7SSx1zTiHq2x1lSySzk119Iz1kbPl2MDIBprUFrLLYDqVPf5AhhBRTY:1wFYLo:Wj5YZ2ONFF28txdri8mzHXQL9v2krtTtTxq05fSGsr4",
+    "expire_date": "2026-04-22T14:19:48.824Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ierzygsdkl1vunqim0zotrxftus6h2ay",
+  "fields": {
+    "session_data": ".eJxVjMsOgyAUBf-FdUN4CBdcdt9vIBfBSlvBCK6a_ns1cdFuz8yZN3G4tcltNa4uBdITTi6_m8fhGfMBwgPzvdCh5LYmTw-FnrTSWwnxdT3dv8CEddrfInoZOsYFBskiau2VkhJAeCkEHw0PQTOOHix4g8paubvMmFGAVTjAEa2x1lSySzk119Ica8N5caTnABqUsKCoYpZ1ID9fGBpFNg:1wF4c3:5kFa3cTBLr2Et-yyk-QGhtPDWMK0ipb-f2yvjcsg-_U",
+    "expire_date": "2026-04-21T06:34:35.517Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "jeilqvj03zvbytt9jl73mjji13pfxzfs",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAURP-FtSE8Che6dO83kEuhFrXQFLoy_rtt0oWuJpk5c97E4dYmt9W4uhRITzi5_HYeh2fMxxAemO-FDiW3NXl6IPRcK72VEF_Xk_0TTFin_S2il6FjXGCQLKLWXikpAYSXQvDR8BA04-jBgjeorJU7y4wZBViFAxzSGmtNJbuUU3MtzbE2nBdHeg6goTNcKar2FPrzBdMXRQU:1wF3MJ:ajpU8mbFqnghQgWUVwbmbCd6g1Jxj9H1xs_M4lcn_3w",
+    "expire_date": "2026-04-21T05:14:15.577Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "jwm19nqvu8od5afpbuui0k6hov61bsjv",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSGzGBZcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxggp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoZ-k4ABdlF0torJSUieAkgJiNC0J0gjxa9IWWt3NzOmAnQKhpxj9ZYayrZpZyaa-kZa6Pny7FBIGpUvZKGWwRAhZ8vGDVFPg:1wF51G:dQa3dtfmOwC40FnE1D6jL-tjoBPbmbggRb2UQuAZaa8",
+    "expire_date": "2026-04-21T07:00:38.978Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ksi6gvi1uf38imhyjcufl0yn745jdjs4",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgwE6_m6fxHvMOwo3ytfCx5LYkz3eFH7TySwnxcT7cv8BMdd7eMnoVOgGSghKRjPFaK4UovZISJgshGAHksUdvSfe92lxh7SSx1zTiHq2x1lSySzk119Iz1kbPl2MDIBrUErqOG4GAny-N9kTD:1wF4Oe:bLquuK0xkZ17aAdQqqRAFvHjfe1oXU8GQok3zP7ADOQ",
+    "expire_date": "2026-04-21T06:20:44.617Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "m3jvw3xd8vcdplbhj365txn2kyfar05b",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgwE6_m6fxHvMOwo3ytfCx5LYkz3eFH7TySwnxcT7cv8BMdd7eMnoVOgGSghKRjPFaK4UovZISJgshGAHksUdvSfe92lxh7SSx1zTiHq2x1lSySzk119Iz1kbPl2MDIBoUSoHkHVgU-vMF0ldE8A:1wErh2:05mg5ZrVUzkb3jYVVqmR5OdO2z2jnTf9-uInWnqXqv4",
+    "expire_date": "2026-04-20T16:46:52.428Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "mbt1ofzy1muhetmu7pfptq2xrstfxsxc",
+  "fields": {
+    "session_data": ".eJxVjDkOwjAQRe_iGllk7HhJSc8ZrPEyxCw2ip0KcXeIlALa_95_L-Zw7bNbW1pcjmxiwA6_m8dwS2UD8YrlUnmopS_Z803hO238XGO6n3b3LzBjm7_vpEiMEjRZEShIMp4AR6WstMlblAEleXkcNIURPEIAkJZIqKgg2sFu0ZZay7W4XHJ3PT9S6_h4OjYNWis9CmUMNzAYod8fRzhGfw:1wF4nY:4AgVPIwP7lgQeT0haxAjQ8hiB3JlGR0QDRKXm19WQ38",
+    "expire_date": "2026-04-21T06:46:28.830Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "n728lgfkh7hwejwi2648rqfmvsv1qth7",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAQRf-FtSF2mIJ06d5vIMNjLGrBFFwZ_12buNDtPeeep3D06LN7tLS6HMUkQOx-N0_hmsoG4oXKucpQS1-zl5siv7TJU43pdvy6f4GZ2vx5J81qRDBsVeCAfPAMNGpt0SZvCQMhe9wPhsMIniAAoGVWOmqIdrBbtKXWci0ul9xdz0tqnZa7E9NgjD5oC2aQqJTZo369AY1pRqk:1wFYrn:o4PMfvPBDuwjHxPHqdYldNlWNoodYq0r_6ffzLMrT1k",
+    "expire_date": "2026-04-22T14:52:51.447Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ndgfpmzu122pbvsk8mhjr6ehu74xuflx",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYbBZcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRtPZ9rxQieAUgJyND0EKSR4veUG-t2lxhzARoexpxj9ZYayrZpZyaa-kZa6Pny7FBImoUAoTlALpDaz5fF1VFLw:1wEqsz:Lgateno0-nd9JcDx2J-Qhmgpp_DmhtPTp7xVeL2WzSY",
+    "expire_date": "2026-04-20T15:55:09.240Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "p46zwv51c3prs40q33ed4jq5iiabit53",
+  "fields": {
+    "session_data": ".eJxVjDsOwjAQBe_iGll4s7HjlPScwVp_lpiPg2KnQtwdIqWA9s28eQlHa5vcWtPichSjAHH43TyFWyobiFcql1mGubQle7kpcqdVnueY7qfd_QtMVKfvO2nuegTDtgsckAfPQL3WFm3yljAQssejMhx68AQBAC1zp6OGaJXdojXVmuficsnNtfxItdHj6cSojNFqAGVQ9soOgN37A4z4RqQ:1wCg7a:0LNPlmCpPb2wTKwiT_Bda974a48-Asijpyqazo_Ss7Q",
+    "expire_date": "2026-04-14T15:58:14.524Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ptepjc279hvh8vzhynn6lhwjrncqxnwh",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDAsu0-cMaDE4Jh8cGVxFuXtsyUXSvpk3b-ZpbZNfa1p8jqxnwE6_W6DhnsoO4o3KdebDXNqSA98VftDKL3NMj_Ph_gUmqtP2limo2AmQFJVIZEzQWilEGZSUMFqI0QiggA6DJe2c2lxh7SjRaRpwj9ZUa56LzyU33_Iz1UbPl2c9IBprjNDIHTjA7vMF0y5FBg:1wFY1x:Ofd78ZcfU7DcqP0ZP7f2IWvUPi1l9zelycFr6Z-rmFk",
+    "expire_date": "2026-04-22T13:59:17.934Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ptmnwvv8x0r0ug24xw4utz0t8bwu8vb6",
+  "fields": {
+    "session_data": ".eJxVjDsOgzAQRO_iOkL-rD9QRuIc1tpehJUAEWuqKHePkCiScua9mbeIeLQ5Hkx7rEUMQonbb5cwP2g9Qd526q7I3bhgfd4v-LeYkedTLwZIGoRiZaAppCJzSC71JgVwRRXKmICc7qdstNLWF6MsBEWgEQKdp0zMdVtjXWuLrS7EDZdXFIPy3isDXtpO-tCDdZ8v4HBAuA:1wGfuz:y7eiAyRFyM8y6P9fMWqzjvC_4QykHsBM5ZWyZg0n3B0",
+    "expire_date": "2026-04-25T17:01:45.084Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "q100wm4i7tnp5543veymffv0cuxom8vz",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyGwWBZ69O43kKVQi1owhZ6M_26b9KDXN_PmzRytbXJrjYtLgfVMstPv5ml4xLyDcKd8K3wouS3J813hB638WkJ8Xg73LzBRnbY3RK_CWUigoEQkrX3XKYUIXgHI0cgQtJDk0aI31FmrNlcYMwLajgbcozXWmkp2KafmWppjbTS_HOslotZgLGgOFixK_fkCGCxFPA:1wEYLG:-8q93DmnZ_PUw71ylodDXjz3o7rlR7JqhOaAzUaB8K8",
+    "expire_date": "2026-04-19T20:04:06.319Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "q6aptv3q8l5yeitllul7ccf7atj7nhxt",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFgDWtcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9VfQQOiEVBRCRjPFaAyAqD0rJqZchGCHJo0Xfk7YWNlf0_aTQahpxj9ZYayrZpZyaa-kZa6Pny7FBIqLowKDg1mpApT9fF8FFNA:1wGIEh:F3tZSB74zMwk3ne3eQc5PuEhY8qfc4z1uf_mS31vFZE",
+    "expire_date": "2026-04-24T15:19:31.004Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "qy52r5ybgcalm6y0hqb2ma3nsxjg3dp8",
+  "fields": {
+    "session_data": ".eJxVjDkOwjAUBe_iGlnxHqek5wzW9_KJgdgodirE3SFSCmjfzJsXcbD12W0trS5HMhFOTr-bh3BPZQfxBuVaaailr9nTXaEHbfRSY3qcD_cvMEObv--kUSjJDVoRMEgcPXJQWltpk7cgA0j0cmAGg-IeeOBcWkSho-bRMrtHW2ot1-Jyyd31vKTWYXk6MjFj9GgGJhQVcjBMvz9GkEZq:1wFZ5j:UcwmLlj6MXnibRvQkmX3HqWCCSq_NMm2S6tZ2x7Oi8g",
+    "expire_date": "2026-04-22T15:07:15.356Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "r10pya03u1uf4wnxcup9yetrboxzl4fg",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWDAsu0-cMaDE4Jh8cGVxFuXtsyUXSvpk3b-ZpbZNfa1p8jqxnwE6_W6DhnsoO4o3KdebDXNqSA98VftDKL3NMj_Ph_gUmqtP2limo2AmQFJVIZEzQWilEGZSUMFqI0QiggA6DJe2c2lxh7SjRaRpwj9ZUa56LzyU33_Iz1UbPl2c9IBoU0piOawBw0n6-F4ZFKw:1wErWa:1DbNByhOFhNJ9tWg4yCEvdFTIU2iHIKBT0r2Dz3aaXw",
+    "expire_date": "2026-04-20T16:36:04.526Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "rvg9gnau2utejo3924hsggpjswxsg75b",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYDItdps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRjPFaK4UIXgHIycoQjJDksUdvSfe92lxh7QTYaxpxj9ZYayrZpZyaa-kZa6Pny7FBIhoEo2XHOwNGwecL0rxE9w:1wExjG:aZmMI1Gl2-34RVutqvPPERGsY-r9pvUUe53dW_mr2-0",
+    "expire_date": "2026-04-20T23:13:34.466Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "s3r23m0di8i699fvjvg71j4e37w3vug2",
+  "fields": {
+    "session_data": ".eJxVjMsOgjAQRf-la9PAMLSUpXu_oZk-RqpSDC0r478rCQvd3nPueQlLW53sVuJqUxCjAHH63Rz5e8w7CDfK10X6Jdc1Obkr8qBFXpYQH-fD_QtMVKbvOyruegTNpvPskQfHQL1SBk10htATssOm1ex7cAQeAA1zp4KCYFqzR0ssJS3ZppyqrWmOpdL8tGJstVa6x67REpQZBsD3B41KRq4:1wF4xX:1vxnZ0n5bkYBj8cZ_9NLlW8JPUc-P0nwom2wPrOIxQ0",
+    "expire_date": "2026-04-21T06:56:47.274Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "scityc9qhcerqoyvxh22x29c93v4aa11",
+  "fields": {
+    "session_data": ".eJxVjEEOwiAQRe_C2hCGsUzp0r1nIEOhFrXUFLoy3t026UK3_73_3sLxWke3lri4FEQnQJx-N8_9I-YdhDvn2yz7Odclebkr8qBFXucQn5fD_QuMXMbtraPHcFagOaCKbIxvGkQi7VFrGFoIwShgT5Z8y421uLmqbQdNtuGe9miJpaQ5u5RTdTVNsVSeXk50QGRIAYCViAbJfL7SakT2:1wEr7f:gFbNq8PYFN6gkp_ws9tQFYP-ZM4fMVRUl3psoJIQ1Po",
+    "expire_date": "2026-04-20T16:10:19.347Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "swqs1it5cyx1ihsdz8m1qu4wjsjs8vrq",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFYDGtcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgkp1-N0_jPeYdhBvla-FjyW1Jnu8KP2jllxLi43y4f4GZ6ry9IXoVOiGBghKRjPFaK4UIXgHIqZchGCHJo0Xfk7ZWba7o-wnQahpxj9ZYayrZpZyaa-kZa6Pny7FBIhoDFoTmVnbagvp8ARfCRTA:1wEYPl:_k0DT65OESNnYpE80owgWqRobEao54pum2GM-W66mP0",
+    "expire_date": "2026-04-19T20:08:45.926Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "tker03aw0bsidhwec0jhq90y8rmwx89s",
+  "fields": {
+    "session_data": ".eJxVjMsOgyAQRf-FdUMYRhx02X2_gQyClT6wEVw1_fdq4qLd3nPueQvHa53cWuLiUhC9AHH63TwP95h3EG6cr7Mc5lyX5OWuyIMWeZlDfJwP9y8wcZm2t44eQ6NAc0AVuW29MYhE2qPWMFoIoVXAnjrylk3X4eYqa0dNneGB9miJpaQ5u5RTdTU9Y6n8fDnRAxGppkFD0iIAWvh8AReARSg:1wGIPl:iD6pinPyacn07O4PoGsMHGNGRppTj0f2NmhyOavZIj4",
+    "expire_date": "2026-04-24T15:30:57.839Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "ufn4vxdx4lioa771lo1i79mge7fh5g2e",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSFgDQsu0-cMaDE4Jh8cGVxFuXtsyUXSvpk3b-ZpbZNfa1p8jqxnkp1-t0DDPZUdxBuV68yHubQlB74r_KCVX-aYHufD_QtMVKftrVKA2AmpKIJIZEzQGgBRBVBKjlbGaISkgA6DJe0cbK6wdlToNA24R2uqNc_F55Kbb_mZaqPny7NeIhqjXKcNF0pb6ODzBRfdRTA:1wEYTo:OmkrFAiREPh5luI0HSvWwgwrqxXhxy2JpNAAOhJykM0",
+    "expire_date": "2026-04-19T20:12:56.040Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "uj3cbjqlqym0cr6j6k7y9k2397bp1nl6",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQBe9CHSEWbBZcps8Z0GJwTD4QGVxFuXtsyUXSvpk3b-ZobbNba1xcCmxgwE6_m6fxHvMOwo3ytfCx5LYkz3eFH7TySwnxcT7cv8BMdd7eMnoVOgGSghKRtPZ9rxSi9EpKmAyEoAWQR4veUG-t2lxhzCTR9jTiHq2x1lSySzk119Iz1kbPl2MDIGoUpkPgGo21YD5fGCpFQg:1wEt2F:ZiKsns8dtiMoVIMyWP2-SagAnUQgq6oyi_v_H3jdAi4",
+    "expire_date": "2026-04-20T18:37:51.686Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "vkksf77h8llpnsfa8ly7cl4uuwk0kljt",
+  "fields": {
+    "session_data": ".eJxVjs0KwjAQhN8lZynpJu1uehR8jrD5KQ3aKt30JL67VnrQy8DMNwPzVJ63OvlN8upLUoPq1Ok3CxyvedlBvK-5Oaw0l5nL7XzAv8XEMn3qGomCthyItdMjaDLUBwQIKVqHhlOkXSH16EiPJiMh2p5Mds7R94ZkkXJffFlK9bXMWSrPD6-GFhFbY03XNgAWHMHrDW5_P2M:1wGfpH:9D2wPrbOMzKn5czSH1h3AR-Dv0T2xzGT9YpZweRsXHQ",
+    "expire_date": "2026-04-25T16:55:51.229Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "w9h107deh4awhc2dgcad1g8j0tfd40ok",
+  "fields": {
+    "session_data": ".eJxVjDsOwyAQRO9CHSEWbBZcps8Z0GJwTD4QGVxFuXtsyUXSjWbevDdztLbZrTUuLgU2MGCn387TeI95H8KN8rXwseS2JM93hB9r5ZcS4uN8sH-Cmeq8vWX0KnQCJAUlImnt-14pROmVlDAZCEELII8WvaHeWrWxwphJou1pxF1aY62pZJdyaq6lZ6yNni_HBkDURlgrJO8AtoCfLxfERTI:1wFJQE:cdkYKVgOB1HY1l1dZApEV3lC1TnuwikrmMxQxl0M8AM",
+    "expire_date": "2026-04-21T22:23:22.419Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "wik6xun96jmqsk4ht53wo1997aw3vj6k",
+  "fields": {
+    "session_data": ".eJxVjMsOgyAUBf-FdUN4CBdcdt9vIBfBSlvBCK6a_ns1cdFuz8ycN3G4tcltNa4uBdITTi6_m8fhGfMBwgPzvdCh5LYmTw-FnrTSWwnxdT3dv4MJ67TXInoZOsYFBskiau2VkhJAeCkEHw0PQTOOHix4g8paubvMmFGAVTjAcVpjralkl3JqrqU51obz4kjPAbSBPeDUKNUx9fkC0qBE9Q:1wFZ5V:0hdXEp0i7z9Lu-SwB8LKUGYkJt4hYepfrXBbxgRdOZk",
+    "expire_date": "2026-04-22T15:07:01.861Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "yuex8sf5km5zyd4h8hkkea18k89m5hky",
+  "fields": {
+    "session_data": ".eJxVjMEOwiAQBf-FsyEsCEt79O43kKVQi1owhZ6M_26b9KDXN_PmzRytbXJrjYtLgfUM2Ol38zQ8Yt5BuFO-FT6U3Jbk-a7wg1Z-LSE-L4f7F5ioTttbRq_CWYCkoEQkY7zWSiFKr6SE0UIIRgB57NBb0l2nNldYO0rsNA24R2usNZXsUk7NtTTH2mh-OdYDokEN2gBHYSyozxfSx0T5:1wF4FF:_lYglNP76fY833BPUobpq9s93RQtpo5GLOrnWYAiRUg",
+    "expire_date": "2026-04-21T06:11:01.716Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "zo5r1friifysirtc5ldw4q6n77j3m70i",
+  "fields": {
+    "session_data": ".eJxVjMsOwiAURP-FtSE8Che6dO83kEuhFrXQFLoy_rtt0oUms5o5c97E4dYmt9W4uhRITzi5_HYeh2fMxxAemO-FDiW3NXl6IPRcK72VEF_Xk_0TTFin_S2il6FjXGCQLKLWXikpAYSXQvDR8BA04-jBgjeorJU7y4wZBViFAxzSGmtNJbuUU3MtzbE2nBdHeg6ggWkNhnKl9nSfLxfyRTM:1wEsZK:qlnp5jH7zHVVLAxa8K2C_V9VtBb3IgQZeNqWKCsGHA4",
+    "expire_date": "2026-04-20T17:42:58.168Z"
+  }
+},
+{
+  "model": "core.sitesettings",
+  "pk": 1,
+  "fields": {
+    "church_name": "Assembléia de Deus no Brasil",
+    "tagline": "SEDE",
+    "about_text": "Nossa igreja é um lugar de fé, comunhão e transformação. Somos uma comunidade cristã comprometida em anunciar a Palavra de Deus, fortalecer vidas através do evangelho e servir à sociedade com amor, dedicação e propósito.\r\n\r\nDesde a nossa fundação, temos buscado cumprir a missão deixada por Jesus Cristo: levar esperança, fé e salvação a todas as pessoas. Acreditamos que a igreja é mais do que um templo físico; ela é formada por pessoas que desejam viver os ensinamentos de Cristo e compartilhar o amor de Deus com o próximo.\r\n\r\nNossa comunidade é composta por famílias, jovens, crianças e idosos que caminham juntos em fé, aprendendo diariamente a viver os valores do Reino de Deus. Aqui você encontrará um ambiente acolhedor, onde todos são recebidos com carinho, respeito e alegria.\r\n\r\nRealizamos cultos, reuniões de oração, estudos bíblicos e diversas atividades voltadas ao crescimento espiritual, à comunhão entre os irmãos e ao fortalecimento da família. Cada encontro é uma oportunidade de adorar a Deus, aprender mais da Sua Palavra e experimentar uma vida transformada pelo poder do Espírito Santo.\r\n\r\nNosso compromisso é continuar sendo um instrumento nas mãos de Deus para alcançar vidas, restaurar corações e anunciar as boas novas do Evangelho.\r\n\r\nSeja sempre bem-vindo. Este é um lugar onde você pode crescer na fé, encontrar esperança e viver o propósito que Deus tem para sua vida.",
+    "address": "Rua do Sul, 54 Coophamat",
+    "maps_url": "https://maps.app.goo.gl/5AUs5PPScqAfwzrFA",
+    "phone": "06733864753",
+    "email": "contato@adbrsede.com.br",
+    "facebook_url": "https://www.facebook.com/igrejaadbrsede",
+    "instagram_url": "https://www.instagram.com/adbrsede",
+    "youtube_url": "",
+    "logo": "logos/logo_adbr_horizontal_2XK7uyh.png",
+    "hero_image": "hero/Captura_de_tela_de_2026-03-12_23-40-37.png",
+    "hero_title": "Bem-vindo à nossa Igreja",
+    "hero_subtitle": "Aqui você é sempre Bem Vindo(a)",
+    "color_primary": "#C9A84C",
+    "color_secondary": "#1A2340",
+    "color_accent": "#8B6914",
+    "pix_key": "10910785000193",
+    "pix_name": "IGREJA EVANGELICA ASSEMBLEIA DE DEUS NO BRASIL ADBR",
+    "bank_name": "Pagseguro Internet S.A.",
+    "bank_agency": "",
+    "bank_account": "",
+    "bank_holder": "",
+    "offering_text": "Honre o Senhor com todos os seus recursos e com os primeiros frutos de todas as suas plantações; os seus celeiros ficarão plenamente cheios, e os seus barris transbordarão de vinho.\r\nProvérbios 3:9-10",
+    "notification_email": "adm@adbrsede.com.br"
+  }
+},
+{
+  "model": "core.heroslide",
+  "pk": 1,
+  "fields": {
+    "title": "BATISMO",
+    "subtitle": "Nas Águas",
+    "image": "hero/slides/Captura_de_tela_de_2026-03-12_23-40-37_44u7TYf.png",
+    "button_text": "O que é?",
+    "button_url": "o batismo nas águas é uma ordenação de Jesus e um ato público de fé, onde o crente, após arrependimento, é imerso na água. Ele simboliza o sepultamento da velha vida de pecado e a ressurreição para um",
+    "button_text_2": "Porque se Batizar",
+    "button_url_2": "",
+    "order": 1,
+    "active": true
+  }
+},
+{
+  "model": "core.heroslide",
+  "pk": 2,
+  "fields": {
+    "title": "Santa Ceia",
+    "subtitle": "Todos os Setores",
+    "image": "hero/slides/ceia1.jpg",
+    "button_text": "Ceia",
+    "button_url": "",
+    "button_text_2": "Geral",
+    "button_url_2": "",
+    "order": 2,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 1,
+  "fields": {
+    "name": "Ministério de Louvor",
+    "description": "Responsável pela adoração durante os cultos, conduzindo a igreja através de músicas e cânticos. Geralmente é formado por músicos, cantores e técnicos de som.\r\n\r\nFunções:\r\n\r\nPreparar músicas para os cultos\r\n\r\nEnsaiar com a equipe\r\n\r\nConduzir a igreja na adoração",
+    "icon": "fa-music",
+    "order": 1,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 2,
+  "fields": {
+    "name": "Ministério Infantil",
+    "description": "Cuida da educação cristã das crianças, ensinando a Palavra de Deus de forma didática e apropriada para cada idade.\r\n\r\nFunções:\r\n\r\nAulas bíblicas\r\n\r\nAtividades educativas\r\n\r\nEventos especiais para crianças",
+    "icon": "fa-child",
+    "order": 2,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 3,
+  "fields": {
+    "name": "Ministério de Evangelismo",
+    "description": "Responsável por levar a mensagem do evangelho para fora da igreja.\r\n\r\nFunções:\r\n\r\nEvangelismo nas ruas\r\n\r\nVisitas missionárias\r\n\r\nDistribuição de literatura cristã",
+    "icon": "fa-church",
+    "order": 3,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 4,
+  "fields": {
+    "name": "Ministério de Intercessão",
+    "description": "Grupo dedicado a orar pela igreja, pelos cultos e pelas necessidades das pessoas.\r\n\r\nFunções:\r\n\r\nCorrentes de oração\r\n\r\nVigílias\r\n\r\nIntercessão pelos pedidos de oração",
+    "icon": "fa-church",
+    "order": 4,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 5,
+  "fields": {
+    "name": "Ministério de Recepção",
+    "description": "Equipe que recebe as pessoas na igreja com cordialidade e organização.\r\n\r\nFunções:\r\n\r\nReceber visitantes\r\n\r\nAjudar na organização do culto\r\n\r\nOrientar novos membros",
+    "icon": "fa-church",
+    "order": 5,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 6,
+  "fields": {
+    "name": "Ministério de Ação Social",
+    "description": "Realiza trabalhos sociais para ajudar pessoas necessitadas.\r\n\r\nFunções:\r\n\r\nDoação de alimentos\r\n\r\nProjetos sociais\r\n\r\nApoio a famílias carentes",
+    "icon": "fa-church",
+    "order": 6,
+    "active": true
+  }
+},
+{
+  "model": "core.ministry",
+  "pk": 7,
+  "fields": {
+    "name": "Ministério de Comunicação",
+    "description": "Cuida da divulgação e mídia da igreja.\r\n\r\nFunções:\r\n\r\nRedes sociais\r\n\r\nSite da igreja\r\n\r\nFotos e vídeos dos eventos",
+    "icon": "fa-music",
+    "order": 7,
+    "active": true
+  }
+},
+{
+  "model": "core.testimony",
+  "pk": 1,
+  "fields": {
+    "author_name": "Abrahão Lincoln",
+    "role": "Evangelista",
+    "text": "Os ministérios de uma igreja são áreas de serviço e organização que ajudam no funcionamento da igreja e no cuidado espiritual das pessoas. Cada ministério tem uma função específica dentro da comunidade cristã. A quantidade pode variar de igreja para igreja, mas normalmente incluem os seguintes:",
+    "photo": "testimonies/dream-photo-low-0_tItvaRG.png",
+    "active": true,
+    "created_at": "2026-03-13T03:47:28.858Z"
+  }
+},
+{
+  "model": "core.testimony",
+  "pk": 2,
+  "fields": {
+    "author_name": "Adeumaria Pitombeira",
+    "role": "Missionária",
+    "text": "Os ministérios de uma igreja são áreas de serviço e organização que ajudam no funcionamento da igreja e no cuidado espiritual das pessoas. Cada ministério tem uma função específica dentro da comunidade cristã. A quantidade pode variar de igreja para igreja, mas normalmente incluem os seguintes:",
+    "photo": "testimonies/Captura_de_tela_de_2024-10-16_15-25-25_kkFN1UJ.png",
+    "active": true,
+    "created_at": "2026-03-13T03:48:13.756Z"
+  }
+},
+{
+  "model": "core.testimony",
+  "pk": 3,
+  "fields": {
+    "author_name": "Herbert Mesquita",
+    "role": "Diácono/Músico",
+    "text": "Os ministérios de uma igreja são áreas de serviço e organização que ajudam no funcionamento da igreja e no cuidado espiritual das pessoas. Cada ministério tem uma função específica dentro da comunidade cristã. A quantidade pode variar de igreja para igreja, mas normalmente incluem os seguintes:",
+    "photo": "testimonies/123623108.png",
+    "active": true,
+    "created_at": "2026-03-13T03:48:40.340Z"
+  }
+},
+{
+  "model": "core.devotional",
+  "pk": 1,
+  "fields": {
+    "title": "O Problema do Pecado",
+    "verse": "Rm. 3.23",
+    "verse_text": "Porque todos pecaram e destituídos estão da glória de Deus.",
+    "reflection": "O pecado separa, mas Cristo restaura: Ele é a solução divina para a culpa, o sofrimento e a morte que\r\nassolam a humanidade.",
+    "prayer": "Gênesis 3.1-7\r\n\r\n1 Ora, a serpente era mais astuta que todas as aümárias do campo que o Senhor Deus tinha feito. E esta disse à mulher: É assim que Deus disse: Não comereis de toda árvore do jardim?\r\n2 E disse a mulher à serpente: Do fruto das árvores do jardim comeremos.\r\n3 mas, do fruto da árvore que está no meio do jardim, disse Deus: Não comereis dele, nem nele tocareis, para que não morrais.\r\n4 Então, a serpente disse à mulher:\r\nCertamente não morrereis.",
+    "author": "Erika",
+    "pub_date": "2026-03-19",
+    "published": true,
+    "created_at": "2026-03-19T05:08:39.693Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 1,
+  "fields": {
+    "profile": 1,
+    "type": "offering",
+    "amount": "15.00",
+    "date": "2026-03-19",
+    "notes": "",
+    "created_at": "2026-03-19T02:32:25.306Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 2,
+  "fields": {
+    "profile": 1,
+    "type": "mission",
+    "amount": "10.00",
+    "date": "2026-03-19",
+    "notes": "",
+    "created_at": "2026-03-19T02:34:35.274Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 3,
+  "fields": {
+    "profile": 4,
+    "type": "building",
+    "amount": "55.00",
+    "date": "2026-03-19",
+    "notes": "",
+    "created_at": "2026-03-19T02:35:26.605Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 4,
+  "fields": {
+    "profile": 4,
+    "type": "tithe",
+    "amount": "350.00",
+    "date": "2026-03-19",
+    "notes": "",
+    "created_at": "2026-03-19T02:35:42.070Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 5,
+  "fields": {
+    "profile": 2,
+    "type": "tithe",
+    "amount": "1000.00",
+    "date": "2026-03-19",
+    "notes": "",
+    "created_at": "2026-03-19T03:44:01.972Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 6,
+  "fields": {
+    "profile": 1,
+    "type": "building",
+    "amount": "155.00",
+    "date": "2026-03-28",
+    "notes": "",
+    "created_at": "2026-03-28T06:23:06.425Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 7,
+  "fields": {
+    "profile": 1,
+    "type": "other",
+    "amount": "20.00",
+    "date": "2026-03-28",
+    "notes": "",
+    "created_at": "2026-03-28T06:23:19.503Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 8,
+  "fields": {
+    "profile": 1,
+    "type": "tithe",
+    "amount": "163.00",
+    "date": "2026-04-11",
+    "notes": "",
+    "created_at": "2026-04-11T21:13:29.974Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 9,
+  "fields": {
+    "profile": 1,
+    "type": "other",
+    "amount": "13.00",
+    "date": "2026-04-11",
+    "notes": "",
+    "created_at": "2026-04-11T21:13:41.757Z"
+  }
+},
+{
+  "model": "core.offering",
+  "pk": 10,
+  "fields": {
+    "profile": 1,
+    "type": "offering",
+    "amount": "15.00",
+    "date": "2026-04-11",
+    "notes": "",
+    "created_at": "2026-04-11T21:13:52.240Z"
+  }
+},
+{
+  "model": "core.visitor",
+  "pk": 1,
+  "fields": {
+    "name": "Elias Inácio",
+    "email": "elias1991@email.com",
+    "phone": "67991253698",
+    "visit_date": "2026-03-19",
+    "how_found": "search",
+    "how_found_other": "",
+    "wants_ministry": true,
+    "ministry_interest": "Louvor",
+    "message": "Amei a Igreja, Gostei muito da Escola Bíblica Dominical",
+    "contacted": false,
+    "created_at": "2026-03-19T03:29:59.685Z"
+  }
+},
+{
+  "model": "core.mediacategory",
+  "pk": 1,
+  "fields": {
+    "name": "Escola Bíblica",
+    "section": "studies",
+    "icon": "fa-play",
+    "order": 1
+  }
+},
+{
+  "model": "core.mediaitem",
+  "pk": 1,
+  "fields": {
+    "title": "Teste",
+    "category": 1,
+    "media_type": "pdf",
+    "visibility": "members",
+    "description": "Primeiro Trimestre",
+    "video_url": "",
+    "audio_file": "",
+    "pdf_file": "media/pdf/Revista_JOVENS_Professor_-_1º_Trim.2026.pdf",
+    "thumbnail": "media/thumbs/Captura_de_tela_de_2026-03-19_00-41-46.png",
+    "speaker": "Eliéser Faustino",
+    "published": true,
+    "featured": false,
+    "pub_date": "2026-03-22",
+    "created_at": "2026-03-19T03:42:26.715Z"
+  }
+},
+{
+  "model": "core.photoalbum",
+  "pk": 1,
+  "fields": {
+    "title": "Teste Para o Portal",
+    "description": "Fazendo testes para o portal da Igreja",
+    "cover": "gallery/covers/Captura_de_tela_de_2026-03-12_22-50-38.png",
+    "event_date": "2026-03-19",
+    "published": true,
+    "order": 1,
+    "created_at": "2026-03-19T05:52:23.841Z"
+  }
+},
+{
+  "model": "core.photoalbum",
+  "pk": 2,
+  "fields": {
+    "title": "Teste",
+    "description": "Teste no portal da Igreja",
+    "cover": "gallery/photos/soraya-thronicke-2.jpg",
+    "event_date": "2026-04-11",
+    "published": true,
+    "order": 2,
+    "created_at": "2026-04-11T20:59:28.153Z"
+  }
+},
+{
+  "model": "core.photoalbum",
+  "pk": 3,
+  "fields": {
+    "title": "Testes Infinitos",
+    "description": "",
+    "cover": "gallery/covers/Captura_de_tela_de_2026-03-18_20-24-53.png",
+    "event_date": "2026-04-24",
+    "published": true,
+    "order": 3,
+    "created_at": "2026-04-24T15:24:10.725Z"
+  }
+},
+{
+  "model": "core.photo",
+  "pk": 1,
+  "fields": {
+    "album": 1,
+    "image": "gallery/photos/CampoGrande3.png",
+    "caption": "Teste 01",
+    "order": 1,
+    "created_at": "2026-03-19T05:52:23.841Z"
+  }
+},
+{
+  "model": "core.photo",
+  "pk": 2,
+  "fields": {
+    "album": 2,
+    "image": "gallery/photos/Captura_de_tela_de_2024-11-12_17-40-37.png",
+    "caption": "",
+    "order": 0,
+    "created_at": "2026-04-11T21:00:06.147Z"
+  }
+},
+{
+  "model": "core.photo",
+  "pk": 3,
+  "fields": {
+    "album": 2,
+    "image": "gallery/photos/Captura_de_tela_de_2024-12-03_19-27-06.png",
+    "caption": "",
+    "order": 1,
+    "created_at": "2026-04-11T21:00:22.736Z"
+  }
+},
+{
+  "model": "core.photo",
+  "pk": 4,
+  "fields": {
+    "album": 2,
+    "image": "gallery/photos/Captura_de_tela_de_2024-12-03_19-33-41.png",
+    "caption": "",
+    "order": 2,
+    "created_at": "2026-04-11T21:00:27.775Z"
+  }
+},
+{
+  "model": "core.photo",
+  "pk": 5,
+  "fields": {
+    "album": 2,
+    "image": "gallery/photos/soraya-thronicke-2.jpg",
+    "caption": "",
+    "order": 3,
+    "created_at": "2026-04-11T21:01:42.243Z"
+  }
+},
+{
+  "model": "core.socialconfig",
+  "pk": 1,
+  "fields": {
+    "ig_user_id": "",
+    "ig_access_token": "",
+    "fb_page_id": "",
+    "fb_access_token": "",
+    "site_base_url": "",
+    "updated_at": "2026-04-24T15:18:05.743Z"
+  }
+},
+{
+  "model": "events.category",
+  "pk": 1,
+  "fields": {
+    "name": "Batismo",
+    "color": "#8B6914"
+  }
+},
+{
+  "model": "events.category",
+  "pk": 2,
+  "fields": {
+    "name": "Ceia",
+    "color": "#8B6914"
+  }
+},
+{
+  "model": "events.category",
+  "pk": 3,
+  "fields": {
+    "name": "Vigília",
+    "color": "#8B6914"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 1,
+  "fields": {
+    "title": "BATISMO",
+    "slug": "batismo",
+    "category": 1,
+    "description": "O batismo é um dos momentos mais importantes na vida de um cristão. Ele representa uma decisão pública de fé em Jesus Cristo e simboliza o início de uma nova vida com Deus.\r\n\r\nMais do que um ato religioso, o batismo é uma expressão de obediência aos ensinamentos de Jesus e uma declaração de que a pessoa decidiu seguir os caminhos do Senhor. Através dele, o cristão testemunha diante da igreja e da sociedade a transformação que aconteceu em seu coração.\r\n\r\nBiblicamente, o batismo simboliza a morte para a antiga vida e o nascimento para uma nova vida em Cristo. Ao ser batizado, o cristão demonstra que deixou para trás o pecado e escolheu viver segundo os princípios do evangelho, caminhando em fé, amor e santidade.\r\n\r\nEm nossa igreja, o batismo é celebrado com alegria, pois representa vidas sendo transformadas pelo poder de Deus. É um momento especial de comunhão, onde a igreja se reúne para testemunhar e celebrar essa importante decisão espiritual.\r\n\r\nSe você deseja dar esse passo de fé e aprender mais sobre o batismo, entre em contato conosco ou procure a liderança da igreja. Será uma alegria caminhar com você nessa jornada de crescimento espiritual.",
+    "short_description": "Batismo",
+    "date": "2026-03-21T22:00:00Z",
+    "end_date": "2026-03-22T00:00:00Z",
+    "location": "SEDE",
+    "address": "Rua do Sul, 54 Coophamat",
+    "image": "events/Captura_de_tela_de_2026-03-13_00-57-41.png",
+    "recurrence": "none",
+    "published": true,
+    "featured": true,
+    "registration_link": "",
+    "requires_registration": false,
+    "max_spots": null,
+    "registration_deadline": null,
+    "created_at": "2026-03-13T03:58:03.093Z",
+    "updated_at": "2026-03-13T03:58:03.093Z"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 2,
+  "fields": {
+    "title": "Ceia",
+    "slug": "ceia",
+    "category": 2,
+    "description": "Ceia",
+    "short_description": "Ceia na Sede",
+    "date": "2026-04-12T22:00:00Z",
+    "end_date": "2026-04-13T00:00:00Z",
+    "location": "SEDE",
+    "address": "Rua do Sul, 54 Coophamat",
+    "image": "events/ceia.jpg",
+    "recurrence": "monthly",
+    "published": true,
+    "featured": false,
+    "registration_link": "",
+    "requires_registration": false,
+    "max_spots": null,
+    "registration_deadline": null,
+    "created_at": "2026-03-27T03:43:47.762Z",
+    "updated_at": "2026-03-27T03:43:47.762Z"
+  }
+},
+{
+  "model": "events.event",
+  "pk": 3,
+  "fields": {
+    "title": "Testes Infinitos",
+    "slug": "testes-infinitos",
+    "category": 3,
+    "description": "gdfgdfgfggfgdfg\r\n\r\nfg\r\nd\r\nf\r\ngd\r\ng\r\nd\r\nfg\r\nd\r\ngf\r\nd\r\nfg\r\nd\r\nfd",
+    "short_description": "fdgdgdf",
+    "date": "2026-04-24T23:00:00Z",
+    "end_date": "2026-05-25T01:00:00Z",
+    "location": "SEDE",
+    "address": "Rua do Sul, 54 Coophamat",
+    "image": "events/Captura_de_tela_de_2026-04-21_02-29-36.png",
+    "recurrence": "none",
+    "published": true,
+    "featured": false,
+    "registration_link": "",
+    "requires_registration": false,
+    "max_spots": null,
+    "registration_deadline": null,
+    "created_at": "2026-04-24T15:42:28.120Z",
+    "updated_at": "2026-04-24T15:42:28.120Z"
+  }
+},
+{
+  "model": "members.memberministry",
+  "pk": 1,
+  "fields": {
+    "profile": 1,
+    "ministry": 1,
+    "role": "Guitarrista, Violinista"
+  }
+},
+{
+  "model": "members.memberministry",
+  "pk": 2,
+  "fields": {
+    "profile": 1,
+    "ministry": 5,
+    "role": "Diácono"
+  }
+},
+{
+  "model": "members.memberministry",
+  "pk": 3,
+  "fields": {
+    "profile": 2,
+    "ministry": 7,
+    "role": "Fotógrafa"
+  }
+},
+{
+  "model": "members.memberministry",
+  "pk": 4,
+  "fields": {
+    "profile": 4,
+    "ministry": 5,
+    "role": "Líder"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "herbert"
+    ],
+    "photo": "members/photos/avatar02.jpg",
+    "phone": "67991363900",
+    "birth_date": "1980-01-18",
+    "bio": "Analista de Sistema, Empresário no ramo de Tecnologia. Músico e Diácono na Igreja ADBR",
+    "baptized": true,
+    "member_since": null,
+    "approved": true,
+    "role": "admin",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-03-13T03:33:36.462Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "adeumaria"
+    ],
+    "photo": "members/photos/Captura_de_tela_de_2024-10-16_15-25-25.png",
+    "phone": "67992590231",
+    "birth_date": "1953-05-19",
+    "bio": "",
+    "baptized": true,
+    "member_since": "2026-03-13",
+    "approved": true,
+    "role": "collaborator",
+    "image_consent": true,
+    "image_consent_date": "2026-04-21T22:00:30.696Z",
+    "image_consent_ip": "127.0.0.1",
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-03-13T04:00:46.384Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "jlucas"
+    ],
+    "photo": "",
+    "phone": "",
+    "birth_date": null,
+    "bio": "",
+    "baptized": false,
+    "member_since": null,
+    "approved": true,
+    "role": "member",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-03-13T04:37:26.463Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "erick"
+    ],
+    "photo": "",
+    "phone": "",
+    "birth_date": "2002-05-16",
+    "bio": "",
+    "baptized": true,
+    "member_since": null,
+    "approved": true,
+    "role": "member",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-03-17T15:23:24.628Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "yohana"
+    ],
+    "photo": "",
+    "phone": "",
+    "birth_date": null,
+    "bio": "",
+    "baptized": false,
+    "member_since": null,
+    "approved": true,
+    "role": "member",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-04-22T13:23:24.398Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "Mendes"
+    ],
+    "photo": "",
+    "phone": "",
+    "birth_date": null,
+    "bio": "",
+    "baptized": false,
+    "member_since": null,
+    "approved": true,
+    "role": "collaborator",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-04-22T14:12:49.171Z"
+  }
+},
+{
+  "model": "members.memberprofile",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "awmesquita"
+    ],
+    "photo": "",
+    "phone": "",
+    "birth_date": null,
+    "bio": "",
+    "baptized": false,
+    "member_since": null,
+    "approved": false,
+    "role": "member",
+    "image_consent": false,
+    "image_consent_date": null,
+    "image_consent_ip": null,
+    "image_consent_revoked": false,
+    "image_consent_revoked_date": null,
+    "created_at": "2026-04-24T17:12:43.845Z"
+  }
+},
+{
+  "model": "members.contentcategory",
+  "pk": 1,
+  "fields": {
+    "name": "Escola Bíblica",
+    "icon": "fa-book",
+    "order": 1
+  }
+},
+{
+  "model": "members.exclusivecontent",
+  "pk": 1,
+  "fields": {
+    "title": "ESCATOLOGIA NOS TEMPOS MODERNOS",
+    "category": 1,
+    "content_type": "text",
+    "body": "Você está preparado para a volta de Jesus? Em um mundo abalado por guerras, crises morais e sinais proféticos, muitos se perguntam: “Estamos vivendo o fim dos tempos?” Neste episódio marcante do HDL Podcast, Hernandes Dias Lopes revela com profundidade e clareza os sinais descritos por Jesus em Mateus 24, chamando a atenção para o engano religioso, o crescimento da iniquidade, a perseguição aos cristãos e a pregação...",
+    "video_url": "",
+    "file": "",
+    "external_link": "",
+    "thumbnail": "members/thumbs/Captura_de_tela_de_2024-12-03_19-33-41.png",
+    "published": true,
+    "featured": true,
+    "created_at": "2026-03-13T04:31:38.745Z",
+    "updated_at": "2026-03-13T04:31:38.745Z",
+    "author": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.exclusivecontent",
+  "pk": 2,
+  "fields": {
+    "title": "Django no Heroku",
+    "category": 1,
+    "content_type": "text",
+    "body": "Get Started With Django: Build a Portfolio App",
+    "video_url": "",
+    "file": "members/files/Django_-_Deploy_no_Heroku.pdf",
+    "external_link": "https://realpython.com/get-started-with-django-1/",
+    "thumbnail": "members/thumbs/WhatsApp_Image_2026-01-29_at_14.01.35.jpeg",
+    "published": true,
+    "featured": true,
+    "created_at": "2026-03-18T23:09:25.560Z",
+    "updated_at": "2026-03-18T23:09:25.560Z",
+    "author": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.testimony",
+  "pk": 1,
+  "fields": {
+    "profile": 1,
+    "text": "Minha Conversão veio através da minha mãe, que desde quando me entendo por gente sempre orou por todos os filhos para servirem ao Senhor Jesus Cristo",
+    "status": "approved",
+    "admin_note": "",
+    "created_at": "2026-03-18T23:38:02.623Z",
+    "updated_at": "2026-03-18T23:38:29.060Z"
+  }
+},
+{
+  "model": "members.notice",
+  "pk": 1,
+  "fields": {
+    "title": "Ensaio com a Orquestra",
+    "body": "Estamos coletando informações para divulgar nosso trabalho",
+    "priority": "urgent",
+    "published": true,
+    "created_at": "2026-03-13T04:26:38.731Z",
+    "expires_at": "2026-03-20T21:00:00Z"
+  }
+},
+{
+  "model": "members.notice",
+  "pk": 2,
+  "fields": {
+    "title": "O Problema do Pecado",
+    "body": "O problema do pecado é que sempre te afasta do Espírito Santo. Aquele que realmente sente a presença do Espírito Santo sabe como funciona o pecado.",
+    "priority": "urgent",
+    "published": true,
+    "created_at": "2026-03-27T03:46:20.981Z",
+    "expires_at": "2026-04-28T02:00:00Z"
+  }
+},
+{
+  "model": "members.prayerrequest",
+  "pk": 1,
+  "fields": {
+    "profile": 1,
+    "title": "Emprego em vista",
+    "description": "Peço orações para um novo emprego, uma nova área, preciso muito de ser abençoado",
+    "visibility": "members",
+    "status": "open",
+    "admin_note": "",
+    "created_at": "2026-03-19T01:36:58.454Z",
+    "updated_at": "2026-03-19T01:36:58.454Z"
+  }
+},
+{
+  "model": "members.prayerrequest",
+  "pk": 2,
+  "fields": {
+    "profile": 1,
+    "title": "Cura da Minha Irmã",
+    "description": "Minha irmã fez uma bariátrica há muitos anos atrás, acabou ficando alcoolatra e nós não aguentamos mais isso, está sendo um fardo pra todos da família",
+    "visibility": "private",
+    "status": "closed",
+    "admin_note": "Já fomos atendidos ",
+    "created_at": "2026-03-28T07:01:24.283Z",
+    "updated_at": "2026-03-28T07:03:05.468Z"
+  }
+},
+{
+  "model": "members.prayerrequest",
+  "pk": 3,
+  "fields": {
+    "profile": 1,
+    "title": "Fazendo Testes",
+    "description": "Quem pode ver este pedido?\r\n Privado: só a liderança vê.   Membros: aparece para toda a área de membros.",
+    "visibility": "members",
+    "status": "open",
+    "admin_note": "",
+    "created_at": "2026-03-28T07:02:36.577Z",
+    "updated_at": "2026-03-28T07:02:36.577Z"
+  }
+},
+{
+  "model": "members.passwordresettoken",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "yohana"
+    ],
+    "token": "sd8HIyGJKXdGtc7NcCALW3foG2c42wYU6rNtlITOOrQD_GiLn85h-oJHSjxmy8UE",
+    "created_at": "2026-04-25T03:50:54.288Z",
+    "used": false
+  }
+},
+{
+  "model": "members.culto",
+  "pk": 1,
+  "fields": {
+    "title": "Escola Bíblica Dominical",
+    "culto_type": "culto_domingo_manha",
+    "date": "2026-04-19",
+    "notes": "",
+    "visitor_count": 1,
+    "visitor_names": "Johny",
+    "created_by": [
+      "herbert"
+    ],
+    "created_at": "2026-04-25T05:48:58.642Z"
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 1,
+  "fields": {
+    "culto": 1,
+    "member": 1,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 2,
+  "fields": {
+    "culto": 1,
+    "member": 2,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 3,
+  "fields": {
+    "culto": 1,
+    "member": 3,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 4,
+  "fields": {
+    "culto": 1,
+    "member": 4,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 5,
+  "fields": {
+    "culto": 1,
+    "member": 5,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "members.presenca",
+  "pk": 6,
+  "fields": {
+    "culto": 1,
+    "member": 6,
+    "present": true,
+    "noted_by": [
+      "herbert"
+    ]
+  }
+},
+{
+  "model": "agenda.location",
+  "pk": 1,
+  "fields": {
+    "name": "Sede",
+    "address": "Rua do Sul, 54 Coophamat",
+    "capacity": 500,
+    "description": "Desde a nossa fundação, temos buscado cumprir a missão deixada por Jesus Cristo: levar esperança, fé e salvação a todas as pessoas. Acreditamos que a igreja é mais do que um templo físico; ela é formada por pessoas que desejam viver os ensinamentos de Cristo e compartilhar o amor de Deus com o próximo.\r\n\r\nNossa comunidade é composta por famílias, jovens, crianças e idosos que caminham juntos em fé, aprendendo diariamente a viver os valores do Reino de Deus. Aqui você encontrará um ambiente acolhedor, onde todos são recebidos com carinho, respeito e alegria.",
+    "active": true,
+    "created_at": "2026-03-13T05:28:16.706Z"
+  }
+},
+{
+  "model": "agenda.location",
+  "pk": 2,
+  "fields": {
+    "name": "Centenário",
+    "address": "Rua Bela, 15 Vila Bela",
+    "capacity": 150,
+    "description": "",
+    "active": true,
+    "created_at": "2026-03-28T06:09:58.922Z"
+  }
+},
+{
+  "model": "agenda.booking",
+  "pk": 1,
+  "fields": {
+    "title": "BATISMO",
+    "location": 1,
+    "responsible": [
+      "herbert"
+    ],
+    "ministry": "",
+    "date": "2026-04-04",
+    "start_time": "18:00:00",
+    "end_time": "21:00:00",
+    "notes": "",
+    "status": "approved",
+    "approved_by": [
+      "herbert"
+    ],
+    "approved_at": "2026-03-19T04:47:40.771Z",
+    "created_at": "2026-03-13T05:36:11.323Z",
+    "updated_at": "2026-03-19T04:48:14.264Z"
+  }
+},
+{
+  "model": "agenda.booking",
+  "pk": 2,
+  "fields": {
+    "title": "CEIA GERAL",
+    "location": 1,
+    "responsible": [
+      "herbert"
+    ],
+    "ministry": "Ministério de Louvor Ruáh, Orquestra Louvarte",
+    "date": "2026-04-11",
+    "start_time": "19:00:00",
+    "end_time": "21:00:00",
+    "notes": "",
+    "status": "approved",
+    "approved_by": [
+      "herbert"
+    ],
+    "approved_at": "2026-04-11T21:10:02.630Z",
+    "created_at": "2026-04-11T21:10:02.632Z",
+    "updated_at": "2026-04-11T21:10:02.632Z"
+  }
+},
+{
+  "model": "ebd.ebdclass",
+  "pk": 1,
+  "fields": {
+    "name": "Joventude Conectada",
+    "description": "Classe dos Jovens",
+    "order": 1,
+    "active": true
+  }
+},
+{
+  "model": "ebd.ebdclass",
+  "pk": 2,
+  "fields": {
+    "name": "Adolescentes",
+    "description": "Classe dos Adolescentes",
+    "order": 2,
+    "active": true
+  }
+},
+{
+  "model": "ebd.ebdtrimester",
+  "pk": 1,
+  "fields": {
+    "ebd_class": 1,
+    "year": 2026,
+    "quarter": 1,
+    "title": "Plano Perfeito",
+    "description": "Iniciamos mais um ano e com ele temos a oportunidade de começar também mais um trimestre de estudos bíblico-doutrinários a respeito da maior prova do amor de Deus pela humanidade: a salvação em Cristo Jesus. \r\nEnsinar a Doutrina da Salvação para os jovens é fundamental. É por meio dela que reconhecemos que\r\napenas a graça divina é capaz de dar meios para que sejamos salvos, sendo alcançados por uma dádiva que não mereciamos. 0 tema da salvação não está presente apenas no Novo Testa mento. Desde o Antigo vemos Deus trazendo salvação, dando livramento, por meio do qual Ele expressa sua bondade, amor e santidade. \r\nSe Cristo não tivesse cumprido plenam ente na cruz o plano de salvação divino, estaríamos ainda\r\nmortos em ofensas e pecados, afastados do Senhor, Graças a Deus que agora fazemos parte, pela fé,\r\ndesta grande família!",
+    "cover": "ebd/covers/Captura_de_tela_de_2026-03-19_00-41-46.png",
+    "active": true
+  }
+},
+{
+  "model": "ebd.ebdlesson",
+  "pk": 1,
+  "fields": {
+    "trimester": 1,
+    "number": 1,
+    "title": "O Sentido Bíblico da Salvação",
+    "summary": "E porei inimizade entre ti e a mulher e entre a tua semente e a sua semente; esta te ferirá a cabeça, e tu lhe ferirás o calcanhar.",
+    "body": "",
+    "video_url": "",
+    "audio_file": "",
+    "pdf_file": "",
+    "scripture": "Gn. 3.15",
+    "published": true,
+    "order": 1,
+    "created_at": "2026-03-19T04:56:37.337Z",
+    "updated_at": "2026-04-25T06:57:27.451Z"
+  }
+},
+{
+  "model": "ebd.quiz",
+  "pk": 1,
+  "fields": {
+    "lesson": 1,
+    "passing_score": 70,
+    "max_attempts": 3,
+    "show_answers": true
+  }
+},
+{
+  "model": "ebd.question",
+  "pk": 1,
+  "fields": {
+    "quiz": 1,
+    "text": "Qual o sentido em que a palavra “salvação\" aparece tanto no Antigo quanto no Novo Testamento?",
+    "explanation": "No Novo Testamento, essa palavra aparece, na maioria das vezes, com o sentido de \"perdão dos pecados”e a oportunidade de viver para sempre com Deus. Mas também pode se referir a curas físicas. Já no Antigo Testamento, o significado mais básico é o de “Livramento\".",
+    "order": 1
+  }
+},
+{
+  "model": "ebd.question",
+  "pk": 2,
+  "fields": {
+    "quiz": 1,
+    "text": "Como vemos Deus agindo no Livro do Êxodo?",
+    "explanation": "No Livro do Êxodo, vemos Deus agindo como Libertador de lsrael(Êx  14.30). Com mão forte, Ele enfrenta Faraó e, por meio de Moisés, Liberta seu povo da escravidão no Egito.",
+    "order": 2
+  }
+},
+{
+  "model": "ebd.question",
+  "pk": 3,
+  "fields": {
+    "quiz": 1,
+    "text": "Quais elementos foram essenciais para o Livramento da nação sob a direção de Samuel?",
+    "explanation": "A fé, o arrependimento e uma Liderança espirituaL foram essenciais para o Livramento da nação.",
+    "order": 0
+  }
+},
+{
+  "model": "ebd.question",
+  "pk": 4,
+  "fields": {
+    "quiz": 1,
+    "text": "O que é o que?",
+    "explanation": "é aquilo mesmo",
+    "order": 3
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 1,
+  "fields": {
+    "question": 3,
+    "text": "Teste 01",
+    "is_correct": true,
+    "order": 1
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 2,
+  "fields": {
+    "question": 3,
+    "text": "Teste 02",
+    "is_correct": false,
+    "order": 2
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 3,
+  "fields": {
+    "question": 3,
+    "text": "Teste 03",
+    "is_correct": false,
+    "order": 3
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 4,
+  "fields": {
+    "question": 1,
+    "text": "Teste 01",
+    "is_correct": false,
+    "order": 1
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 5,
+  "fields": {
+    "question": 1,
+    "text": "Teste 02",
+    "is_correct": true,
+    "order": 2
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 6,
+  "fields": {
+    "question": 1,
+    "text": "Teste 03",
+    "is_correct": false,
+    "order": 3
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 7,
+  "fields": {
+    "question": 2,
+    "text": "Teste 01",
+    "is_correct": false,
+    "order": 1
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 8,
+  "fields": {
+    "question": 2,
+    "text": "Teste 02",
+    "is_correct": false,
+    "order": 2
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 9,
+  "fields": {
+    "question": 2,
+    "text": "Teste 03",
+    "is_correct": true,
+    "order": 3
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 10,
+  "fields": {
+    "question": 4,
+    "text": "Isso",
+    "is_correct": false,
+    "order": 0
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 11,
+  "fields": {
+    "question": 4,
+    "text": "Aquilo",
+    "is_correct": false,
+    "order": 1
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 12,
+  "fields": {
+    "question": 4,
+    "text": "Aquilo Outro",
+    "is_correct": true,
+    "order": 2
+  }
+},
+{
+  "model": "ebd.choice",
+  "pk": 13,
+  "fields": {
+    "question": 4,
+    "text": "Outro",
+    "is_correct": false,
+    "order": 3
+  }
+},
+{
+  "model": "ebd.quizattempt",
+  "pk": 7,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "score": 100,
+    "passed": true,
+    "answers": {
+      "3": "1",
+      "1": "5",
+      "2": "9"
+    },
+    "created_at": "2026-03-19T06:09:53.354Z"
+  }
+},
+{
+  "model": "ebd.quizattempt",
+  "pk": 8,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "herbert"
+    ],
+    "score": 100,
+    "passed": true,
+    "answers": {
+      "3": "1",
+      "1": "5",
+      "2": "9"
+    },
+    "created_at": "2026-03-19T06:10:38.570Z"
+  }
+},
+{
+  "model": "ebd.quizattempt",
+  "pk": 9,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "yohana"
+    ],
+    "score": 75,
+    "passed": true,
+    "answers": {
+      "3": "1",
+      "1": "5",
+      "2": "9",
+      "4": "11"
+    },
+    "created_at": "2026-04-25T17:16:58.629Z"
+  }
+},
+{
+  "model": "ebd.lessoncertificate",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "adeumaria"
+    ],
+    "lesson": 1,
+    "attempt": 7,
+    "issued_at": "2026-03-19T06:09:53.360Z"
+  }
+},
+{
+  "model": "ebd.lessoncertificate",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "herbert"
+    ],
+    "lesson": 1,
+    "attempt": 8,
+    "issued_at": "2026-03-19T06:10:38.578Z"
+  }
+},
+{
+  "model": "ebd.lessoncertificate",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "yohana"
+    ],
+    "lesson": 1,
+    "attempt": 9,
+    "issued_at": "2026-04-25T17:16:58.635Z"
+  }
+},
+{
+  "model": "cells.cell",
+  "pk": 1,
+  "fields": {
+    "name": "Guerreiros de Cristo",
+    "cell_type": "ministry",
+    "description": "Grupo dos Varões da Igreja",
+    "cover": "cells/covers/WhatsApp_Image_2023-03-26_at_19.08.33.jpeg",
+    "region": "Sede",
+    "meeting_day": "Sexta-Feira às 19:30",
+    "meeting_place": "Sede",
+    "active": true,
+    "created_at": "2026-03-19T07:14:24.801Z"
+  }
+},
+{
+  "model": "cells.cell",
+  "pk": 2,
+  "fields": {
+    "name": "De Casa em Casa",
+    "cell_type": "ministry",
+    "description": "Os Jovens que se reunem um vez no mês na casa de um membro da Igreja",
+    "cover": "cells/covers/logo_Ciadep_minimalista.png",
+    "region": "Casa Da Bruna",
+    "meeting_day": "Sexta-Feira as 19:30",
+    "meeting_place": "Rua da casa dela, 12 Jd Brunalandia",
+    "active": true,
+    "created_at": "2026-04-25T04:25:32.115Z"
+  }
+},
+{
+  "model": "cells.cellmembership",
+  "pk": 1,
+  "fields": {
+    "cell": 1,
+    "user": [
+      "erick"
+    ],
+    "status": "approved",
+    "role": "member",
+    "joined_at": "2026-03-19T07:14:24.802Z"
+  }
+},
+{
+  "model": "cells.cellmembership",
+  "pk": 2,
+  "fields": {
+    "cell": 1,
+    "user": [
+      "herbert"
+    ],
+    "status": "approved",
+    "role": "leader",
+    "joined_at": "2026-03-19T07:14:54.630Z"
+  }
+},
+{
+  "model": "cells.cellmembership",
+  "pk": 3,
+  "fields": {
+    "cell": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "status": "pending",
+    "role": "member",
+    "joined_at": "2026-04-13T22:56:31.810Z"
+  }
+},
+{
+  "model": "cells.cellpost",
+  "pk": 1,
+  "fields": {
+    "cell": 1,
+    "author": [
+      "herbert"
+    ],
+    "post_type": "message",
+    "content": "pessoal vamos comparecer e participar",
+    "file": "",
+    "pinned": false,
+    "created_at": "2026-03-19T07:15:47.670Z",
+    "updated_at": "2026-03-19T07:15:47.670Z"
+  }
+},
+{
+  "model": "cells.cellpost",
+  "pk": 2,
+  "fields": {
+    "cell": 1,
+    "author": [
+      "erick"
+    ],
+    "post_type": "message",
+    "content": "Quem vai tocar violão nessa sexta agora?",
+    "file": "",
+    "pinned": true,
+    "created_at": "2026-03-19T07:16:54.905Z",
+    "updated_at": "2026-03-27T04:15:31.375Z"
+  }
+},
+{
+  "model": "cells.cellpost",
+  "pk": 3,
+  "fields": {
+    "cell": 1,
+    "author": [
+      "erick"
+    ],
+    "post_type": "message",
+    "content": "oiuopiupoiu",
+    "file": "",
+    "pinned": false,
+    "created_at": "2026-03-27T04:01:42.599Z",
+    "updated_at": "2026-03-27T04:01:42.599Z"
+  }
+},
+{
+  "model": "cells.cellpost",
+  "pk": 4,
+  "fields": {
+    "cell": 1,
+    "author": [
+      "erick"
+    ],
+    "post_type": "prayer",
+    "content": "Pessoal temos o culto de oração todas sextas, vamos ser mais presentes ok",
+    "file": "",
+    "pinned": false,
+    "created_at": "2026-04-20T18:00:22.379Z",
+    "updated_at": "2026-04-20T18:00:22.379Z"
+  }
+},
+{
+  "model": "cells.cellpostreaction",
+  "pk": 1,
+  "fields": {
+    "post": 1,
+    "user": [
+      "erick"
+    ],
+    "emoji": "🙏"
+  }
+},
+{
+  "model": "cells.cellpostreaction",
+  "pk": 3,
+  "fields": {
+    "post": 2,
+    "user": [
+      "herbert"
+    ],
+    "emoji": "👏"
+  }
+},
+{
+  "model": "courses.coursecategory",
+  "pk": 1,
+  "fields": {
+    "name": "Teologia",
+    "icon": "fa-graduation-cap",
+    "order": 1
+  }
+},
+{
+  "model": "courses.course",
+  "pk": 1,
+  "fields": {
+    "title": "Teologia",
+    "slug": "teologia",
+    "category": 1,
+    "description": "Explorar a Teologia é empreender uma jornada fascinante através dos fundamentos da fé e dos planos de Deus, mergulhando nas profundezas da revelação divina. Este tema central busca unir os diversos aspectos da Teologia em uma jornada de descoberta e compreensão dos mistérios de Deus.",
+    "cover": "courses/covers/teologia-trilhas-1024x576.png",
+    "instructor": [
+      "Mendes"
+    ],
+    "level": "beginner",
+    "workload": 600,
+    "published": true,
+    "order": 1,
+    "created_at": "2026-04-20T23:24:50.135Z",
+    "updated_at": "2026-04-22T14:44:03.328Z"
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 1,
+  "fields": {
+    "course": 1,
+    "title": "A História da Bíblia: Doutrina das Escrituras",
+    "description": "A verdade mais crucial que precede e motiva a existência de um conteúdo como o dessa matéria, é que: Deus se revelou. O Criador do Universo não se escondeu ou ocultou-se da sua criação, Ele brilhou sua existência desde que falou “haja luz”. A criação revela a glória de Deus, e o firmamento anuncia as suas obras (Sl 19). Porém, em sua infinita bondade e misericórdia, Deus não se limitou e foi além. Ele se preocupou em organizar uma revelação escrita, esclarecedora e definidora.   Nesta matéria de Doutrina das Escrituras, ou Bibliologia, o aluno irá adquirir um entendimento mais profundo e mais claro sobre a Palavra de Deus, sabendo sua importância, sua relevância, sua inerrância e sua confiabilidade ainda hoje. Mas acima de tudo, que Deus se comunica e se revela para nós hoje, diretamente por meio das Escrituras Sagradas, através da iluminação do seu Espírito.   Entender o valor e o quão minucioso Deus foi em preparar e mover tantos eventos e pessoas para que essas Escrituras chegassem às nossas mãos também despertará zelo, estima e fome e sede por essas palavras.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 2,
+  "fields": {
+    "course": 1,
+    "title": "A Bíblia",
+    "description": "A Bíblia é o livro sagrado do cristianismo e reúne escritos que relatam a relação entre Deus e a humanidade. Ela é dividida em Antigo Testamento e Novo Testamento, contendo ensinamentos, histórias, profecias e orientações espirituais. Seu principal tema é a revelação do amor e do plano de Deus para a salvação das pessoas.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 3,
+  "fields": {
+    "course": 1,
+    "title": "A Escrita E A Inspiração Da Bíblia",
+    "description": "",
+    "order": 3
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 4,
+  "fields": {
+    "course": 1,
+    "title": "Características E O Fato Da Inspiração",
+    "description": "",
+    "order": 4
+  }
+},
+{
+  "model": "courses.module",
+  "pk": 5,
+  "fields": {
+    "course": 1,
+    "title": "Como A Bíblia Testemunha A Si Mesma No Novo Testamento",
+    "description": "",
+    "order": 5
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 1,
+  "fields": {
+    "module": 1,
+    "title": "O Deus Que Se Comunica",
+    "description": "Deus é apresentado na Bíblia como um Deus que busca relacionamento com a humanidade e se comunica com as pessoas. Essa comunicação ocorre por meio da criação, das Escrituras, dos profetas e de Jesus Cristo. Ouvir a voz de Deus envolve atenção, fé e disposição para responder à sua mensagem.",
+    "body": "Em um pequeno vilarejo cercado por montanhas, vivia um homem chamado Elias. Ele acreditava que Deus estava distante demais para ouvir suas orações. Todas as noites, ele olhava para o céu estrelado e perguntava se Deus realmente falava com as pessoas.\r\n\r\nCerto dia, enquanto caminhava pela floresta, Elias percebeu algo curioso: o vento soprava suavemente entre as árvores, os pássaros cantavam e um riacho corria tranquilamente. Naquele momento, ele sentiu como se Deus estivesse falando através de toda aquela criação.\r\n\r\nNos dias seguintes, Elias começou a prestar mais atenção. Uma palavra lida na Bíblia parecia responder suas dúvidas. Uma conversa com um amigo trouxe consolo inesperado. Uma oração silenciosa trouxe paz ao seu coração.\r\n\r\nEntão ele compreendeu algo profundo: Deus sempre esteve se comunicando, mas muitas vezes as pessoas estão ocupadas demais para ouvir.\r\n\r\nElias voltou para casa com uma nova certeza — Deus fala de muitas maneiras, e quem aprende a ouvir descobre que nunca está sozinho.",
+    "video_url": "",
+    "audio_file": "",
+    "pdf_file": "",
+    "duration": 20,
+    "order": 1,
+    "published": true,
+    "created_at": "2026-04-21T05:04:27.448Z"
+  }
+},
+{
+  "model": "courses.lesson",
+  "pk": 2,
+  "fields": {
+    "module": 2,
+    "title": "A Bíblia: História, Estrutura e Mensagem",
+    "description": "A Bíblia é o livro sagrado do cristianismo e registra a relação entre Deus e a humanidade ao longo da história. Ela é formada por diversos livros escritos em épocas e contextos diferentes. Seu conteúdo apresenta ensinamentos espirituais, histórias, profecias e a mensagem de salvação.",
+    "body": "A Bíblia é composta por 66 livros, divididos em duas partes principais: Antigo Testamento e Novo Testamento. O Antigo Testamento apresenta a criação do mundo, a história do povo de Israel, leis, poesias e profecias. Já o Novo Testamento relata a vida e os ensinamentos de Jesus Cristo, além do início da igreja cristã.\r\n\r\nEsses textos foram escritos por diferentes autores ao longo de muitos séculos, inspirados por Deus segundo a fé cristã. Mesmo com autores e contextos variados, a Bíblia possui uma mensagem central que aponta para o amor de Deus e seu relacionamento com as pessoas.\r\n\r\nAlém de ser um livro histórico e religioso, a Bíblia também serve como guia espiritual e moral para milhões de pessoas ao redor do mundo. Seus ensinamentos incentivam valores como fé, amor, justiça, perdão e esperança, sendo estudada tanto em igrejas quanto em ambientes acadêmicos.",
+    "video_url": "",
+    "audio_file": "",
+    "pdf_file": "",
+    "duration": 60,
+    "order": 1,
+    "published": true,
+    "created_at": "2026-04-21T05:53:55.843Z"
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 1,
+  "fields": {
+    "course": 1,
+    "user": [
+      "herbert"
+    ],
+    "enrolled_at": "2026-04-21T05:02:39.140Z",
+    "active": true
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 2,
+  "fields": {
+    "course": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "enrolled_at": "2026-04-21T06:33:03.510Z",
+    "active": true
+  }
+},
+{
+  "model": "courses.enrollment",
+  "pk": 3,
+  "fields": {
+    "course": 1,
+    "user": [
+      "yohana"
+    ],
+    "enrolled_at": "2026-04-25T04:46:05.714Z",
+    "active": true
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "herbert"
+    ],
+    "lesson": 1,
+    "completed": true,
+    "completed_at": "2026-04-21T05:47:46.427Z"
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "herbert"
+    ],
+    "lesson": 2,
+    "completed": true,
+    "completed_at": "2026-04-21T05:56:50.274Z"
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "adeumaria"
+    ],
+    "lesson": 1,
+    "completed": true,
+    "completed_at": "2026-04-21T06:33:14.092Z"
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "adeumaria"
+    ],
+    "lesson": 2,
+    "completed": true,
+    "completed_at": "2026-04-21T22:01:11.131Z"
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "yohana"
+    ],
+    "lesson": 1,
+    "completed": false,
+    "completed_at": null
+  }
+},
+{
+  "model": "courses.lessonprogress",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "yohana"
+    ],
+    "lesson": 2,
+    "completed": true,
+    "completed_at": "2026-04-25T07:01:14.369Z"
+  }
+},
+{
+  "model": "courses.lessoncomment",
+  "pk": 1,
+  "fields": {
+    "lesson": 1,
+    "user": [
+      "herbert"
+    ],
+    "parent": null,
+    "body": "Fazendo testes nos comentários,",
+    "created_at": "2026-04-21T06:04:23.891Z",
+    "updated_at": "2026-04-21T06:04:23.891Z"
+  }
+},
+{
+  "model": "courses.lessonquiz",
+  "pk": 1,
+  "fields": {
+    "lesson": 2,
+    "passing_score": 70,
+    "max_attempts": 3,
+    "show_answers": true
+  }
+},
+{
+  "model": "courses.quizquestion",
+  "pk": 1,
+  "fields": {
+    "quiz": 1,
+    "text": "Em quantas partes principais a Bíblia é dividida?",
+    "explanation": "A Bíblia é dividida em Antigo Testamento e Novo Testamento. O Antigo Testamento contém relatos da criação, da história do povo de Israel e das profecias. O Novo Testamento apresenta a vida e os ensinamentos de Jesus Cristo e o início da igreja cristã.",
+    "order": 1
+  }
+},
+{
+  "model": "courses.quizquestion",
+  "pk": 2,
+  "fields": {
+    "quiz": 1,
+    "text": "Quantos livros compõem a Bíblia cristã tradicional?",
+    "explanation": "A Bíblia possui 66 livros no total, sendo 39 no Antigo Testamento e 27 no Novo Testamento. Esses livros foram escritos por diferentes autores ao longo de vários séculos.",
+    "order": 2
+  }
+},
+{
+  "model": "courses.quizquestion",
+  "pk": 3,
+  "fields": {
+    "quiz": 1,
+    "text": "Qual é a principal mensagem central da Bíblia?",
+    "explanation": "Embora a Bíblia contenha histórias, leis, poesias e profecias, sua mensagem principal apresenta o amor de Deus e seu plano de salvação para a humanidade, revelado ao longo das Escrituras.",
+    "order": 3
+  }
+},
+{
+  "model": "courses.quizchoice",
+  "pk": 1,
+  "fields": {
+    "question": 1,
+    "text": "2",
+    "is_correct": true,
+    "order": 0
+  }
+},
+{
+  "model": "courses.quizchoice",
+  "pk": 2,
+  "fields": {
+    "question": 1,
+    "text": "3",
+    "is_correct": false,
+    "order": 1
+  }
+},
+{
+  "model": "courses.quizchoice",
+  "pk": 3,
+  "fields": {
+    "question": 1,
+    "text": "5",
+    "is_correct": false,
+    "order": 2
+  }
+},
+{
+  "model": "courses.quizchoice",
+  "pk": 4,
+  "fields": {
+    "question": 1,
+    "text": "10",
+    "is_correct": false,
+    "order": 3
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 1,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "herbert"
+    ],
+    "score": 0,
+    "passed": false,
+    "answers": {
+      "1": null,
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-21T06:02:53.608Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 2,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "herbert"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-21T06:45:13.054Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 3,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "herbert"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-21T06:47:43.455Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 4,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-21T22:01:18.942Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 5,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-21T22:01:33.070Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 6,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "adeumaria"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-22T14:47:38.739Z"
+  }
+},
+{
+  "model": "courses.quizattempt",
+  "pk": 7,
+  "fields": {
+    "quiz": 1,
+    "user": [
+      "yohana"
+    ],
+    "score": 33,
+    "passed": false,
+    "answers": {
+      "1": "1",
+      "2": null,
+      "3": null
+    },
+    "created_at": "2026-04-25T06:43:53.827Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-03-13T03:30:58.769Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "1",
+    "object_repr": "Ministério de Louvor",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-03-13T03:31:33.211Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "2",
+    "object_repr": "Ministério Infantil",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-03-13T03:33:29.720Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome da Igreja\", \"Slogan\", \"Logo\", \"Imagem Principal (Hero)\", \"Sobre a Igreja\", \"Endere\\u00e7o\", \"E-mail\", \"Facebook\", \"Instagram\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-03-13T03:34:26.493Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Subt\\u00edtulo do Hero\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-03-13T03:36:00.149Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "3",
+    "object_repr": "Ministério de Evangelismo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-03-13T03:37:19.151Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "4",
+    "object_repr": "Ministério de Intercessão",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-03-13T03:37:48.064Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "5",
+    "object_repr": "Ministério de Recepção",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-03-13T03:41:23.356Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "heroslide"
+    ],
+    "object_id": "1",
+    "object_repr": "BATISMO",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-03-13T03:42:15.064Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "members",
+      "memberprofile"
+    ],
+    "object_id": "1",
+    "object_repr": "Herbert Mesquita",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Cadastro Aprovado\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-03-13T03:44:06.201Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "6",
+    "object_repr": "Ministério de Ação Social",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-03-13T03:45:32.292Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "7",
+    "object_repr": "Ministério de Comunicação",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 12,
+  "fields": {
+    "action_time": "2026-03-13T03:45:47.906Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "ministry"
+    ],
+    "object_id": "7",
+    "object_repr": "Ministério de Comunicação",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"\\u00cdcone (Font Awesome class)\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 13,
+  "fields": {
+    "action_time": "2026-03-13T03:47:28.859Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "testimony"
+    ],
+    "object_id": "1",
+    "object_repr": "Abrahão Lincoln - 13/03/2026",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 14,
+  "fields": {
+    "action_time": "2026-03-13T03:48:13.757Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "testimony"
+    ],
+    "object_id": "2",
+    "object_repr": "Adeumaria Pitombeira - 13/03/2026",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 15,
+  "fields": {
+    "action_time": "2026-03-13T03:48:40.340Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "testimony"
+    ],
+    "object_id": "3",
+    "object_repr": "Herbert Mesquita - 13/03/2026",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 16,
+  "fields": {
+    "action_time": "2026-03-13T03:50:03.704Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "events",
+      "category"
+    ],
+    "object_id": "1",
+    "object_repr": "Batismo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 17,
+  "fields": {
+    "action_time": "2026-03-13T03:58:03.093Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "events",
+      "event"
+    ],
+    "object_id": "1",
+    "object_repr": "BATISMO",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 18,
+  "fields": {
+    "action_time": "2026-03-13T04:03:36.406Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "members",
+      "memberprofile"
+    ],
+    "object_id": "2",
+    "object_repr": "Adeumaria Pitombeira",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Foto de Perfil\", \"Telefone\", \"Data de Nascimento\", \"Batizado(a)\", \"Membro desde\", \"Cadastro Aprovado\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 19,
+  "fields": {
+    "action_time": "2026-03-13T04:11:37.007Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "object_id": "1",
+    "object_repr": "admin",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 20,
+  "fields": {
+    "action_time": "2026-03-13T04:11:46.889Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "object_id": "2",
+    "object_repr": "colaborador",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 21,
+  "fields": {
+    "action_time": "2026-03-13T04:12:00.667Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "object_id": "3",
+    "object_repr": "usuarios",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 22,
+  "fields": {
+    "action_time": "2026-03-13T04:16:34.250Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "auth",
+      "group"
+    ],
+    "object_id": "2",
+    "object_repr": "colaborador",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Permissions\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 23,
+  "fields": {
+    "action_time": "2026-03-13T04:18:40.969Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "heroslide"
+    ],
+    "object_id": "2",
+    "object_repr": "CEIA GERAL",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 24,
+  "fields": {
+    "action_time": "2026-03-13T04:29:39.912Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "members",
+      "contentcategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Escola Bíblica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 25,
+  "fields": {
+    "action_time": "2026-03-13T05:28:16.707Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "agenda",
+      "location"
+    ],
+    "object_id": "1",
+    "object_repr": "Sede",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 26,
+  "fields": {
+    "action_time": "2026-03-13T05:36:11.324Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "agenda",
+      "booking"
+    ],
+    "object_id": "1",
+    "object_repr": "BATISMO — Sede (2026-03-13 18:00:00–21:00:00)",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 27,
+  "fields": {
+    "action_time": "2026-03-17T15:05:19.101Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "agenda",
+      "booking"
+    ],
+    "object_id": "1",
+    "object_repr": "BATISMO — Sede (2026-03-13 18:00:00–21:00:00)",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 28,
+  "fields": {
+    "action_time": "2026-03-18T23:10:54.358Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "events",
+      "category"
+    ],
+    "object_id": "2",
+    "object_repr": "Ceia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 29,
+  "fields": {
+    "action_time": "2026-03-18T23:11:09.239Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "events",
+      "category"
+    ],
+    "object_id": "3",
+    "object_repr": "Vigília",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 30,
+  "fields": {
+    "action_time": "2026-03-19T01:59:21.646Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "4",
+    "object_repr": "erick",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Groups\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 31,
+  "fields": {
+    "action_time": "2026-03-19T03:40:31.920Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "mediacategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Estudos — Escola Bíblica",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 32,
+  "fields": {
+    "action_time": "2026-03-19T03:42:26.716Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "mediaitem"
+    ],
+    "object_id": "1",
+    "object_repr": "Teste",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 33,
+  "fields": {
+    "action_time": "2026-03-19T04:49:58.251Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "ebdclass"
+    ],
+    "object_id": "1",
+    "object_repr": "Joventude Conectada",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 34,
+  "fields": {
+    "action_time": "2026-03-19T04:52:50.506Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "ebdtrimester"
+    ],
+    "object_id": "1",
+    "object_repr": "Joventude Conectada — 1º Trimestre 2026",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 35,
+  "fields": {
+    "action_time": "2026-03-19T04:56:37.338Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "ebdlesson"
+    ],
+    "object_id": "1",
+    "object_repr": "Lição 1 — O Sentido Bíblico da Salvação",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 36,
+  "fields": {
+    "action_time": "2026-03-19T05:00:06.472Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quiz"
+    ],
+    "object_id": "1",
+    "object_repr": "Quiz — O Sentido Bíblico da Salvação",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"Pergunta\", \"object\": \"Qual o sentido em que a palavra \\u201csalva\\u00e7\\u00e3o\\\" aparece tanto no Antigo quanto no Nov\"}}, {\"added\": {\"name\": \"Pergunta\", \"object\": \"Como vemos Deus agindo no Livro do \\u00caxodo?\"}}, {\"added\": {\"name\": \"Pergunta\", \"object\": \"Quais elementos foram essenciais para o Livramento da na\\u00e7\\u00e3o sob a dire\\u00e7\\u00e3o de Sam\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 37,
+  "fields": {
+    "action_time": "2026-03-19T05:08:39.694Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "devotional"
+    ],
+    "object_id": "1",
+    "object_repr": "19/03/2026 — O Problema do Pecado",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 38,
+  "fields": {
+    "action_time": "2026-03-19T05:23:14.639Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Chave PIX\", \"Nome do titular PIX\", \"Banco\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 39,
+  "fields": {
+    "action_time": "2026-03-19T05:52:23.842Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "photoalbum"
+    ],
+    "object_id": "1",
+    "object_repr": "Teste Para o Portal",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"Foto\", \"object\": \"Teste Para o Portal \\u2014 foto 1\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 40,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.065Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "6",
+    "object_repr": "herbert — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 41,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.071Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "5",
+    "object_repr": "adeumaria — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 42,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.075Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "4",
+    "object_repr": "adeumaria — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 43,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.079Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "3",
+    "object_repr": "adeumaria — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 44,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.087Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "2",
+    "object_repr": "herbert — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 45,
+  "fields": {
+    "action_time": "2026-03-19T06:07:28.091Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "quizattempt"
+    ],
+    "object_id": "1",
+    "object_repr": "herbert — Quiz — O Sentido Bíblico da Salvação — 0%",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 46,
+  "fields": {
+    "action_time": "2026-03-19T06:08:35.954Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "question"
+    ],
+    "object_id": "3",
+    "object_repr": "Quais elementos foram essenciais para o Livramento da nação sob a direção de Sam",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2713 Teste 01\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 02\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 03\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 47,
+  "fields": {
+    "action_time": "2026-03-19T06:09:13.653Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "question"
+    ],
+    "object_id": "1",
+    "object_repr": "Qual o sentido em que a palavra “salvação\" aparece tanto no Antigo quanto no Nov",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 01\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2713 Teste 02\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 03\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 48,
+  "fields": {
+    "action_time": "2026-03-19T06:09:40.770Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "question"
+    ],
+    "object_id": "2",
+    "object_repr": "Como vemos Deus agindo no Livro do Êxodo?",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 01\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2717 Teste 02\"}}, {\"added\": {\"name\": \"Alternativa\", \"object\": \"\\u2713 Teste 03\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 49,
+  "fields": {
+    "action_time": "2026-03-19T07:14:24.802Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "cells",
+      "cell"
+    ],
+    "object_id": "1",
+    "object_repr": "Guerreiros de Cristo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"Membro da C\\u00e9lula\", \"object\": \"Erick Lincoln \\u2014 Guerreiros de Cristo\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 50,
+  "fields": {
+    "action_time": "2026-03-19T07:14:54.630Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "cells",
+      "cellmembership"
+    ],
+    "object_id": "2",
+    "object_repr": "Herbert Mesquita — Guerreiros de Cristo",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 51,
+  "fields": {
+    "action_time": "2026-03-27T03:53:05.718Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "heroslide"
+    ],
+    "object_id": "2",
+    "object_repr": "CEIA GERAL",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Imagem de Fundo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 52,
+  "fields": {
+    "action_time": "2026-03-27T03:53:48.296Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "heroslide"
+    ],
+    "object_id": "2",
+    "object_repr": "Santa Ceia",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"T\\u00edtulo\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 53,
+  "fields": {
+    "action_time": "2026-03-27T04:04:48.785Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Subt\\u00edtulo do Hero\", \"Texto de apresenta\\u00e7\\u00e3o das ofertas\", \"E-mail para notifica\\u00e7\\u00f5es\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 54,
+  "fields": {
+    "action_time": "2026-03-28T06:09:58.923Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "agenda",
+      "location"
+    ],
+    "object_id": "2",
+    "object_repr": "Centenário",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 55,
+  "fields": {
+    "action_time": "2026-04-19T20:02:06.297Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus no Brasil",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Nome da Igreja\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 56,
+  "fields": {
+    "action_time": "2026-04-19T20:09:52.679Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus no Brasil",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Link do Google Maps\", \"Telefone\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 57,
+  "fields": {
+    "action_time": "2026-04-20T15:48:30.783Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "ebdclass"
+    ],
+    "object_id": "1",
+    "object_repr": "Joventude Conectada",
+    "action_flag": 2,
+    "change_message": "[]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 58,
+  "fields": {
+    "action_time": "2026-04-20T15:49:04.399Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "ebd",
+      "ebdclass"
+    ],
+    "object_id": "2",
+    "object_repr": "Adolescentes",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 59,
+  "fields": {
+    "action_time": "2026-04-20T16:17:44.291Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "core",
+      "sitesettings"
+    ],
+    "object_id": "1",
+    "object_repr": "Assembléia de Deus no Brasil",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Slogan\", \"E-mail para notifica\\u00e7\\u00f5es\", \"E-mail\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 60,
+  "fields": {
+    "action_time": "2026-04-20T23:23:19.932Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "coursecategory"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 61,
+  "fields": {
+    "action_time": "2026-04-20T23:24:50.135Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "course"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 62,
+  "fields": {
+    "action_time": "2026-04-20T23:25:24.551Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "module"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia › A História da Bíblia: Doutrina das Escrituras",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 63,
+  "fields": {
+    "action_time": "2026-04-21T05:04:27.449Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "module"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia › A História da Bíblia: Doutrina das Escrituras",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Aula\", \"object\": \"A Hist\\u00f3ria da B\\u00edblia: Doutrina das Escrituras \\u203a O Deus Que Se Comunica\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 64,
+  "fields": {
+    "action_time": "2026-04-21T05:05:25.267Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "course"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"M\\u00f3dulo\", \"object\": \"Teologia \\u203a A B\\u00edblia\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 65,
+  "fields": {
+    "action_time": "2026-04-21T05:05:39.298Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "course"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"M\\u00f3dulo\", \"object\": \"Teologia \\u203a A Escrita E A Inspirac\\u0327\\u00e3o Da B\\u00edblia\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 66,
+  "fields": {
+    "action_time": "2026-04-21T05:21:45.368Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "course"
+    ],
+    "object_id": "1",
+    "object_repr": "Teologia",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Carga hor\\u00e1ria (min)\"]}}, {\"added\": {\"name\": \"M\\u00f3dulo\", \"object\": \"Teologia \\u203a Caracter\\u00edsticas E O Fato Da Inspirac\\u0327\\u00e3o\"}}, {\"added\": {\"name\": \"M\\u00f3dulo\", \"object\": \"Teologia \\u203a Como A B\\u00edblia Testemunha A Si Mesma No Novo Testamento\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 67,
+  "fields": {
+    "action_time": "2026-04-21T05:36:35.430Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "lesson"
+    ],
+    "object_id": "1",
+    "object_repr": "A História da Bíblia: Doutrina das Escrituras › O Deus Que Se Comunica",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Ordem\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 68,
+  "fields": {
+    "action_time": "2026-04-21T05:51:37.694Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "module"
+    ],
+    "object_id": "2",
+    "object_repr": "Teologia › A Bíblia",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Descri\\u00e7\\u00e3o\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 69,
+  "fields": {
+    "action_time": "2026-04-21T05:53:55.843Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "module"
+    ],
+    "object_id": "2",
+    "object_repr": "Teologia › A Bíblia",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Aula\", \"object\": \"A B\\u00edblia \\u203a A B\\u00edblia: Hist\\u00f3ria, Estrutura e Mensagem\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 70,
+  "fields": {
+    "action_time": "2026-04-21T05:56:32.427Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "lesson"
+    ],
+    "object_id": "2",
+    "object_repr": "A Bíblia › A Bíblia: História, Estrutura e Mensagem",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Resumo / Objetivo\", \"Conte\\u00fado (texto)\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 71,
+  "fields": {
+    "action_time": "2026-04-21T05:59:22.695Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "lessonquiz"
+    ],
+    "object_id": "1",
+    "object_repr": "Quiz — A Bíblia: História, Estrutura e Mensagem",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"Pergunta\", \"object\": \"Em quantas partes principais a B\\u00edblia \\u00e9 dividida?\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 72,
+  "fields": {
+    "action_time": "2026-04-21T06:01:58.893Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "lessonquiz"
+    ],
+    "object_id": "1",
+    "object_repr": "Quiz — A Bíblia: História, Estrutura e Mensagem",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Pergunta\", \"object\": \"Quantos livros comp\\u00f5em a B\\u00edblia crist\\u00e3 tradicional?\"}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 73,
+  "fields": {
+    "action_time": "2026-04-21T06:02:44.901Z",
+    "user": [
+      "herbert"
+    ],
+    "content_type": [
+      "courses",
+      "lessonquiz"
+    ],
+    "object_id": "1",
+    "object_repr": "Quiz — A Bíblia: História, Estrutura e Mensagem",
+    "action_flag": 2,
+    "change_message": "[{\"added\": {\"name\": \"Pergunta\", \"object\": \"Qual \\u00e9 a principal mensagem central da B\\u00edblia?\"}}]"
+  }
+}
+]

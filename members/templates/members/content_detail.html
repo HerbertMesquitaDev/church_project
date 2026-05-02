@@ -1,0 +1,57 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ content.title }}{% endblock %}
+{% block page_title %}Conteúdo{% endblock %}
+
+{% block content %}
+<div class="content-detail-wrap">
+    <a href="{% url 'content_list' %}" class="back-link">
+        <i class="fa fa-arrow-left"></i> Voltar aos conteúdos
+    </a>
+
+    <div class="content-detail-card">
+        {% if content.thumbnail %}
+        <div class="content-detail-img">
+            <img src="{{ content.thumbnail.url }}" alt="{{ content.title }}">
+        </div>
+        {% endif %}
+
+        <div class="content-detail-header">
+            <span class="content-type-badge content-{{ content.content_type }}">{{ content.get_content_type_display }}</span>
+            {% if content.category %}<span class="content-cat">{{ content.category.name }}</span>{% endif %}
+            <h1>{{ content.title }}</h1>
+            <small>Publicado em {{ content.created_at|date:"d/m/Y" }}
+            {% if content.author %} · por {{ content.author.get_full_name|default:content.author.username }}{% endif %}</small>
+        </div>
+
+        <!-- Video embed -->
+        {% if content.content_type == 'video' and content.video_url %}
+        <div class="video-embed">
+            <iframe src="{{ content.get_embed_url }}" frameborder="0"
+                allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+            </iframe>
+        </div>
+        {% endif %}
+
+        <!-- Body text -->
+        {% if content.body %}
+        <div class="content-body">
+            {{ content.body|safe }}
+        </div>
+        {% endif %}
+
+        <!-- File download -->
+        {% if content.content_type == 'file' and content.file %}
+        <a href="{{ content.file.url }}" class="btn btn-primary" download>
+            <i class="fa fa-download"></i> Baixar Arquivo
+        </a>
+        {% endif %}
+
+        <!-- External link -->
+        {% if content.content_type == 'link' and content.external_link %}
+        <a href="{{ content.external_link }}" target="_blank" class="btn btn-primary">
+            <i class="fa fa-external-link-alt"></i> Acessar Link
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

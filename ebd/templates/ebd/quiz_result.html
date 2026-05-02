@@ -1,0 +1,71 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Resultado — {{ lesson.title }}{% endblock %}
+{% block page_title %}Resultado do Quiz{% endblock %}
+
+{% block content %}
+<div style="max-width:720px">
+
+    <div class="ebd-result-hero {% if attempt.passed %}ebd-result-pass{% else %}ebd-result-fail{% endif %}">
+        <div class="ebd-result-icon">
+            {% if attempt.passed %}<i class="fa fa-check-circle"></i>
+            {% else %}<i class="fa fa-times-circle"></i>{% endif %}
+        </div>
+        <div>
+            <h2>{% if attempt.passed %}Parabéns, você foi aprovado!{% else %}Não foi desta vez{% endif %}</h2>
+            <p class="ebd-result-score">{{ attempt.score }}% de acertos</p>
+            <p>Nota mínima: {{ quiz.passing_score }}%</p>
+        </div>
+        {% if certificate %}
+        <div class="ebd-cert-issued">
+            <i class="fa fa-certificate"></i>
+            <span>Certificado emitido em {{ certificate.issued_at|date:"d/m/Y" }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if quiz.show_answers %}
+    <div class="section-label-sm" style="margin:2rem 0 1rem;">Gabarito</div>
+
+    {% for res in results %}
+    <div class="ebd-result-question {% if res.is_correct %}ebd-q-correct{% else %}ebd-q-wrong{% endif %}">
+        <div class="ebd-result-q-header">
+            <span class="ebd-result-icon-sm">
+                {% if res.is_correct %}<i class="fa fa-check" style="color:#27ae60"></i>
+                {% else %}<i class="fa fa-times" style="color:#e74c3c"></i>{% endif %}
+            </span>
+            <p class="ebd-question-text">{{ res.question.text }}</p>
+        </div>
+        <div class="ebd-result-choices">
+            {% for ch in res.choices %}
+            <div class="ebd-result-choice
+                {% if ch.is_correct %}ebd-choice-correct
+                {% elif ch.wrong_pick %}ebd-choice-wrong{% endif %}">
+                {% if ch.is_correct %}<i class="fa fa-check"></i>
+                {% elif ch.wrong_pick %}<i class="fa fa-times"></i>
+                {% else %}<span style="width:14px;display:inline-block"></span>{% endif %}
+                {{ ch.text }}
+            </div>
+            {% endfor %}
+            {% if res.explanation %}
+            <div class="ebd-explanation">
+                <i class="fa fa-lightbulb"></i> {{ res.explanation }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div style="margin-top:2rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        {% if not attempt.passed %}
+        <a href="{% url 'ebd_quiz' lesson.pk %}" class="btn btn-primary">
+            <i class="fa fa-redo"></i> Tentar novamente
+        </a>
+        {% endif %}
+        <a href="{% url 'ebd_lesson_detail' lesson.pk %}" class="btn btn-outline">Voltar para a lição</a>
+        <a href="{% url 'ebd_my_progress' %}" class="btn btn-outline">
+            <i class="fa fa-chart-bar"></i> Meu progresso
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Confirmar Exclusão{% endblock %}
+{% block page_title %}Confirmar Exclusão{% endblock %}
+{% block extra_css %}
+<style>
+[data-theme="dark"] .form-page-wrap h2 { color: #E8E4DC !important; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="form-page-wrap" style="max-width:500px">
+    <div style="text-align:center;padding:2rem">
+        <i class="fa fa-exclamation-triangle" style="font-size:3rem;color:#e74c3c;margin-bottom:1rem;display:block"></i>
+        <h2 style="color:var(--navy);margin-bottom:0.5rem">Tem certeza?</h2>
+        <p style="color:var(--text-muted);margin-bottom:2rem">
+            Você está prestes a excluir o {{ tipo }}: <strong>{{ object }}</strong>.<br>
+            Esta ação não pode ser desfeita.
+        </p>
+        <form method="post" style="display:flex;gap:1rem;justify-content:center">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" style="background:#e74c3c">
+                <i class="fa fa-trash"></i> Sim, excluir
+            </button>
+            <a href="javascript:history.back()" class="btn btn-outline">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

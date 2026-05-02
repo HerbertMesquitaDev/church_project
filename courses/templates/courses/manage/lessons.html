@@ -1,0 +1,55 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Aulas — {{ module.title }}{% endblock %}
+{% block page_title %}Aulas: {{ module.title }}{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_courses' %}" style="color:var(--gold)"><i class="fa fa-graduation-cap"></i> Cursos</a>
+        <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+        <a href="{% url 'manage_modules' module.course.pk %}" style="color:var(--gold)">{{ module.course.title }}</a>
+        <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+        <span>{{ module.title }}</span>
+    </div>
+
+    <div class="manage-topbar">
+        <span class="text-muted" style="font-size:.875rem">{{ lessons.count }} aula{{ lessons.count|pluralize }}</span>
+        <a href="{% url 'manage_lesson_create' module.pk %}" class="btn btn-primary"><i class="fa fa-plus"></i> Nova Aula</a>
+    </div>
+
+    {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}
+
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead><tr><th>Ord.</th><th>Título</th><th class="hide-mobile">Conteúdo</th><th>Dur.</th><th>Pub.</th><th style="width:90px">Ações</th></tr></thead>
+            <tbody>
+                {% for lesson in lessons %}
+                <tr>
+                    <td style="color:var(--text-muted);font-size:.85rem">{{ lesson.order }}</td>
+                    <td><span style="font-weight:500">{{ lesson.title }}</span></td>
+                    <td class="hide-mobile">
+                        <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+                            {% if lesson.body %}<span class="badge">Texto</span>{% endif %}
+                            {% if lesson.video_url %}<span class="badge">Vídeo</span>{% endif %}
+                            {% if lesson.pdf_file %}<span class="badge">PDF</span>{% endif %}
+                            {% if lesson.audio_file %}<span class="badge">Áudio</span>{% endif %}
+                        </div>
+                    </td>
+                    <td>{% if lesson.duration %}{{ lesson.duration }}min{% else %}—{% endif %}</td>
+                    <td>{% if lesson.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
+                    <td>
+                        <div class="manage-actions">
+                            <a href="{% url 'manage_lesson_edit' lesson.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                            <a href="{% url 'manage_lesson_delete' lesson.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" style="text-align:center;padding:2rem" class="text-muted">Nenhuma aula ainda.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'manage_modules' module.course.pk %}" class="btn btn-outline"><i class="fa fa-arrow-left"></i> Voltar aos Módulos</a>
+</div>
+{% endblock %}

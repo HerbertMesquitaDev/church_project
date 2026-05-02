@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+{% block title %}Midiateca — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Conteúdo</span>
+        <h1>Midiateca</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <!-- Filtros -->
+        <div class="media-filters">
+            <div class="media-sections">
+                <a href="{% url 'media_list' %}" class="media-section-btn {% if not section %}active{% endif %}">
+                    <i class="fa fa-th"></i> Todos
+                </a>
+                {% for key, label in sections %}
+                <a href="?secao={{ key }}" class="media-section-btn {% if section == key %}active{% endif %}">
+                    {% if key == 'sermons' %}<i class="fa fa-microphone"></i>
+                    {% elif key == 'worship' %}<i class="fa fa-music"></i>
+                    {% elif key == 'studies' %}<i class="fa fa-book-open"></i>
+                    {% elif key == 'live' %}<i class="fa fa-circle" style="color:#e74c3c;font-size:.6rem;vertical-align:middle"></i>
+                    {% else %}<i class="fa fa-play"></i>{% endif %}
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+
+            <form method="get" class="media-search-form">
+                {% if section %}<input type="hidden" name="secao" value="{{ section }}">{% endif %}
+                <div class="filter-input-icon">
+                    <i class="fa fa-search"></i>
+                    <input type="text" name="q" value="{{ q }}" placeholder="Buscar por título ou pregador…" class="filter-input media-search-input">
+                </div>
+            </form>
+        </div>
+
+        <!-- Grid de itens -->
+        {% if items %}
+        <div class="media-grid">
+            {% for item in items %}
+            <a href="{% url 'media_detail' item.pk %}" class="media-card">
+                <div class="media-card-thumb">
+                    {% if item.thumbnail %}
+                        <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}">
+                    {% else %}
+                        <div class="media-card-no-thumb">
+                            {% if item.media_type == 'video' or item.media_type == 'live' %}<i class="fa fa-play-circle"></i>
+                            {% elif item.media_type == 'audio' %}<i class="fa fa-headphones"></i>
+                            {% elif item.media_type == 'pdf' %}<i class="fa fa-file-pdf"></i>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <span class="media-type-badge media-type-{{ item.media_type }}">
+                        {% if item.media_type == 'video' %}Vídeo
+                        {% elif item.media_type == 'audio' %}Áudio
+                        {% elif item.media_type == 'pdf' %}PDF
+                        {% elif item.media_type == 'live' %}<i class="fa fa-circle" style="font-size:.55rem;vertical-align:middle"></i> Ao Vivo
+                        {% endif %}
+                    </span>
+                    {% if item.visibility == 'members' %}
+                    <span class="media-members-lock"><i class="fa fa-lock"></i></span>
+                    {% endif %}
+                </div>
+                <div class="media-card-body">
+                    {% if item.category %}<span class="media-cat-label">{{ item.category.name }}</span>{% endif %}
+                    <h3>{{ item.title }}</h3>
+                    {% if item.speaker %}<p class="media-speaker"><i class="fa fa-user-tie"></i> {{ item.speaker }}</p>{% endif %}
+                    {% if item.pub_date %}<small>{{ item.pub_date|date:"d/m/Y" }}</small>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% include 'core/pagination.html' %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fa fa-photo-film"></i>
+            <h3>Nenhum conteúdo encontrado.</h3>
+            {% if q %}<p><a href="{% url 'media_list' %}">Limpar busca</a></p>{% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

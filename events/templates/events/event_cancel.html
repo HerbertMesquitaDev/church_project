@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block title %}Cancelar Inscrição — {{ event.title }}{% endblock %}
+
+{% block content %}
+<section class="section" style="padding-top:7rem">
+    <div class="container" style="max-width:500px">
+        <div class="aside-card" style="text-align:center;padding:2.5rem">
+            <i class="fa fa-exclamation-triangle" style="font-size:2.5rem;color:#e74c3c;margin-bottom:1rem;display:block"></i>
+            <h2 style="color:var(--text-heading);margin-bottom:.75rem">Cancelar Inscrição</h2>
+            <p style="color:var(--text-muted);margin-bottom:.5rem">
+                Você tem certeza que deseja cancelar sua inscrição em:
+            </p>
+            <p style="font-weight:500;color:var(--text-heading);margin-bottom:1.5rem">
+                {{ event.title }} — {{ event.display_date }}
+            </p>
+            {% if reg.status == 'confirmed' and event.waitlist_count %}
+            <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:6px;padding:.9rem 1rem;margin-bottom:1.5rem;font-size:.85rem;color:var(--text-muted);text-align:left">
+                <i class="fa fa-info-circle" style="color:var(--gold-dark)"></i>
+                Há {{ event.waitlist_count }} pessoa{{ event.waitlist_count|pluralize:",s" }} na lista de espera.
+                Ao cancelar, a próxima da fila será notificada automaticamente.
+            </div>
+            {% endif %}
+            <form method="post" style="display:flex;gap:.75rem;justify-content:center">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c">
+                    <i class="fa fa-times"></i> Sim, cancelar
+                </button>
+                <a href="{% url 'event_detail' event.slug %}" class="btn btn-outline">Voltar</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

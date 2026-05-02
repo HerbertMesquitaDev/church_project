@@ -1,0 +1,165 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Solicitações de Exclusão{% endblock %}
+{% block page_title %}Solicitações de Exclusão{% endblock %}
+
+{% block extra_css %}
+<style>
+.dr-status-pending  { background:rgba(243,156,18,.12); color:#946b00; }
+.dr-status-approved { background:rgba(39,174,96,.12);  color:#1a7a40; }
+.dr-status-rejected { background:rgba(231,76,60,.12);  color:#c0392b; }
+.dr-badge { display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:20px;font-size:.7rem;font-weight:600; }
+.dr-reason { font-size:.8rem;color:var(--text-muted);margin-top:.25rem;font-style:italic; }
+.dr-modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;align-items:center;justify-content:center; }
+.dr-modal-overlay.open { display:flex; }
+.dr-modal { background:var(--card-bg,#fff);border-radius:12px;padding:2rem;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25); }
+.dr-modal h3 { margin:0 0 .5rem;font-size:1.1rem; }
+.dr-modal p  { color:var(--text-muted);font-size:.875rem;margin:0 0 1.25rem; }
+.dr-note { width:100%;min-height:72px;border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;font-size:.85rem;font-family:inherit;background:var(--surface-alt);color:var(--text);resize:vertical; }
+.dr-note:focus { outline:none;border-color:var(--gold); }
+[data-theme="dark"] .dr-modal { background:#1E1E24; }
+[data-theme="dark"] .dr-status-pending  { background:rgba(243,156,18,.12); color:#D4A94E; }
+[data-theme="dark"] .dr-status-approved { background:rgba(39,174,96,.12);  color:#58d68d; }
+[data-theme="dark"] .dr-status-rejected { background:rgba(231,76,60,.12);  color:#e87c6f; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <!-- ── Pendentes ── -->
+  <div class="section-label-sm">
+    Aguardando revisão
+    {% if pending_count %}<span class="crud-badge crud-badge-alert" style="margin-left:.5rem">{{ pending_count }}</span>{% endif %}
+  </div>
+
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Tipo</th>
+          <th>Solicitado por</th>
+          <th class="hide-mobile">Data</th>
+          <th class="hide-mobile">Motivo</th>
+          <th style="width:160px">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dr in pending %}
+        <tr>
+          <td><strong class="td-title">{{ dr.object_title }}</strong></td>
+          <td><span class="badge">{{ dr.get_content_type_display }}</span></td>
+          <td>{{ dr.requested_by.get_full_name|default:dr.requested_by.username }}</td>
+          <td class="hide-mobile" style="white-space:nowrap;font-size:.82rem;color:var(--gold-dark)">{{ dr.created_at|date:"d/m/Y H:i" }}</td>
+          <td class="hide-mobile"><span class="dr-reason">{{ dr.reason|default:"—"|truncatewords:10 }}</span></td>
+          <td>
+            <div class="manage-actions">
+              <button class="manage-btn manage-btn-edit" title="Aprovar e excluir" onclick="openApprove({{ dr.pk }},'{{ dr.object_title|escapejs }}')">
+                <i class="fa fa-check"></i>
+              </button>
+              <button class="manage-btn manage-btn-del" title="Recusar" onclick="openReject({{ dr.pk }},'{{ dr.object_title|escapejs }}')">
+                <i class="fa fa-times"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+          <i class="fa fa-check-circle" style="font-size:1.8rem;opacity:.3;display:block;margin-bottom:.5rem"></i>
+          Nenhuma solicitação pendente.
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── Histórico ── -->
+  {% if reviewed %}
+  <div class="section-label-sm" style="margin-top:2rem">Histórico recente</div>
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr><th>Item</th><th>Tipo</th><th>Solicitante</th><th>Status</th><th class="hide-mobile">Revisado por</th><th class="hide-mobile">Data</th></tr>
+      </thead>
+      <tbody>
+        {% for dr in reviewed %}
+        <tr>
+          <td><span class="td-title">{{ dr.object_title }}</span></td>
+          <td><span class="badge">{{ dr.get_content_type_display }}</span></td>
+          <td>{{ dr.requested_by.get_full_name|default:dr.requested_by.username }}</td>
+          <td><span class="dr-badge dr-status-{{ dr.status }}">{{ dr.get_status_display }}</span></td>
+          <td class="hide-mobile text-muted">{{ dr.reviewed_by.get_full_name|default:"—" }}</td>
+          <td class="hide-mobile" style="font-size:.82rem;color:var(--gold-dark)">{{ dr.reviewed_at|date:"d/m/Y"|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+</div>
+
+<!-- Modal: aprovar -->
+<div id="modalApprove" class="dr-modal-overlay">
+  <div class="dr-modal">
+    <h3><i class="fa fa-check-circle" style="color:#27ae60"></i> Aprovar e excluir</h3>
+    <p id="approveText">Você está prestes a excluir este item permanentemente.</p>
+    <form method="post" id="approveForm">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom:1rem">
+        <label style="font-size:.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Nota ao colaborador (opcional)</label>
+        <textarea name="admin_note" class="dr-note" placeholder="Motivo da aprovação..."></textarea>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button type="submit" class="btn btn-primary" style="background:#27ae60;border-color:#27ae60"><i class="fa fa-trash"></i> Confirmar exclusão</button>
+        <button type="button" class="btn btn-outline" onclick="closeModals()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: rejeitar -->
+<div id="modalReject" class="dr-modal-overlay">
+  <div class="dr-modal">
+    <h3><i class="fa fa-times-circle" style="color:#e74c3c"></i> Recusar solicitação</h3>
+    <p id="rejectText">O item não será excluído. Informe o motivo ao colaborador.</p>
+    <form method="post" id="rejectForm">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom:1rem">
+        <label style="font-size:.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Motivo da recusa *</label>
+        <textarea name="admin_note" class="dr-note" placeholder="Ex: Conteúdo ainda em uso, aguardar autorização..." required></textarea>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c"><i class="fa fa-times"></i> Recusar</button>
+        <button type="button" class="btn btn-outline" onclick="closeModals()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openApprove(pk, title) {
+  document.getElementById('approveText').textContent = 'Excluir permanentemente: "' + title + '"';
+  document.getElementById('approveForm').action = '/membros/solicitacoes-exclusao/' + pk + '/aprovar/';
+  document.getElementById('modalApprove').classList.add('open');
+}
+function openReject(pk, title) {
+  document.getElementById('rejectText').textContent = 'Recusar exclusão de: "' + title + '"';
+  document.getElementById('rejectForm').action = '/membros/solicitacoes-exclusao/' + pk + '/recusar/';
+  document.getElementById('modalReject').classList.add('open');
+}
+function closeModals() {
+  document.querySelectorAll('.dr-modal-overlay').forEach(m => m.classList.remove('open'));
+}
+document.querySelectorAll('.dr-modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModals(); });
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+</script>
+{% endblock %}

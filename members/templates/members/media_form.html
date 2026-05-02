@@ -1,0 +1,54 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+    <form method="post" enctype="multipart/form-data" class="members-form">
+        {% csrf_token %}
+
+        <div class="form-section-title"><i class="fa fa-info-circle"></i> Informações Gerais</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.title.label }}</label>{{ form.title }}</div>
+            <div class="form-group"><label>{{ form.media_type.label }}</label>{{ form.media_type }}</div>
+            <div class="form-group"><label>{{ form.category.label }}</label>{{ form.category }}</div>
+            <div class="form-group"><label>{{ form.visibility.label }}</label>{{ form.visibility }}</div>
+            <div class="form-group"><label>{{ form.speaker.label }}</label>{{ form.speaker }}</div>
+            <div class="form-group"><label>{{ form.pub_date.label }}</label>{{ form.pub_date }}</div>
+        </div>
+        <div class="form-group"><label>{{ form.description.label }}</label>{{ form.description }}</div>
+
+        <div class="form-section-title"><i class="fa fa-photo-film"></i> Arquivo de Mídia</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.video_url.label }}</label>{{ form.video_url }}</div>
+            <div class="form-group"><label>{{ form.audio_file.label }}</label>{{ form.audio_file }}</div>
+            <div class="form-group"><label>{{ form.pdf_file.label }}</label>{{ form.pdf_file }}</div>
+            <div class="form-group form-col-2">
+                <label>{{ form.thumbnail.label }}</label>{{ form.thumbnail }}
+                {% if item and item.thumbnail %}
+                <div style="margin-top:.5rem">
+                    <img src="{{ item.thumbnail.url }}" style="height:60px;border-radius:6px;border:1px solid var(--border)">
+                    <small class="text-muted"> — envie outra para substituir</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="display:flex;gap:2rem;margin-top:.5rem;flex-wrap:wrap">
+            <div class="form-check-group form-group">{{ form.published }}<label for="{{ form.published.id_for_label }}">Publicado</label></div>
+            <div class="form-check-group form-group">{{ form.featured }}<label for="{{ form.featured.id_for_label }}">Destaque na Home</label></div>
+        </div>
+
+        {% if form.errors %}
+        <div class="non-field-errors" style="margin-top:1rem">
+            {% for field in form %}{% for err in field.errors %}<p><strong>{{ field.label }}:</strong> {{ err }}</p>{% endfor %}{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <a href="{% url 'media_manage' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

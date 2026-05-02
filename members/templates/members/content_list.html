@@ -1,0 +1,45 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Conteúdos Exclusivos{% endblock %}
+{% block page_title %}Conteúdos{% endblock %}
+
+{% block content %}
+
+<div class="content-filters">
+    <a href="{% url 'content_list' %}" class="filter-btn {% if not selected_category %}active{% endif %}">Todos</a>
+    {% for cat in categories %}
+    <a href="?categoria={{ cat.id }}" class="filter-btn {% if selected_category == cat.id|stringformat:'s' %}active{% endif %}">
+        <i class="fa {{ cat.icon }}"></i> {{ cat.name }}
+    </a>
+    {% endfor %}
+</div>
+
+{% if contents %}
+<div class="contents-grid">
+    {% for item in contents %}
+    <a href="{% url 'content_detail' item.pk %}" class="content-card">
+        {% if item.thumbnail %}
+            <div class="content-card-img"><img src="{{ item.thumbnail.url }}" alt="{{ item.title }}"></div>
+        {% else %}
+            <div class="content-card-img content-card-no-img">
+                <i class="fa {{ item.category.icon|default:'fa-book' }}"></i>
+            </div>
+        {% endif %}
+        <div class="content-card-body">
+            <span class="content-type-badge content-{{ item.content_type }}">{{ item.get_content_type_display }}</span>
+            <h3>{{ item.title }}</h3>
+            {% if item.category %}<span class="content-cat">{{ item.category.name }}</span>{% endif %}
+            <p>{{ item.body|truncatewords:18 }}</p>
+            <small>{{ item.created_at|date:"d/m/Y" }}</small>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% include 'core/pagination.html' %}
+{% else %}
+<div class="empty-state">
+    <i class="fa fa-book-open"></i>
+    <h3>Nenhum conteúdo encontrado</h3>
+    <p>Em breve novos conteúdos serão publicados.</p>
+</div>
+{% endif %}
+{% endblock %}

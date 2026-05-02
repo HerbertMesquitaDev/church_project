@@ -1,0 +1,102 @@
+{% extends 'core/base.html' %}
+{% block title %}Política de Privacidade — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Transparência</span>
+        <h1>Política de Privacidade</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="privacy-layout">
+            <div class="privacy-content">
+
+                <p class="privacy-updated">Última atualização: {% now "d \d\e F \d\e Y" %}</p>
+
+                <p>A <strong>{{ site_settings.church_name }}</strong> respeita sua privacidade e está comprometida com a proteção dos seus dados pessoais, em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD — Lei nº 13.709/2018)</strong>.</p>
+
+                <h2>1. Quem somos</h2>
+                <p>{{ site_settings.church_name }}{% if site_settings.address %}, localizada em {{ site_settings.address }}{% endif %}{% if site_settings.email %}, e-mail: {{ site_settings.email }}{% endif %}{% if site_settings.phone %}, telefone: {{ site_settings.phone }}{% endif %}.</p>
+
+                <h2>2. Quais dados coletamos</h2>
+                <p>Coletamos apenas os dados necessários para as finalidades descritas abaixo:</p>
+                <ul>
+                    <li><strong>Cadastro de membro:</strong> nome, e-mail, telefone, data de nascimento e foto de perfil.</li>
+                    <li><strong>Formulário de visita:</strong> nome, e-mail, telefone e data da visita.</li>
+                    <li><strong>Formulário de contato:</strong> nome, e-mail e mensagem.</li>
+                    <li><strong>Dados de uso:</strong> cookies de sessão necessários para o funcionamento do site (não utilizamos cookies de rastreamento ou publicidade).</li>
+                </ul>
+
+                <h2>3. Para que usamos seus dados</h2>
+                <ul>
+                    <li>Gerenciar seu cadastro na área de membros.</li>
+                    <li>Enviar comunicações sobre eventos, avisos e atividades da igreja.</li>
+                    <li>Responder mensagens e pedidos de contato.</li>
+                    <li>Manter o histórico de participação em atividades e estudos.</li>
+                </ul>
+
+                <h2>4. Base legal</h2>
+                <p>O tratamento dos seus dados é baseado em:</p>
+                <ul>
+                    <li><strong>Consentimento</strong> — ao se cadastrar, você consente com o uso dos seus dados.</li>
+                    <li><strong>Legítimo interesse</strong> — para comunicações relacionadas às atividades da igreja.</li>
+                    <li><strong>Cumprimento de obrigação</strong> — quando exigido por lei.</li>
+                </ul>
+
+                <h2>5. Com quem compartilhamos</h2>
+                <p>Seus dados <strong>não são vendidos, alugados ou compartilhados</strong> com terceiros para fins comerciais. Podemos compartilhar informações apenas com prestadores de serviço que nos auxiliam na operação do site (como serviços de hospedagem), sempre sob sigilo e apenas o necessário.</p>
+
+                <h2>6. Por quanto tempo guardamos</h2>
+                <p>Mantemos seus dados enquanto você for membro ativo da igreja ou enquanto necessário para as finalidades descritas. Após o encerramento do cadastro, os dados são excluídos em até 90 dias, salvo obrigação legal de retenção.</p>
+
+                <h2>7. Seus direitos</h2>
+                <p>Conforme a LGPD, você tem direito a:</p>
+                <ul>
+                    <li>Confirmar a existência do tratamento dos seus dados.</li>
+                    <li>Acessar os dados que temos sobre você.</li>
+                    <li>Corrigir dados incompletos, inexatos ou desatualizados.</li>
+                    <li>Solicitar a anonimização, bloqueio ou exclusão dos seus dados.</li>
+                    <li>Revogar o consentimento a qualquer momento.</li>
+                </ul>
+                <p>Para exercer qualquer desses direitos, entre em contato conosco{% if site_settings.email %} pelo e-mail <strong>{{ site_settings.email }}</strong>{% endif %}.</p>
+
+                <h2>8. Cookies</h2>
+                <p>Utilizamos apenas cookies de sessão, essenciais para o funcionamento do site (autenticação). Não utilizamos cookies de rastreamento, analytics ou publicidade.</p>
+
+                <h2>9. Segurança</h2>
+                <p>Adotamos medidas técnicas e administrativas para proteger seus dados contra acessos não autorizados, situações acidentais ou ilícitas de destruição, perda, alteração ou comunicação.</p>
+
+                <h2>10. Contato</h2>
+                <p>Em caso de dúvidas sobre esta política ou sobre o tratamento dos seus dados, entre em contato:</p>
+                <ul>
+                    {% if site_settings.email %}<li><i class="fa fa-envelope"></i> {{ site_settings.email }}</li>{% endif %}
+                    {% if site_settings.phone %}<li><i class="fa fa-phone"></i> {{ site_settings.phone }}</li>{% endif %}
+                    {% if site_settings.address %}<li><i class="fa fa-map-marker-alt"></i> {{ site_settings.address }}</li>{% endif %}
+                </ul>
+
+            </div>
+
+            <aside class="privacy-aside">
+                <div class="aside-card">
+                    <h4>Resumo</h4>
+                    <ul class="privacy-summary">
+                        <li><i class="fa fa-check" style="color:#27ae60"></i> Dados usados apenas para fins da igreja</li>
+                        <li><i class="fa fa-check" style="color:#27ae60"></i> Não vendemos seus dados</li>
+                        <li><i class="fa fa-check" style="color:#27ae60"></i> Sem cookies de rastreamento</li>
+                        <li><i class="fa fa-check" style="color:#27ae60"></i> Você pode pedir exclusão a qualquer momento</li>
+                        <li><i class="fa fa-check" style="color:#27ae60"></i> Em conformidade com a LGPD</li>
+                    </ul>
+                </div>
+                <div class="aside-card" style="margin-top:1rem">
+                    <h4>Dúvidas?</h4>
+                    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem">Entre em contato conosco.</p>
+                    <a href="{% url 'contact' %}" class="btn btn-outline btn-full">Falar conosco</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

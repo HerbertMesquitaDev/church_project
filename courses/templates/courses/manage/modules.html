@@ -1,0 +1,71 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Módulos — {{ course.title }}{% endblock %}
+{% block page_title %}Módulos: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_courses' %}" style="color:var(--gold)"><i class="fa fa-graduation-cap"></i> Cursos</a>
+        <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+        <span>{{ course.title }}</span>
+    </div>
+
+    {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>{% endfor %}{% endif %}
+
+    <!-- Módulos existentes -->
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+        {% for module in modules %}
+        <div class="manage-table-wrap" style="border-radius:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;background:var(--surface-alt,#FAF7F2);border-bottom:1px solid var(--border,rgba(201,168,76,.1))">
+                <strong style="color:var(--text-heading)"><i class="fa fa-folder-open" style="color:var(--gold);margin-right:.4rem"></i>{{ module.title }}</strong>
+                <div class="manage-actions">
+                    <a href="{% url 'manage_lessons' module.pk %}" class="manage-btn manage-btn-view" title="Ver aulas"><i class="fa fa-list"></i></a>
+                    <a href="{% url 'manage_lesson_create' module.pk %}" class="manage-btn manage-btn-edit" title="Nova aula"><i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+            <table class="manage-table">
+                <tbody>
+                    {% for lesson in module.lessons.all %}
+                    <tr>
+                        <td style="width:30px;color:var(--text-muted);font-size:.8rem">{{ lesson.order }}</td>
+                        <td>
+                            <span style="font-weight:500">{{ lesson.title }}</span>
+                            {% if lesson.duration %}<small class="text-muted"> — {{ lesson.duration }} min</small>{% endif %}
+                        </td>
+                        <td>{% if lesson.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
+                        <td>
+                            <div class="manage-actions">
+                                <a href="{% url 'manage_lesson_edit' lesson.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                                <a href="{% url 'manage_lesson_delete' lesson.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="padding:.75rem 1.1rem;font-size:.85rem" class="text-muted">Nenhuma aula — <a href="{% url 'manage_lesson_create' module.pk %}" style="color:var(--gold)">adicionar aula</a></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% empty %}
+        <p class="text-muted" style="text-align:center;padding:2rem">Nenhum módulo ainda.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Novo módulo -->
+    <div class="manage-table-wrap" style="border-radius:10px;padding:1.25rem">
+        <h4 style="margin-bottom:1rem;font-size:.9rem;font-weight:600;color:var(--text-heading)"><i class="fa fa-plus" style="color:var(--gold);margin-right:.4rem"></i>Novo Módulo</h4>
+        <form method="post" class="members-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group form-col-2"><label>Título do Módulo</label>{{ form.title }}</div>
+                <div class="form-group form-col-2"><label>Descrição (opcional)</label>{{ form.description }}</div>
+                <div class="form-group"><label>Ordem</label>{{ form.order }}</div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Criar Módulo</button>
+                <a href="{% url 'manage_courses' %}" class="btn btn-outline">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Resultado do Quiz{% endblock %}
+{% block page_title %}Resultado do Quiz{% endblock %}
+
+{% block content %}
+<div style="max-width:700px">
+    <div class="quiz-result-hero {% if attempt.passed %}quiz-result-pass{% else %}quiz-result-fail{% endif %}">
+        <div class="quiz-result-icon">
+            {% if attempt.passed %}<i class="fa fa-check-circle"></i>{% else %}<i class="fa fa-times-circle"></i>{% endif %}
+        </div>
+        <div class="quiz-result-score">{{ attempt.score }}%</div>
+        <div class="quiz-result-label">{% if attempt.passed %}Aprovado!{% else %}Tente novamente{% endif %}</div>
+        <div class="quiz-result-detail">{{ correct }} de {{ total }} corretas · Mínimo: {{ quiz.passing_score }}%</div>
+    </div>
+
+    {% if quiz.show_answers %}
+    <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1.25rem">
+        {% for q in questions %}
+        {% with chosen_id=answers|dict_key:q.pk|stringformat:"s" %}
+        <div class="quiz-question-card">
+            <div class="quiz-question-num">Pergunta {{ forloop.counter }}</div>
+            <p class="quiz-question-text">{{ q.text }}</p>
+            <div class="quiz-choices">
+                {% for choice in q.choices.all %}
+                <div class="quiz-choice-result
+                    {% if choice.is_correct %}choice-correct
+                    {% elif choice.pk|stringformat:'s' == chosen_id and not choice.is_correct %}choice-wrong
+                    {% endif %}">
+                    <i class="fa {% if choice.is_correct %}fa-check-circle{% elif choice.pk|stringformat:'s' == chosen_id %}fa-times-circle{% else %}fa-circle{% endif %}"></i>
+                    {{ choice.text }}
+                </div>
+                {% endfor %}
+            </div>
+            {% if q.explanation %}<p class="quiz-explanation"><i class="fa fa-lightbulb"></i> {{ q.explanation }}</p>{% endif %}
+        </div>
+        {% endwith %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form-actions" style="margin-top:1.25rem">
+        <a href="{% url 'lesson_detail' lesson.pk %}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Voltar para a aula</a>
+        {% if not attempt.passed %}
+        <a href="{% url 'lesson_quiz' lesson.pk %}" class="btn btn-outline"><i class="fa fa-redo"></i> Tentar novamente</a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.quiz-result-hero { text-align:center; padding:2rem; border-radius:12px; margin-bottom:.5rem; }
+.quiz-result-pass { background:rgba(39,174,96,.08); border:1px solid rgba(39,174,96,.25); }
+.quiz-result-fail { background:rgba(231,76,60,.06); border:1px solid rgba(231,76,60,.2); }
+.quiz-result-icon { font-size:2.5rem; margin-bottom:.5rem; }
+.quiz-result-pass .quiz-result-icon { color:#27ae60; }
+.quiz-result-fail .quiz-result-icon { color:#e74c3c; }
+.quiz-result-score { font-size:3rem; font-weight:700; line-height:1; }
+.quiz-result-pass .quiz-result-score { color:#27ae60; }
+.quiz-result-fail .quiz-result-score { color:#e74c3c; }
+.quiz-result-label { font-size:1.1rem; font-weight:600; margin:.25rem 0; }
+.quiz-result-detail { font-size:.82rem; color:var(--text-muted); }
+.quiz-question-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.25rem; }
+.quiz-question-num { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-dark,#8B6914); margin-bottom:.4rem; }
+.quiz-question-text { font-size:.95rem; font-weight:500; color:var(--text-heading,#1A2340); margin-bottom:.75rem; }
+.quiz-choices { display:flex; flex-direction:column; gap:.4rem; }
+.quiz-choice-result { display:flex; align-items:center; gap:.6rem; padding:.55rem .85rem; border-radius:8px; font-size:.875rem; border:1px solid var(--border,rgba(201,168,76,.1)); }
+.choice-correct { background:rgba(39,174,96,.08); border-color:rgba(39,174,96,.3); color:#1a7a45; font-weight:500; }
+.choice-correct i { color:#27ae60; }
+.choice-wrong { background:rgba(231,76,60,.06); border-color:rgba(231,76,60,.25); color:#c0392b; }
+.choice-wrong i { color:#e74c3c; }
+.quiz-explanation { font-size:.82rem; color:var(--text-muted); margin:.75rem 0 0; padding:.6rem .85rem; background:rgba(201,168,76,.06); border-radius:6px; border-left:3px solid var(--gold,#C9A84C); }
+.quiz-explanation i { color:var(--gold,#C9A84C); }
+[data-theme="dark"] .quiz-question-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .quiz-question-text { color:#E8E4DC; }
+</style>
+{% endblock %}

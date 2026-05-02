@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %}
+{% block title %}Eventos — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Agenda</span>
+        <h1>Eventos</h1>
+    </div>
+</section>
+
+{% if featured %}
+<section class="featured-event">
+    <div class="container">
+        <div class="featured-inner">
+            {% if featured.image %}
+            <div class="featured-img">
+                <img src="{{ featured.image.url }}" alt="{{ featured.title }}">
+            </div>
+            {% endif %}
+            <div class="featured-content">
+                <span class="event-badge-lg">Destaque</span>
+                <h2>{{ featured.title }}</h2>
+                <p class="event-meta"><i class="fa fa-calendar"></i> {{ featured.date|date:"d \d\e F \d\e Y" }} às {{ featured.date|date:"H:i" }}</p>
+                {% if featured.location %}<p class="event-meta"><i class="fa fa-map-marker-alt"></i> {{ featured.location }}</p>{% endif %}
+                <p>{{ featured.short_description|default:featured.description|truncatewords:30 }}</p>
+                <a href="{{ featured.get_absolute_url }}" class="btn btn-primary">Ver Detalhes</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="container">
+        <!-- Filtros -->
+        <div class="events-filters">
+            <div class="filter-period">
+                <a href="?periodo=upcoming{% if selected_category %}&categoria={{ selected_category }}{% endif %}"
+                   class="filter-btn {% if period != 'past' %}active{% endif %}">Próximos</a>
+                <a href="?periodo=past{% if selected_category %}&categoria={{ selected_category }}{% endif %}"
+                   class="filter-btn {% if period == 'past' %}active{% endif %}">Anteriores</a>
+            </div>
+            {% if categories %}
+            <div class="filter-categories">
+                <a href="?periodo={{ period }}" class="filter-tag {% if not selected_category %}active{% endif %}">Todos</a>
+                {% for cat in categories %}
+                <a href="?categoria={{ cat.id }}&periodo={{ period }}"
+                   class="filter-tag {% if selected_category == cat.id|stringformat:'s' %}active{% endif %}"
+                   style="--cat-color: {{ cat.color }}">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if events %}
+        <div class="events-grid">
+            {% for event in events %}            <article class="event-card" style="--i:{{ forloop.counter }}">
+                {% if event.image %}
+                <div class="event-card-img">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% if event.category %}<span class="event-badge" style="background:{{ event.category.color }}">{{ event.category.name }}</span>{% endif %}
+                </div>
+                {% else %}
+                <div class="event-card-img event-card-no-img">
+                    <i class="fa fa-church"></i>
+                    {% if event.category %}<span class="event-badge" style="background:{{ event.category.color }}">{{ event.category.name }}</span>{% endif %}
+                </div>
+                {% endif %}
+                <div class="event-card-body">
+                    <div class="event-date-block">
+                        <span class="event-day">{{ event.date|date:"d" }}</span>
+                        <span class="event-month">{{ event.date|date:"M" }}</span>
+                    </div>
+                    <div class="event-info">
+                        <h3><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+                        <p class="event-meta"><i class="fa fa-clock"></i> {{ event.date|date:"H:i" }}</p>
+                        {% if event.location %}<p class="event-meta"><i class="fa fa-map-marker-alt"></i> {{ event.location }}</p>{% endif %}
+                        <p class="event-desc">{{ event.short_description|default:event.description|truncatewords:18 }}</p>
+                        <a href="{{ event.get_absolute_url }}" class="event-link">Ver detalhes <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% include 'core/pagination.html' %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fa fa-calendar-times"></i>
+            <h3>Nenhum evento encontrado</h3>
+            <p>{% if period == 'past' %}Não há eventos anteriores.{% else %}Em breve novos eventos serão anunciados.{% endif %}</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

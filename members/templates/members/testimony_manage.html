@@ -1,0 +1,125 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Gerenciar Testemunhos{% endblock %}
+{% block page_title %}Gerenciar Testemunhos{% endblock %}
+
+{% block content %}
+
+{% if pending %}
+<div class="section-label-sm" style="margin-bottom:1rem;">
+    Aguardando Aprovação
+    <span style="background:#e74c3c;color:#fff;border-radius:20px;padding:.1rem .6rem;font-size:.75rem;margin-left:.5rem;">{{ pending|length }}</span>
+</div>
+<div class="testimony-cards">
+    {% for t in pending %}
+    <div class="testimony-card testimony-card-pending">
+        <div class="testimony-card-header">
+            <div style="display:flex;align-items:center;gap:.8rem;">
+                {% if t.profile.photo %}
+                    <img src="{{ t.profile.photo.url }}" class="member-thumb" alt="">
+                {% else %}
+                    <div class="member-thumb-placeholder"><i class="fa fa-user"></i></div>
+                {% endif %}
+                <div>
+                    <strong>{{ t.profile.full_name }}</strong>
+                    <br><small style="color:var(--text-muted)">{{ t.created_at|date:"d/m/Y \à\s H:i" }}</small>
+                </div>
+            </div>
+            <span class="testimony-badge testimony-badge-pending"><i class="fa fa-clock"></i> Pendente</span>
+        </div>
+        <p class="testimony-body">{{ t.text }}</p>
+        <div class="testimony-actions">
+            <a href="{% url 'testimony_approve' t.pk %}" class="btn-action btn-approve">
+                <i class="fa fa-check"></i> Aprovar
+            </a>
+            <button class="btn-action btn-reject" onclick="openRejectModal({{ t.pk }}, '{{ t.profile.full_name|escapejs }}')">
+                <i class="fa fa-times"></i> Rejeitar
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="padding:1.5rem 0">
+    <i class="fa fa-check-circle" style="color:var(--gold)"></i>
+    <h3>Nenhum testemunho pendente</h3>
+</div>
+{% endif %}
+
+{% if approved %}
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">Aprovados ({{ approved|length }})</div>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>Membro</th><th>Trecho</th><th>Data</th><th>Ação</th></tr></thead>
+        <tbody>
+        {% for t in approved %}
+        <tr>
+            <td><strong>{{ t.profile.full_name }}</strong></td>
+            <td style="max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.text|truncatechars:100 }}</td>
+            <td>{{ t.created_at|date:"d/m/Y" }}</td>
+            <td>
+                <button class="btn-action btn-reject" onclick="openRejectModal({{ t.pk }}, '{{ t.profile.full_name|escapejs }}')">
+                    <i class="fa fa-times"></i> Revogar
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if rejected %}
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">Rejeitados ({{ rejected|length }})</div>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>Membro</th><th>Trecho</th><th>Observação</th><th>Data</th></tr></thead>
+        <tbody>
+        {% for t in rejected %}
+        <tr>
+            <td>{{ t.profile.full_name }}</td>
+            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.text|truncatechars:80 }}</td>
+            <td style="color:var(--text-muted);font-style:italic;">{{ t.admin_note|default:"—" }}</td>
+            <td>{{ t.created_at|date:"d/m/Y" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- MODAL REJEITAR -->
+<div id="rejectModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:var(--warm-white);border-radius:8px;padding:2rem;width:100%;max-width:440px;margin:1rem;">
+        <h3 style="font-size:1.1rem;margin-bottom:1rem;">Rejeitar testemunho de <span id="rejectName"></span></h3>
+        <form method="post" id="rejectForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label style="font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;">Observação para o membro (opcional)</label>
+                <textarea name="admin_note" rows="3" class="form-input" placeholder="Ex: Testemunho incompleto, por favor detalhe mais..."></textarea>
+            </div>
+            <div style="display:flex;gap:.8rem;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c;">Confirmar Rejeição</button>
+                <button type="button" class="btn btn-outline" onclick="closeRejectModal()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openRejectModal(pk, name) {
+    document.getElementById('rejectName').textContent = name;
+    document.getElementById('rejectForm').action = `/membros/testemunhos/${pk}/rejeitar/`;
+    const modal = document.getElementById('rejectModal');
+    modal.style.display = 'flex';
+}
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRejectModal();
+});
+</script>
+{% endblock %}

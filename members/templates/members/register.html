@@ -1,0 +1,222 @@
+{% extends 'core/base.html' %}
+{% load static form_tags %}
+{% block title %}Cadastro — Área de Membros{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/members.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-brand">
+            <img src="{% static 'img/logo_icone.png' %}" alt="{{ site_settings.church_name }}" class="auth-logo-img">
+            <h2>Criar Conta</h2>
+            <p>Preencha os dados para se cadastrar</p>
+        </div>
+
+        <form method="post" class="auth-form" id="registerForm">
+            {% csrf_token %}
+            <div class="auth-grid">
+                <div class="form-group">
+                    <label>Nome</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<span class="field-error">{{ form.first_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Sobrenome</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<span class="field-error">{{ form.last_name.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-group auth-full">
+                    <label>E-mail</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<span class="field-error">{{ form.email.errors.0 }}</span>{% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label>Senha</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}<span class="field-error">{{ form.password1.errors.0 }}</span>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Senha</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}<span class="field-error">{{ form.password2.errors.0 }}</span>{% endif %}
+                </div>
+            </div>
+
+            <!-- ── TERMO LGPD ── -->
+            <div class="lgpd-reg-block">
+                <div class="lgpd-reg-header">
+                    <i class="fa fa-shield-alt"></i>
+                    <div>
+                        <strong>Autorização de Uso de Imagem — LGPD</strong>
+                        <span>Lei nº 13.709/2018 · Leia antes de marcar</span>
+                    </div>
+                </div>
+
+                <div class="lgpd-reg-termo" id="lgpdTermoReg">
+                    <p><strong>1. Controlador:</strong> {{ site_settings.church_name }}{% if site_settings.address %}, localizada em {{ site_settings.address }}{% endif %}.</p>
+                    <p><strong>2. O que está sendo autorizado:</strong> captação e divulgação de imagens fotográficas e/ou gravações em vídeo obtidas durante cultos, eventos, reuniões e atividades promovidas pela igreja.</p>
+                    <p><strong>3. Finalidade:</strong> publicação no site, redes sociais institucionais (Instagram, Facebook, YouTube), materiais impressos e transmissões ao vivo. <strong>Suas imagens não serão cedidas a terceiros para fins comerciais.</strong></p>
+                    <p><strong>4. Base legal:</strong> consentimento livre e informado (Art. 7º, I, LGPD).</p>
+                    <p><strong>5. Seus direitos:</strong> você pode revogar esta autorização a qualquer momento através do seu perfil na área de membros, sem que isso prejudique sua participação nas atividades da igreja.</p>
+                    <p><strong>6. Contato:</strong>{% if site_settings.email %} {{ site_settings.email }}{% endif %}{% if site_settings.phone %} · {{ site_settings.phone }}{% endif %}.</p>
+                    <p class="lgpd-reg-nota"><i class="fa fa-info-circle"></i> A autorização de uso de imagem é <strong>opcional</strong>. Você pode se cadastrar sem marcá-la e decidir depois no seu perfil.</p>
+                </div>
+
+                <div class="lgpd-reg-scroll-hint" id="lgpdScrollHint">
+                    <i class="fa fa-arrow-down"></i> Role para ler o termo completo antes de autorizar
+                </div>
+
+                <label class="lgpd-reg-check-label" id="lgpdCheckLabel">
+                    <input
+                        type="checkbox"
+                        name="image_consent"
+                        id="id_image_consent"
+                        class="lgpd-checkbox"
+                        disabled
+                        onchange="updateRegBtn()"
+                    >
+                    <span>Li o Termo acima e <strong>autorizo voluntariamente</strong> o uso da minha imagem pela {{ site_settings.church_name }} conforme descrito.</span>
+                </label>
+                <p class="lgpd-reg-opcional">
+                    <i class="fa fa-info-circle"></i>
+                    Marcar este campo é <strong>opcional</strong>. Você pode prosseguir com o cadastro sem autorizar — e alterar sua decisão depois no perfil.
+                </p>
+            </div>
+
+            <p class="auth-notice">
+                <i class="fa fa-info-circle"></i>
+                Após o cadastro, sua conta precisará ser aprovada pela liderança antes de ter acesso à área de membros.
+            </p>
+
+            <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                Criar Conta
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Já tem conta? <a href="{% url 'member_login' %}">Entrar</a>
+        </div>
+        <div class="auth-footer">
+            <a href="{% url 'home' %}"><i class="fa fa-arrow-left"></i> Voltar ao site</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.lgpd-reg-block {
+    margin: 1.25rem 0;
+    border: 1px solid var(--border, rgba(201,168,76,.25));
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.lgpd-reg-header {
+    background: var(--navy, #1A2340);
+    color: #fff;
+    padding: .9rem 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.lgpd-reg-header i { color: var(--gold, #C9A84C); font-size: 1.1rem; }
+.lgpd-reg-header strong { display: block; font-size: .9rem; color: #fff; }
+.lgpd-reg-header span   { font-size: .72rem; color: rgba(255,255,255,.55); }
+
+.lgpd-reg-termo {
+    padding: 1rem 1.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--surface-alt, #FAF7F2);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(201,168,76,.3) transparent;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+.lgpd-reg-termo::-webkit-scrollbar { width: 4px; }
+.lgpd-reg-termo::-webkit-scrollbar-thumb { background: rgba(201,168,76,.3); border-radius: 2px; }
+.lgpd-reg-termo p { font-size: .8rem; color: var(--text, #2C2C2C); line-height: 1.65; margin: 0; }
+.lgpd-reg-nota    { background: rgba(201,168,76,.08); border-radius: 6px; padding: .5rem .75rem; }
+.lgpd-reg-nota i  { color: var(--gold, #C9A84C); margin-right: .3rem; }
+
+.lgpd-reg-scroll-hint {
+    text-align: center;
+    padding: .45rem;
+    font-size: .72rem;
+    color: var(--gold, #C9A84C);
+    background: rgba(201,168,76,.06);
+    border-top: 1px solid rgba(201,168,76,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    transition: opacity .3s;
+}
+.lgpd-reg-scroll-hint.hidden { display: none; }
+
+.lgpd-reg-check-label {
+    display: flex;
+    align-items: flex-start;
+    gap: .7rem;
+    padding: .9rem 1.1rem;
+    cursor: pointer;
+    background: var(--card-bg, #fff);
+    border-top: 1px solid var(--border, rgba(201,168,76,.15));
+    transition: background .2s;
+}
+.lgpd-reg-check-label input { width: 17px; height: 17px; flex-shrink: 0; margin-top: .15rem; accent-color: var(--gold, #C9A84C); cursor: pointer; }
+.lgpd-reg-check-label input:disabled { opacity: .4; cursor: not-allowed; }
+.lgpd-reg-check-label span  { font-size: .82rem; color: var(--text, #2C2C2C); line-height: 1.55; }
+.lgpd-reg-check-label:has(input:checked) { background: rgba(201,168,76,.06); }
+
+.lgpd-reg-opcional {
+    font-size: .75rem;
+    color: var(--text-muted, #6B6B6B);
+    padding: .4rem 1.1rem .7rem;
+    margin: 0;
+    background: var(--card-bg, #fff);
+}
+.lgpd-reg-opcional i { color: var(--gold, #C9A84C); margin-right: .25rem; }
+
+/* Dark mode */
+[data-theme="dark"] .lgpd-reg-termo       { background: #25252D; }
+[data-theme="dark"] .lgpd-reg-termo p     { color: #C8C4BC; }
+[data-theme="dark"] .lgpd-reg-check-label { background: #1E1E24; border-color: rgba(201,168,76,.1); }
+[data-theme="dark"] .lgpd-reg-check-label span { color: #C8C4BC; }
+[data-theme="dark"] .lgpd-reg-opcional    { background: #1E1E24; }
+</style>
+
+<script>
+(function(){
+    const termo = document.getElementById('lgpdTermoReg');
+    const hint  = document.getElementById('lgpdScrollHint');
+    const chk   = document.getElementById('id_image_consent');
+
+    if (termo && chk) {
+        termo.addEventListener('scroll', function() {
+            // Habilita o checkbox quando o usuário rolar até o fim do termo
+            const scrolled = termo.scrollTop + termo.clientHeight >= termo.scrollHeight - 10;
+            if (scrolled) {
+                chk.disabled = false;
+                if (hint) hint.classList.add('hidden');
+            }
+        });
+
+        // Se o texto couber sem scroll, já habilita
+        if (termo.scrollHeight <= termo.clientHeight + 10) {
+            chk.disabled = false;
+            if (hint) hint.classList.add('hidden');
+        }
+    }
+})();
+
+function updateRegBtn() {
+    // O botão de criar conta nunca é bloqueado — a autorização é opcional
+    // Esta função existe apenas para feedback visual futuro se necessário
+}
+</script>
+{% endblock %}

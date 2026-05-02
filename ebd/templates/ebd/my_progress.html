@@ -1,0 +1,61 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Meu Progresso — EBD{% endblock %}
+{% block page_title %}Meu Progresso na EBD{% endblock %}
+
+{% block content %}
+
+{% if certificates %}
+<div class="section-label-sm" style="margin-bottom:1rem;">
+    <i class="fa fa-certificate" style="color:var(--gold)"></i> Certificados Emitidos ({{ certificates|length }})
+</div>
+<div class="ebd-certs-grid">
+    {% for cert in certificates %}
+    <div class="ebd-cert-card">
+        <div class="ebd-cert-icon"><i class="fa fa-certificate"></i></div>
+        <div>
+            <strong>{{ cert.lesson.title }}</strong>
+            <span>{{ cert.lesson.trimester }}</span>
+            <small>Emitido em {{ cert.issued_at|date:"d/m/Y" }}</small>
+        </div>
+        {% if cert.attempt %}
+        <div class="ebd-cert-score">{{ cert.attempt.score }}%</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="padding:1.5rem 0">
+    <i class="fa fa-certificate" style="font-size:2rem;opacity:.3;display:block;margin-bottom:.75rem;color:var(--gold)"></i>
+    <h3>Nenhum certificado ainda</h3>
+    <p>Complete as lições e faça os quizzes para receber seus certificados.</p>
+    <a href="{% url 'ebd_home' %}" class="btn btn-primary" style="margin-top:1rem">Ver lições</a>
+</div>
+{% endif %}
+
+{% if attempts %}
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">Histórico de Quizzes</div>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>Lição</th><th>Turma</th><th>Nota</th><th>Resultado</th><th>Data</th></tr></thead>
+        <tbody>
+        {% for att in attempts %}
+        <tr>
+            <td><strong class="td-title">{{ att.quiz.lesson.title }}</strong></td>
+            <td class="td-sub">{{ att.quiz.lesson.trimester }}</td>
+            <td><strong>{{ att.score }}%</strong></td>
+            <td>
+                {% if att.passed %}
+                <span class="prayer-badge prayer-badge-answered"><i class="fa fa-check"></i> Aprovado</span>
+                {% else %}
+                <span class="prayer-badge prayer-badge-open"><i class="fa fa-times"></i> Reprovado</span>
+                {% endif %}
+            </td>
+            <td class="td-sub">{{ att.created_at|date:"d/m/Y H:i" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Agendamentos{% endblock %}
+{% block page_title %}Lista de Agendamentos{% endblock %}
+
+{% block extra_css %}
+<style>
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+.filter-bar .form-group { margin: 0; }
+.filter-bar label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+.filter-bar select,
+.filter-bar input[type=date] {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--surface);
+}
+.filter-bar select:focus, .filter-bar input:focus {
+  border-color: var(--gold);
+  outline: none;
+}
+.bookings-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.bookings-table th {
+  background: var(--navy);
+  color: rgba(255,255,255,0.9);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bookings-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.bookings-table tr:last-child td { border-bottom: none; }
+.bookings-table tr:hover td { background: var(--surface-alt); }
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-approved  { background: rgba(39,174,96,0.12); color: #1a7a40; }
+.status-pending   { background: rgba(243,156,18,0.12); color: #946b00; }
+.status-rejected  { background: rgba(231,76,60,0.12);  color: #c0392b; }
+.status-cancelled { background: rgba(149,165,166,0.15); color: var(--text-muted); }
+.action-btns { display: flex; gap: 0.4rem; }
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  border: 1px solid var(--border);
+  color: var(--text-heading);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.action-btn:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+.action-btn.danger:hover { background: #e74c3c; border-color: #e74c3c; }
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-muted);
+}
+.empty-state i { font-size: 2.5rem; margin-bottom: 0.75rem; opacity: 0.3; display: block; }
+.page-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+@media (max-width: 768px) {
+  .bookings-table { display: block; overflow-x: auto; }
+  .hide-mobile { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-top">
+  <div>
+    <a href="{% url 'agenda_view' %}" class="btn btn-outline" style="font-size:0.85rem;padding:0.45rem 1rem;">
+      <i class="fa fa-calendar"></i> Calendário
+    </a>
+  </div>
+  <a href="{% url 'booking_create' %}" class="btn btn-primary" style="font-size:0.85rem;padding:0.45rem 1rem;">
+    <i class="fa fa-plus"></i> Novo Agendamento
+  </a>
+</div>
+
+<!-- Filtros -->
+<form method="get" class="filter-bar">
+  <div class="form-group">
+    <label>Local</label>
+    <select name="location">
+      <option value="">Todos</option>
+      {% for loc in locations %}
+      <option value="{{ loc.pk }}" {% if filter_location == loc.pk|stringformat:'s' %}selected{% endif %}>{{ loc.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if request.user.is_staff or request.user.is_superuser %}
+  <div class="form-group">
+    <label>Status</label>
+    <select name="status">
+      <option value="">Todos</option>
+      {% for val, label in status_choices %}
+      <option value="{{ val }}" {% if filter_status == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="form-group">
+    <label>De</label>
+    <input type="date" name="date_from" value="{{ filter_date_from }}">
+  </div>
+  <div class="form-group">
+    <label>Até</label>
+    <input type="date" name="date_to" value="{{ filter_date_to }}">
+  </div>
+  <button type="submit" class="btn btn-primary" style="font-size:0.85rem;padding:0.45rem 1rem;">
+    <i class="fa fa-filter"></i> Filtrar
+  </button>
+  <a href="{% url 'booking_list' %}" class="btn btn-outline" style="font-size:0.85rem;padding:0.45rem 1rem;">Limpar</a>
+</form>
+
+<!-- Tabela -->
+<div class="bookings-table-wrap">
+  {% if bookings %}
+  <table class="bookings-table">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Horário</th>
+        <th>Título</th>
+        <th>Local</th>
+        <th class="hide-mobile">Ministério</th>
+        <th class="hide-mobile">Responsável</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td><strong>{{ booking.date|date:"d/m/Y" }}</strong><br><small style="color:var(--text-muted)">{{ booking.date|date:"D"|lower }}</small></td>
+        <td style="white-space:nowrap;">{{ booking.start_time|time:"H:i" }} – {{ booking.end_time|time:"H:i" }}<br><small style="color:var(--text-muted)">{{ booking.duration_hours }}</small></td>
+        <td><a href="{% url 'booking_detail' booking.pk %}" style="color:var(--text-heading);font-weight:500;">{{ booking.title }}</a></td>
+        <td>{{ booking.location.name }}</td>
+        <td class="hide-mobile">{{ booking.ministry|default:"—" }}</td>
+        <td class="hide-mobile">{{ booking.responsible.get_full_name|default:booking.responsible.username }}</td>
+        <td><span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
+        <td>
+          <div class="action-btns">
+            <a href="{% url 'booking_detail' booking.pk %}" class="action-btn" title="Detalhes"><i class="fa fa-eye"></i></a>
+            {% if request.user == booking.responsible or request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'booking_edit' booking.pk %}" class="action-btn" title="Editar"><i class="fa fa-pen"></i></a>
+            <a href="{% url 'booking_delete' booking.pk %}" class="action-btn danger" title="{% if request.user.is_staff or request.user.is_superuser %}Excluir{% else %}Cancelar{% endif %}"><i class="fa fa-trash"></i></a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <i class="fa fa-calendar-times"></i>
+    <strong>Nenhum agendamento encontrado</strong>
+    <p>Tente ajustar os filtros ou <a href="{% url 'booking_create' %}">crie um novo agendamento</a>.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

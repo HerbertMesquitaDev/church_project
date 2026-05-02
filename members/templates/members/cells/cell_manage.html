@@ -1,0 +1,136 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Células — Gestão{% endblock %}
+{% block page_title %}Grupos e Células{% endblock %}
+
+{% block extra_css %}
+<style>
+.cell-card { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.2s; }
+.cell-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-1px); }
+.cell-cover { width:100%;height:110px;object-fit:cover;display:block; }
+.cell-cover-ph { width:100%;height:110px;background:linear-gradient(135deg,var(--surface-alt) 0%,var(--border) 100%);display:flex;align-items:center;justify-content:center; }
+.cell-cover-ph i { font-size:2rem;color:var(--gold);opacity:.4; }
+.cell-body { padding:.9rem 1.1rem .65rem; }
+.cell-name { font-size:.95rem;font-weight:600;color:var(--text-heading);margin:0 0 .25rem; }
+.cell-meta { font-size:.75rem;color:var(--text-muted);display:flex;flex-direction:column;gap:.15rem; }
+.cell-meta i { color:var(--gold-dark);width:14px; }
+.cell-stats { display:flex;gap:.75rem;padding:.6rem 1.1rem;border-top:1px solid var(--border);background:var(--surface-alt); }
+.cell-stat { font-size:.72rem;color:var(--text-muted);display:flex;align-items:center;gap:.3rem; }
+.cell-stat strong { color:var(--text-heading); }
+.cell-actions { display:flex;gap:.4rem;padding:.6rem 1.1rem;border-top:1px solid var(--border); }
+.type-badge-ministry { background:rgba(108,52,131,.1);color:#6c3483; }
+.type-badge-region   { background:rgba(41,128,185,.1);color:#2475a8; }
+.type-badge-other    { background:rgba(149,165,166,.12);color:#666; }
+[data-theme="dark"] .cell-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .cell-name { color:#E8E4DC; }
+[data-theme="dark"] .cell-stats { background:#25252D;border-color:rgba(201,168,76,.08); }
+[data-theme="dark"] .cell-actions { border-color:rgba(201,168,76,.08); }
+[data-theme="dark"] .type-badge-ministry { background:rgba(108,52,131,.15);color:#a569bd; }
+[data-theme="dark"] .type-badge-region   { background:rgba(41,128,185,.12);color:#5dade2; }
+[data-theme="dark"] .type-badge-other    { background:rgba(149,165,166,.08);color:#9A9690; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div class="stats-grid" style="margin-bottom:1.5rem">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(201,168,76,.1)"><i class="fa fa-sitemap" style="color:var(--gold-dark)"></i></div>
+    <div><span class="stat-number">{{ total_cells }}</span><span class="stat-label">Total de células</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(39,174,96,.1)"><i class="fa fa-check-circle" style="color:#27ae60"></i></div>
+    <div><span class="stat-number">{{ active_cells }}</span><span class="stat-label">Células ativas</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(41,128,185,.1)"><i class="fa fa-users" style="color:#2475a8"></i></div>
+    <div><span class="stat-number">{{ total_members }}</span><span class="stat-label">Membros aprovados</span></div>
+  </div>
+  <div class="stat-card {% if pending_total %}stat-alert{% endif %}">
+    <div class="stat-icon" style="background:rgba(243,156,18,.08)"><i class="fa fa-clock" style="color:#f39c12"></i></div>
+    <div><span class="stat-number">{{ pending_total }}</span><span class="stat-label">Pedidos pendentes</span></div>
+  </div>
+</div>
+
+<!-- Filtros -->
+<div class="manage-topbar" style="margin-bottom:1.25rem">
+  <form method="get" class="manage-search-row">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar célula..." class="form-input" style="flex:1;min-width:160px">
+    <select name="tipo" class="form-input" onchange="this.form.submit()" style="min-width:150px">
+      <option value="">Todos os tipos</option>
+      {% for val, label in type_choices %}
+      <option value="{{ val }}" {% if tipo == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="ativo" class="form-input" onchange="this.form.submit()" style="min-width:130px">
+      <option value="">Qualquer status</option>
+      <option value="1" {% if ativo == '1' %}selected{% endif %}>Ativas</option>
+      <option value="0" {% if ativo == '0' %}selected{% endif %}>Inativas</option>
+    </select>
+    <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
+    {% if q or tipo or ativo %}
+    <a href="{% url 'cell_manage_dashboard' %}" class="btn btn-outline" title="Limpar"><i class="fa fa-times"></i></a>
+    {% endif %}
+  </form>
+  <a href="{% url 'cell_create_dashboard' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Nova Célula</a>
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<!-- Grid de células -->
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem">
+  {% for cell in cells %}
+  <div class="cell-card">
+    {% if cell.cover %}
+    <img src="{{ cell.cover.url }}" class="cell-cover" alt="{{ cell.name }}">
+    {% else %}
+    <div class="cell-cover-ph"><i class="fa fa-users"></i></div>
+    {% endif %}
+
+    <div class="cell-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.4rem">
+        <div class="cell-name">{{ cell.name }}</div>
+        <span class="badge type-badge-{{ cell.cell_type }}" style="flex-shrink:0;font-size:.65rem">{{ cell.get_cell_type_display }}</span>
+      </div>
+      <div class="cell-meta">
+        {% if cell.meeting_day %}<span><i class="fa fa-calendar"></i> {{ cell.meeting_day }}</span>{% endif %}
+        {% if cell.meeting_place %}<span><i class="fa fa-map-marker-alt"></i> {{ cell.meeting_place }}</span>{% endif %}
+        {% if cell.region %}<span><i class="fa fa-map"></i> {{ cell.region }}</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="cell-stats">
+      <span class="cell-stat"><i class="fa fa-users" style="color:var(--gold-dark)"></i> <strong>{{ cell.member_count }}</strong> membro(s)</span>
+      {% with pend=cell.memberships.all|length %}
+      <span class="cell-stat"><i class="fa fa-clock" style="color:var(--gold-dark)"></i> <strong>{{ cell.memberships.filter.count }}</strong></span>
+      {% endwith %}
+      {% if cell.active %}
+      <span class="badge-green" style="font-size:.65rem;margin-left:auto">Ativa</span>
+      {% else %}
+      <span class="badge-grey" style="font-size:.65rem;margin-left:auto">Inativa</span>
+      {% endif %}
+    </div>
+
+    <div class="cell-actions">
+      <a href="{% url 'cell_members_dashboard' cell.pk %}" class="btn btn-outline" style="font-size:.78rem;padding:.3rem .75rem;flex:1;text-align:center">
+        <i class="fa fa-users"></i> Membros
+      </a>
+      <a href="{% url 'cell_detail' cell.pk %}" class="manage-btn manage-btn-view" title="Ver mural" target="_blank"><i class="fa fa-eye"></i></a>
+      <a href="{% url 'cell_edit_dashboard' cell.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+      {% if request.user.is_superuser %}
+      <a href="{% url 'cell_delete_dashboard' cell.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">
+    <i class="fa fa-sitemap" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+    {% if q or tipo or ativo %}Nenhuma célula encontrada com esses filtros.
+    {% else %}Nenhuma célula cadastrada ainda.{% endif %}
+    <br><a href="{% url 'cell_create_dashboard' %}" class="btn btn-primary" style="margin-top:.75rem">Criar primeira célula</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

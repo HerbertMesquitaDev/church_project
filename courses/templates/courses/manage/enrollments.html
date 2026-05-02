@@ -1,0 +1,37 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Inscritos — {{ course.title }}{% endblock %}
+{% block page_title %}Inscritos: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+    <div style="margin-bottom:.5rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_courses' %}" style="color:var(--gold)"><i class="fa fa-arrow-left"></i> Voltar aos Cursos</a>
+        &nbsp;·&nbsp; {{ data|length }} inscrito{{ data|length|pluralize }}
+    </div>
+
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead><tr><th>Aluno</th><th>Inscrição</th><th>Progresso</th></tr></thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td>
+                        <strong>{{ item.enr.user.get_full_name|default:item.enr.user.username }}</strong>
+                        <br><small class="text-muted">{{ item.enr.user.email }}</small>
+                    </td>
+                    <td>{{ item.enr.enrolled_at|date:"d/m/Y" }}</td>
+                    <td style="min-width:150px">
+                        <div style="display:flex;align-items:center;gap:.6rem">
+                            <div class="progress" style="flex:1"><div class="progress-bar" style="width:{{ item.pct }}%"></div></div>
+                            <span style="font-size:.8rem;color:var(--text-muted);flex-shrink:0">{{ item.pct }}%</span>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" style="text-align:center;padding:2rem" class="text-muted">Nenhum inscrito ainda.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

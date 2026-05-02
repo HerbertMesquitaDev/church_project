@@ -1,0 +1,38 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+    <form method="post" enctype="multipart/form-data" class="members-form">
+        {% csrf_token %}
+
+        <div class="form-section-title"><i class="fa fa-info-circle"></i> Informações do Curso</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.title.label }}</label>{{ form.title }}{% if form.title.errors %}<span class="field-error">{{ form.title.errors.0 }}</span>{% endif %}</div>
+            <div class="form-group"><label>{{ form.category.label }}</label>{{ form.category }}</div>
+            <div class="form-group"><label>{{ form.level.label }}</label>{{ form.level }}</div>
+            <div class="form-group"><label>{{ form.instructor.label }}</label>{{ form.instructor }}</div>
+            <div class="form-group"><label>{{ form.workload.label }}</label>{{ form.workload }}<span class="form-hint">Duração total estimada em minutos</span></div>
+            <div class="form-group form-col-2"><label>{{ form.description.label }}</label>{{ form.description }}</div>
+            <div class="form-group form-col-2">
+                <label>{{ form.cover.label }}</label>{{ form.cover }}
+                {% if course and course.cover %}<div style="margin-top:.5rem"><img src="{{ course.cover.url }}" style="height:60px;border-radius:6px;border:1px solid var(--border)"><small class="text-muted"> — envie outra para substituir</small></div>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-cog"></i> Publicação</div>
+        <div class="form-grid">
+            <div class="form-group"><label>{{ form.order.label }}</label>{{ form.order }}</div>
+        </div>
+        <div class="form-check-group form-group">{{ form.published }}<label for="{{ form.published.id_for_label }}">Publicado</label></div>
+
+        {% if form.errors %}<div class="non-field-errors" style="margin-top:1rem">{% for f in form %}{% for e in f.errors %}<p><strong>{{ f.label }}:</strong> {{ e }}</p>{% endfor %}{% endfor %}</div>{% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <a href="{% url 'manage_courses' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

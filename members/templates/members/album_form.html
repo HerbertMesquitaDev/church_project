@@ -1,0 +1,36 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+    <form method="post" enctype="multipart/form-data" class="members-form">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group form-col-2"><label>{{ form.title.label }}</label>{{ form.title }}</div>
+            <div class="form-group"><label>{{ form.event_date.label }}</label>{{ form.event_date }}</div>
+            <div class="form-group"><label>{{ form.order.label }}</label>{{ form.order }}</div>
+            <div class="form-group form-col-2">
+                <label>{{ form.cover.label }}</label>{{ form.cover }}
+                {% if album and album.cover %}
+                <div style="margin-top:.5rem"><img src="{{ album.cover.url }}" style="height:60px;border-radius:6px;border:1px solid var(--border)"><small class="text-muted"> — envie outra para substituir</small></div>
+                {% endif %}
+            </div>
+            <div class="form-group form-col-2"><label>{{ form.description.label }}</label>{{ form.description }}</div>
+        </div>
+        <div class="form-check-group form-group" style="margin-top:.5rem">
+            {{ form.published }}<label for="{{ form.published.id_for_label }}">Publicado</label>
+        </div>
+        {% if form.errors %}
+        <div class="non-field-errors" style="margin-top:1rem">
+            {% for field in form %}{% for err in field.errors %}<p><strong>{{ field.label }}:</strong> {{ err }}</p>{% endfor %}{% endfor %}
+        </div>
+        {% endif %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            {% if album %}<a href="{% url 'album_photos' album.pk %}" class="btn btn-outline"><i class="fa fa-images"></i> Gerenciar Fotos</a>{% endif %}
+            <a href="{% url 'album_manage' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'members/base_members.html' %}
+{% load i18n %}
+{% block title %}Super Admin{% endblock %}
+{% block page_title %}Super Admin — Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+.sa-online-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #27ae60;
+  display: inline-block;
+  margin-right: 5px;
+  animation: sa-pulse 1.5s infinite;
+}
+@keyframes sa-pulse {
+  0%,100% { opacity:1; }
+  50%      { opacity:.3; }
+}
+.sa-region-bars { display:flex; flex-direction:column; gap:8px; margin-top:.75rem; }
+.sa-region-row  { display:flex; align-items:center; gap:10px; font-size:.875rem; }
+.sa-region-name { width:160px; color:var(--text-main,#2c3e50); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sa-region-bar-wrap { flex:1; background:var(--border-color,#ddd); border-radius:4px; height:10px; }
+.sa-region-bar  { background:var(--primary,#3498db); border-radius:4px; height:10px; min-width:4px; }
+.sa-region-count { width:36px; text-align:right; color:var(--text-muted,#7f8c8d); font-size:.8rem; }
+</style>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+  <span class="section-label-sm">Visão Geral do Sistema</span>
+  <a href="{% url 'sa_igreja_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Nova Igreja</a>
+</div>
+
+<!-- Todos os badges em uma grade -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.75rem">
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ total_igrejas }}</div>
+    <div class="dash-stat-label">Total de Igrejas</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value" style="color:#27ae60">{{ total_ativas }}</div>
+    <div class="dash-stat-label">Igrejas Ativas</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value" style="color:#e74c3c">{{ total_inativas }}</div>
+    <div class="dash-stat-label">Igrejas Inativas</div>
+  </div>
+  <div class="dash-stat-card">
+    <div class="dash-stat-value">{{ total_membros }}</div>
+    <div class="dash-stat-label">Total de Membros</div>
+  </div>
+  <div class="dash-stat-card" style="border-top:3px solid #27ae60">
+    <div class="dash-stat-value"><span class="sa-online-dot"></span>{{ online_count }}</div>
+    <div class="dash-stat-label">Online agora</div>
+  </div>
+  <div class="dash-stat-card" style="border-top:3px solid #3498db">
+    <div class="dash-stat-value">{{ visits_today }}</div>
+    <div class="dash-stat-label">Visitas hoje</div>
+  </div>
+  <div class="dash-stat-card" style="border-top:3px solid #9b59b6">
+    <div class="dash-stat-value">{{ visits_week }}</div>
+    <div class="dash-stat-label">Visitas 7 dias</div>
+  </div>
+  <div class="dash-stat-card" style="border-top:3px solid #f1c40f">
+    <div class="dash-stat-value">{{ total_seals }}</div>
+    <div class="dash-stat-label">Selos Nota 10</div>
+  </div>
+</div>
+
+<!-- Top regiões -->
+{% if top_regions %}
+<div class="manage-table-wrap" style="padding:1.25rem 1.5rem;margin-bottom:1.75rem">
+  <span class="section-label-sm">Regiões — últimos 30 dias</span>
+  <div class="sa-region-bars">
+    {% for r in top_regions %}
+    <div class="sa-region-row">
+      <span class="sa-region-name">{{ r.region }}</span>
+      <div class="sa-region-bar-wrap">
+        <div class="sa-region-bar" style="width:{% widthratio r.total max_region 100 %}%"></div>
+      </div>
+      <span class="sa-region-count">{{ r.total }}</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+  <span class="section-label-sm">Igrejas Recentes</span>
+  <a href="{% url 'sa_igreja_list' %}" class="btn btn-outline btn-sm">Ver todas</a>
+</div>
+
+<div class="manage-table-wrap">
+  <table class="manage-table">
+    <thead>
+      <tr><th>Igreja</th><th>Plano</th><th>Membros</th><th>Status</th><th>Criada em</th><th>Ações</th></tr>
+    </thead>
+    <tbody>
+    {% for ig in igrejas %}
+    <tr>
+      <td>
+        <strong>{{ ig.nome }}</strong><br>
+        <small style="color:var(--text-muted)">{{ ig.slug }}</small>
+      </td>
+      <td>
+        {% if ig.plano == 'pro' %}<span class="badge-gold">Pro</span>
+        {% elif ig.plano == 'basic' %}<span class="badge-grey">Básico</span>
+        {% else %}<span class="badge-grey">Trial</span>{% endif %}
+      </td>
+      <td>{{ ig.total_membros }}</td>
+      <td>
+        {% if ig.ativo %}<span class="badge-green">Ativa</span>
+        {% else %}<span class="badge-red">Inativa</span>{% endif %}
+      </td>
+      <td>{{ ig.criado_em|date:"d/m/Y" }}</td>
+      <td class="action-btns">
+        <a href="{% url 'sa_igreja_detail' ig.pk %}" class="btn-action btn-approve" title="Ver"><i class="fa fa-eye"></i></a>
+        <a href="{% url 'sa_igreja_edit' ig.pk %}" class="btn-action btn-approve" title="Editar"><i class="fa fa-pen"></i></a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" style="text-align:center;color:var(--text-muted)">Nenhuma igreja cadastrada.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Minha Jornada{% endblock %}
+{% block page_title %}Minha Jornada{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Resumo topo ── */
+.journey-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:2rem; }
+.journey-stat  { background:var(--card-bg,#fff); border:1px solid var(--border); border-radius:10px; padding:1.25rem 1rem; text-align:center; }
+.journey-stat-num   { font-size:2rem; font-weight:600; color:var(--gold-dark); line-height:1; }
+.journey-stat-label { font-size:.75rem; color:var(--text-muted); margin-top:.35rem; text-transform:uppercase; letter-spacing:.07em; }
+
+/* ── Conquistas ── */
+.achievements-row { display:flex; flex-wrap:wrap; gap:.75rem; margin-bottom:2rem; }
+.achievement-pill {
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.4rem 1rem; border-radius:20px;
+  background:rgba(201,168,76,.1); border:1px solid rgba(201,168,76,.25);
+  font-size:.78rem; font-weight:500; color:var(--gold-dark);
+}
+.achievement-pill i { font-size:.85rem; }
+
+/* ── Barra de progresso ── */
+.prog-bar-wrap { background:var(--border); border-radius:20px; height:7px; overflow:hidden; margin:.4rem 0 .2rem; }
+.prog-bar      { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--gold-dark),var(--gold)); transition:width .5s; }
+
+/* ── Cards de curso ── */
+.course-card-j {
+  background:var(--card-bg,#fff); border:1px solid var(--border);
+  border-radius:10px; padding:1.25rem 1.5rem; margin-bottom:.75rem;
+  display:flex; align-items:center; gap:1.25rem;
+}
+.course-cover-mini { width:56px;height:56px;border-radius:8px;object-fit:cover;flex-shrink:0; }
+.course-cover-ph   { width:56px;height:56px;border-radius:8px;background:rgba(201,168,76,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.course-cover-ph i { color:var(--gold);font-size:1.3rem; }
+.course-meta       { flex:1;min-width:0; }
+.course-title-j    { font-weight:600;font-size:.95rem;color:var(--text-heading);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.course-pct        { font-size:.78rem;color:var(--text-muted);margin-top:.15rem; }
+.course-done-badge { font-size:.68rem;padding:.2rem .6rem;border-radius:20px;background:rgba(39,174,96,.12);color:#1a7a40;font-weight:600;flex-shrink:0; }
+
+/* ── EBD table ── */
+.ebd-score { font-weight:600;font-size:.9rem; }
+.ebd-score.good { color:#1a7a40; }
+.ebd-score.ok   { color:#946b00; }
+.ebd-score.low  { color:#c0392b; }
+
+/* ── Cert card ── */
+.cert-card { background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;margin-bottom:.6rem; }
+.cert-icon { width:40px;height:40px;border-radius:50%;background:rgba(201,168,76,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.cert-icon i { color:var(--gold-dark);font-size:1rem; }
+
+/* ── Dark mode ── */
+[data-theme="dark"] .journey-stat   { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .achievement-pill { background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.15);color:#D4A94E; }
+[data-theme="dark"] .course-card-j  { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .course-title-j { color:#E8E4DC; }
+[data-theme="dark"] .course-done-badge { background:rgba(39,174,96,.1);color:#58d68d; }
+[data-theme="dark"] .ebd-score.good { color:#58d68d; }
+[data-theme="dark"] .ebd-score.ok   { color:#D4A94E; }
+[data-theme="dark"] .prog-bar-wrap  { background:rgba(255,255,255,.08); }
+[data-theme="dark"] .cert-card      { background:rgba(201,168,76,.05);border-color:rgba(201,168,76,.15); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Resumo ── -->
+{% if is_nota10 %}
+<div style="background:linear-gradient(135deg,rgba(201,168,76,.15) 0%,rgba(201,168,76,.05) 100%);border:1px solid rgba(201,168,76,.35);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem">
+  <div style="width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <i class="fa fa-award" style="font-size:1.5rem;color:var(--gold-dark)"></i>
+  </div>
+  <div>
+    <div style="font-size:1.05rem;font-weight:600;color:var(--gold-dark)">🎓 Aluno Nota 10!</div>
+    <div style="font-size:.8rem;color:var(--text-muted);margin-top:.15rem">Parabéns! Você tem presença exemplar e está ativo nos estudos. Continue assim!</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="journey-stats">
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ total_courses }}</div>
+    <div class="journey-stat-label">Cursos iniciados</div>
+  </div>
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ done_courses }}</div>
+    <div class="journey-stat-label">Cursos concluídos</div>
+  </div>
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ total_ebd }}</div>
+    <div class="journey-stat-label">Quizzes EBD</div>
+  </div>
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ pres_pct }}%</div>
+    <div class="journey-stat-label">Frequência</div>
+  </div>
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ pres_streak }}</div>
+    <div class="journey-stat-label">Cultos seguidos</div>
+  </div>
+  <div class="journey-stat">
+    <div class="journey-stat-num">{{ achievements|length }}</div>
+    <div class="journey-stat-label">Conquistas</div>
+  </div>
+</div>
+
+<!-- ── Conquistas ── -->
+{% if achievements %}
+<div class="section-label-sm">Conquistas</div>
+<div class="achievements-row" style="margin-top:.6rem">
+  {% for a in achievements %}
+  <span class="achievement-pill" style="color:{{ a.color }};border-color:{{ a.color }}33;background:{{ a.color }}12">
+    <i class="fa {{ a.icon }}"></i> {{ a.label }}
+  </span>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── Cursos ── -->
+<div class="section-label-sm" style="margin-top:1.5rem">Meus Cursos</div>
+<div style="margin-top:.75rem">
+  {% for cd in course_data %}
+  <div class="course-card-j">
+    {% if cd.enrollment.course.cover %}
+    <img src="{{ cd.enrollment.course.cover.url }}" class="course-cover-mini" alt="">
+    {% else %}
+    <div class="course-cover-ph"><i class="fa fa-graduation-cap"></i></div>
+    {% endif %}
+    <div class="course-meta">
+      <div class="course-title-j">{{ cd.enrollment.course.title }}</div>
+      <div class="prog-bar-wrap"><div class="prog-bar" style="width:{{ cd.pct }}%"></div></div>
+      <div class="course-pct">{{ cd.done }} de {{ cd.total }} aulas · {{ cd.pct }}% concluído</div>
+    </div>
+    {% if cd.pct == 100 %}
+    <span class="course-done-badge"><i class="fa fa-check"></i> Concluído</span>
+    {% else %}
+    <a href="{% url 'my_courses' %}" class="btn btn-outline" style="font-size:.8rem;padding:.35rem .85rem;flex-shrink:0">Continuar</a>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+    <i class="fa fa-graduation-cap" style="font-size:2rem;opacity:.25;display:block;margin-bottom:.6rem"></i>
+    Você ainda não está inscrito em nenhum curso.
+    <br><a href="{% url 'course_list' %}" class="btn btn-primary" style="margin-top:.75rem">Ver catálogo de cursos</a>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ── EBD ── -->
+<div class="section-label-sm" style="margin-top:2rem">Histórico EBD</div>
+{% if ebd_attempts %}
+<div class="manage-table-wrap" style="margin-top:.75rem">
+  <table class="manage-table">
+    <thead>
+      <tr><th>Lição</th><th>Quiz</th><th>Nota</th><th class="hide-mobile">Data</th></tr>
+    </thead>
+    <tbody>
+      {% for att in ebd_attempts %}
+      <tr>
+        <td><strong>{{ att.quiz.lesson.title }}</strong></td>
+        <td>{{ att.quiz.title }}</td>
+        <td>
+          <span class="ebd-score {% if att.score >= 70 %}good{% elif att.score >= 50 %}ok{% else %}low{% endif %}">
+            {{ att.score }}%
+          </span>
+        </td>
+        <td class="hide-mobile" style="font-size:.82rem;color:var(--text-muted)">{{ att.created_at|date:"d/m/Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted" style="margin-top:.6rem">Nenhum quiz EBD respondido ainda. <a href="{% url 'ebd_home' %}">Explorar EBD</a></p>
+{% endif %}
+
+<!-- ── Presenças nos Cultos ── -->
+{% if total_cultos %}
+<div class="section-label-sm" style="margin-top:2rem">Minha Frequência nos Cultos</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:.75rem">
+  <div class="journey-stat" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+    <div class="journey-stat-num" style="font-size:1.6rem">{{ pres_pct }}%</div>
+    <div class="journey-stat-label">de frequência</div>
+    <div style="height:5px;border-radius:20px;background:var(--border);margin-top:.5rem;overflow:hidden">
+      <div style="height:100%;border-radius:20px;width:{{ pres_pct }}%;background:{% if pres_pct >= 85 %}#27ae60{% elif pres_pct >= 60 %}#f39c12{% else %}#e74c3c{% endif %}"></div>
+    </div>
+  </div>
+  <div class="journey-stat" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+    <div class="journey-stat-num" style="font-size:1.6rem">{{ pres_count }}</div>
+    <div class="journey-stat-label">presenças registradas</div>
+  </div>
+  <div class="journey-stat" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center">
+    <div class="journey-stat-num" style="font-size:1.6rem;color:{% if pres_streak >= 10 %}#e74c3c{% elif pres_streak >= 5 %}#f39c12{% else %}var(--gold-dark){% endif %}">{{ pres_streak }}</div>
+    <div class="journey-stat-label"><i class="fa fa-fire"></i> cultos seguidos</div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Certificados EBD ── -->
+{% if ebd_certs %}
+<div class="section-label-sm" style="margin-top:2rem">Certificados EBD</div>
+<div style="margin-top:.75rem">
+  {% for cert in ebd_certs %}
+  <div class="cert-card">
+    <div class="cert-icon"><i class="fa fa-certificate"></i></div>
+    <div>
+      <strong>{{ cert.lesson.title }}</strong>
+      <br><small class="text-muted">{{ cert.lesson.trimester }} · {{ cert.issued_at|date:"d/m/Y" }}</small>
+    </div>
+    <a href="{% url 'ebd_lesson_detail' cert.lesson.pk %}" class="btn btn-outline" style="font-size:.78rem;padding:.3rem .75rem;margin-left:auto;flex-shrink:0">
+      <i class="fa fa-eye"></i> Ver
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

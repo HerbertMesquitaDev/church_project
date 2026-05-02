@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sem conexão</title>
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Jost', system-ui, sans-serif;
+      background: #FAF7F2;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      max-width: 400px;
+      width: 100%;
+    }
+    .icon-wrap {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(201,168,76,.12);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      color: #1A2340;
+      margin-bottom: .75rem;
+    }
+    p {
+      color: #6B6B6B;
+      font-size: .95rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .65rem 1.75rem;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+    }
+    .btn-primary {
+      background: #1A2340;
+      color: #FAF7F2;
+    }
+    .btn-outline {
+      background: none;
+      border: 1.5px solid #DDD8CC;
+      color: #1A2340;
+      margin-left: .5rem;
+    }
+    img.logo { width: 48px; margin-bottom: 1.25rem; opacity: .7; }
+    .cached-note {
+      margin-top: 2rem;
+      font-size: .78rem;
+      color: #9A9690;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="{% static 'img/logo_icone.png' %}" alt="Logo" class="logo">
+    <div class="icon-wrap">📡</div>
+    <h1>Você está offline</h1>
+    <p>
+      Não foi possível carregar esta página.<br>
+      Verifique sua conexão com a internet e tente novamente.
+    </p>
+    <div>
+      <button class="btn btn-primary" onclick="tryReload()">
+        ↺ Tentar novamente
+      </button>
+      <a href="/" class="btn btn-outline">Início</a>
+    </div>
+    <p class="cached-note">
+      Algumas páginas visitadas anteriormente podem estar disponíveis offline.
+    </p>
+  </div>
+  <script>
+    function tryReload() {
+      if (navigator.onLine) {
+        location.reload();
+      } else {
+        alert('Ainda sem conexão. Verifique sua internet.');
+      }
+    }
+    // Recarrega automaticamente quando voltar online
+    window.addEventListener('online', () => location.reload());
+  </script>
+</body>
+</html>

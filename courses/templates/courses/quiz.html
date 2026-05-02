@@ -1,0 +1,50 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Quiz — {{ lesson.title }}{% endblock %}
+{% block page_title %}Quiz: {{ lesson.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width:700px">
+    <div style="margin-bottom:1rem;font-size:.85rem;color:var(--text-muted)">
+        <a href="{% url 'lesson_detail' lesson.pk %}" style="color:var(--gold)"><i class="fa fa-arrow-left"></i> Voltar para a aula</a>
+        &nbsp;·&nbsp; Tentativa {{ attempt_num }} de {% if quiz.max_attempts > 0 %}{{ quiz.max_attempts }}{% else %}∞{% endif %}
+        &nbsp;·&nbsp; Nota mínima: {{ quiz.passing_score }}%
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for q in questions %}
+        <div class="quiz-question-card">
+            <div class="quiz-question-num">Pergunta {{ forloop.counter }}</div>
+            <p class="quiz-question-text">{{ q.text }}</p>
+            <div class="quiz-choices">
+                {% for choice in q.choices.all %}
+                <label class="quiz-choice-label">
+                    <input type="radio" name="q_{{ q.pk }}" value="{{ choice.pk }}" required>
+                    <span>{{ choice.text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div style="display:flex;gap:1rem;margin-top:1rem">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Enviar Respostas</button>
+            <a href="{% url 'lesson_detail' lesson.pk %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.quiz-question-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.25rem; margin-bottom:1rem; }
+.quiz-question-num { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--gold-dark,#8B6914); margin-bottom:.4rem; }
+.quiz-question-text { font-size:.95rem; font-weight:500; color:var(--text-heading,#1A2340); margin-bottom:.9rem; line-height:1.5; }
+.quiz-choices { display:flex; flex-direction:column; gap:.5rem; }
+.quiz-choice-label { display:flex; align-items:flex-start; gap:.7rem; padding:.65rem .9rem; border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:8px; cursor:pointer; transition:all .15s; font-size:.875rem; }
+.quiz-choice-label:hover { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.05); }
+.quiz-choice-label input { margin-top:.15rem; accent-color:var(--gold,#C9A84C); flex-shrink:0; }
+.quiz-choice-label:has(input:checked) { border-color:var(--gold,#C9A84C); background:rgba(201,168,76,.08); }
+[data-theme="dark"] .quiz-question-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .quiz-question-text { color:#E8E4DC; }
+[data-theme="dark"] .quiz-choice-label { border-color:rgba(201,168,76,.15); color:#C8C4BC; }
+</style>
+{% endblock %}

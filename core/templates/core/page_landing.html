@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} — {{ site_settings.church_name }}</title>
+    {% if page.meta_description %}
+    <meta name="description" content="{{ page.meta_description }}">
+    {% endif %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="landing-page">
+    <main class="landing-main">
+        {% if page.cover %}
+        <div class="landing-cover" style="background-image: url('{{ page.cover.url }}');"></div>
+        {% endif %}
+        <div class="landing-content container">
+            <h1 class="landing-title">{{ page.title }}</h1>
+            <div class="dynamic-page-body prose">
+                {{ page.content|safe }}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

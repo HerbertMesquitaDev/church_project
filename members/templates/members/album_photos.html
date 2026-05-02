@@ -1,0 +1,115 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Fotos — {{ album.title }}{% endblock %}
+{% block page_title %}Fotos: {{ album.title }}{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem" class="text-muted">
+        <a href="{% url 'album_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-images"></i> Álbuns</a>
+        <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+        <span>{{ album.title }}</span>
+        <span style="margin-left:auto">{{ photos.count }} foto{{ photos.count|pluralize }}</span>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Upload -->
+    <div class="upload-card">
+        <form method="post" enctype="multipart/form-data" id="uploadForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="upload">
+            <label class="upload-zone" for="fileInput" id="uploadZone">
+                <i class="fa fa-cloud-upload-alt"></i>
+                <span id="uploadLabel">Clique ou arraste fotos aqui</span>
+                <small>JPG, PNG, WEBP — múltiplas fotos aceitas</small>
+                <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display:none" onchange="updateLabel(this)">
+            </label>
+            <div style="text-align:right;margin-top:.75rem">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> Enviar Fotos</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Grid de fotos -->
+    {% if photos %}
+    <div class="photos-grid">
+        {% for photo in photos %}
+        <div class="photo-card">
+            <div class="photo-img-wrap">
+                <img src="{{ photo.image.url }}" alt="{{ photo.caption|default:'Foto' }}" loading="lazy">
+                <div class="photo-overlay">
+                    <form method="post" style="display:inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="set_cover">
+                        <input type="hidden" name="photo_id" value="{{ photo.pk }}">
+                        <button type="submit" class="photo-btn photo-btn-cover" title="Usar como capa"><i class="fa fa-image"></i></button>
+                    </form>
+                    <form method="post" style="display:inline" onsubmit="return confirm('Excluir esta foto?')">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_photo">
+                        <input type="hidden" name="photo_id" value="{{ photo.pk }}">
+                        <button type="submit" class="photo-btn photo-btn-del" title="Excluir"><i class="fa fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% if photo.caption %}<div class="photo-caption">{{ photo.caption }}</div>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:3rem" class="text-muted">
+        <i class="fa fa-image" style="font-size:2.5rem;opacity:.25;display:block;margin-bottom:1rem"></i>
+        Este álbum ainda não tem fotos. Faça o upload acima!
+    </div>
+    {% endif %}
+
+    <div class="form-actions" style="flex-wrap:wrap;gap:.75rem">
+        <a href="{% url 'social_post_create' album_pk=album.pk %}" class="btn btn-primary">
+            <i class="fa fa-share-nodes"></i> Publicar no Instagram/Facebook
+        </a>
+        <a href="{% url 'social_post_list' album_pk=album.pk %}" class="btn btn-outline">
+            <i class="fa fa-clock-rotate-left"></i> Publicações ({{ album.social_posts.count }})
+        </a>
+        <a href="{% url 'album_edit' album.pk %}" class="btn btn-outline"><i class="fa fa-pencil"></i> Editar Álbum</a>
+        <a href="{% url 'album_manage' %}" class="btn btn-outline"><i class="fa fa-arrow-left"></i> Voltar</a>
+    </div>
+</div>
+
+<style>
+.photos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.75rem; }
+.photo-card { border-radius:8px; overflow:hidden; border:1px solid var(--border,rgba(201,168,76,.15)); background:var(--card-bg,#fff); }
+.photo-img-wrap { position:relative; aspect-ratio:1; overflow:hidden; background:var(--surface-alt,#FAF7F2); }
+.photo-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+.photo-img-wrap:hover img { transform:scale(1.05); }
+.photo-overlay { position:absolute; inset:0; background:rgba(0,0,0,.45); opacity:0; transition:opacity .2s; display:flex; align-items:center; justify-content:center; gap:.5rem; }
+.photo-img-wrap:hover .photo-overlay { opacity:1; }
+.photo-btn { width:36px; height:36px; border-radius:50%; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.85rem; transition:all .2s; }
+.photo-btn-cover { background:rgba(201,168,76,.9); color:#fff; }
+.photo-btn-cover:hover { background:var(--gold,#C9A84C); transform:scale(1.1); }
+.photo-btn-del { background:rgba(231,76,60,.9); color:#fff; }
+.photo-btn-del:hover { background:#e74c3c; transform:scale(1.1); }
+.photo-caption { padding:.4rem .6rem; font-size:.72rem; color:var(--text-muted); border-top:1px solid var(--border,rgba(201,168,76,.1)); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+[data-theme="dark"] .photo-card { background:#1E1E24; }
+[data-theme="dark"] .photo-img-wrap { background:#2a2a34; }
+</style>
+
+<script>
+function updateLabel(input) {
+    document.getElementById('uploadLabel').textContent = input.files.length > 0
+        ? `${input.files.length} foto(s) selecionada(s)` : 'Clique ou arraste fotos aqui';
+}
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor='var(--gold)'; });
+zone.addEventListener('dragleave', () => { zone.style.borderColor=''; });
+zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor='';
+    document.getElementById('fileInput').files = e.dataTransfer.files;
+    updateLabel(document.getElementById('fileInput'));
+});
+</script>
+{% endblock %}

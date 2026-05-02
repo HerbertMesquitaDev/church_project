@@ -1,0 +1,493 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-welcome">
+    <div>
+        <h2>Olá, {{ request.user.first_name|default:request.user.username }}! 👋</h2>
+        <p>
+            {% if request.user.is_superuser %}Você está logado(a)como <strong>Administrador</strong>.
+            {% elif request.user.is_staff %}Você está logado(a)como <strong>Colaborador</strong>.
+            {% else %}Bem-vindo(a) à área de membros.{% endif %}
+        </p>
+    </div>
+</div>
+
+{% if request.user.is_staff or request.user.is_superuser %}
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(26,35,64,0.1)"><i class="fa fa-users" style="color:var(--navy)"></i></div>
+        <div><span class="stat-number">{{ total_members }}</span><span class="stat-label">Membros Ativos</span></div>
+    </div>
+    <div class="stat-card {% if pending_members %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(231,76,60,0.1)"><i class="fa fa-user-clock" style="color:#e74c3c"></i></div>
+        <div><span class="stat-number">{{ pending_members }}</span><span class="stat-label">Aguardando Aprovação</span></div>
+        {% if pending_members %}<a href="{% url 'members_manage' %}" class="stat-action">Ver <i class="fa fa-arrow-right"></i></a>{% endif %}
+    </div>
+    <div class="stat-card {% if pending_visitors %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(231,76,60,0.08)"><i class="fa fa-door-open" style="color:#e74c3c"></i></div>
+        <div><span class="stat-number">{{ pending_visitors }}</span><span class="stat-label">Visitantes Pendentes</span></div>
+        {% if pending_visitors %}<a href="{% url 'visitor_manage' %}" class="stat-action">Ver <i class="fa fa-arrow-right"></i></a>{% endif %}
+    </div>
+    <div class="stat-card {% if pending_testimonies %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-hands-praying" style="color:var(--gold-dark)"></i></div>
+        <div><span class="stat-number">{{ pending_testimonies }}</span><span class="stat-label">Testemunhos Pendentes</span></div>
+        {% if pending_testimonies %}<a href="{% url 'testimony_manage' %}" class="stat-action">Revisar <i class="fa fa-arrow-right"></i></a>{% endif %}
+    </div>
+    <div class="stat-card {% if pending_prayers %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.1)"><i class="fa fa-pray" style="color:var(--gold-dark)"></i></div>
+        <div><span class="stat-number">{{ pending_prayers }}</span><span class="stat-label">Pedidos de Oração</span></div>
+        {% if pending_prayers %}<a href="{% url 'prayer_manage' %}" class="stat-action">Ver <i class="fa fa-arrow-right"></i></a>{% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(46,204,113,0.1)"><i class="fa fa-calendar-check" style="color:#27ae60"></i></div>
+        <div><span class="stat-number">{{ total_events }}</span><span class="stat-label">Próximos Eventos</span></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(201,168,76,0.15)"><i class="fa fa-book-open" style="color:var(--gold-dark)"></i></div>
+        <div><span class="stat-number">{{ total_contents }}</span><span class="stat-label">Conteúdos Exclusivos</span></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(108,52,131,0.1)"><i class="fa fa-photo-film" style="color:#6c3483"></i></div>
+        <div><span class="stat-number">{{ total_media }}</span><span class="stat-label">Itens na Midiateca</span></div>
+    </div>
+    <div class="stat-card {% if pending_delete_requests %}stat-alert{% endif %}">
+        <div class="stat-icon" style="background:rgba(231,76,60,0.08)"><i class="fa fa-trash" style="color:#e74c3c"></i></div>
+        <div><span class="stat-number">{{ pending_delete_requests }}</span><span class="stat-label">Excluções Pendentes</span></div>
+        {% if pending_delete_requests %}<a href="{% url 'delete_request_manage' %}" class="stat-action">Revisar <i class="fa fa-arrow-right"></i></a>{% endif %}
+    </div>
+</div>
+
+{% if offering_monthly_json %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1rem;">
+    <div class="section-label-sm">Contribuições — Últimos 6 meses</div>
+    <div style="display:flex;align-items:center;gap:1rem;">
+        <span style="font-size:.82rem;color:var(--text-muted)">Este mês: <strong style="color:var(--gold-dark)">R$ {{ total_month_offering|floatformat:2 }}</strong></span>
+        <a href="{% url 'offering_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver completo <i class="fa fa-arrow-right"></i></a>
+    </div>
+</div>
+<div class="offering-chart-wrap" style="padding:1rem 1.5rem .75rem;">
+    <canvas id="dashOfferingChart" height="70"></canvas>
+</div>
+{% endif %}
+
+<!-- PAINEL DE GESTÃO -->
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">Gestão do Portal</div>
+<div class="crud-panel">
+
+    <div class="crud-group">
+        <div class="crud-group-title"><i class="fa fa-users"></i> Pessoas</div>
+        <div class="crud-items">
+            <a href="{% url 'members_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-users-cog"></i></div>
+                <div><span class="crud-item-title">Membros</span><span class="crud-item-sub">Aprovar, visualizar e gerenciar</span></div>
+                {% if pending_members %}<span class="crud-badge crud-badge-alert">{{ pending_members }}</span>{% endif %}
+            </a>
+            <a href="{% url 'visitor_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-door-open"></i></div>
+                <div><span class="crud-item-title">Visitantes</span><span class="crud-item-sub">Lista e acompanhamento</span></div>
+                {% if pending_visitors %}<span class="crud-badge crud-badge-alert">{{ pending_visitors }}</span>{% endif %}
+            </a>
+            <a href="{% url 'ministry_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-church"></i></div>
+                <div><span class="crud-item-title">Ministérios</span><span class="crud-item-sub">Membros por ministério</span></div>
+            </a>
+            <a href="{% url 'cell_manage_dashboard' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-sitemap"></i></div>
+                <div><span class="crud-item-title">Células</span><span class="crud-item-sub">Grupos e líderes</span></div>
+                {% if pending_cell_count %}<span class="crud-badge crud-badge-alert">{{ pending_cell_count }}</span>{% endif %}
+                <a href="{% url 'cell_create_dashboard' %}" class="crud-new-btn" title="Nova célula" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'culto_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-clipboard-check"></i></div>
+                <div><span class="crud-item-title">Presenças</span><span class="crud-item-sub">Chamada e frequência</span></div>
+                <a href="{% url 'culto_create' %}" class="crud-new-btn" title="Registrar culto" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+        </div>
+    </div>
+
+    <div class="crud-group">
+        <div class="crud-group-title"><i class="fa fa-layer-group"></i> Conteúdo</div>
+        <div class="crud-items">
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'content_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-book-open"></i></div>
+                <div><span class="crud-item-title">Conteúdos Exclusivos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
+                <a href="{% url 'content_create_manage' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            {% else %}
+            <a href="{% url 'content_list' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-book-open"></i></div>
+                <div><span class="crud-item-title">Conteúdos Exclusivos</span><span class="crud-item-sub">Artigos, vídeos e estudos</span></div>
+            </a>
+            {% endif %}
+            <a href="{% url 'media_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-photo-film"></i></div>
+                <div><span class="crud-item-title">Midiateca</span><span class="crud-item-sub">Pregações, louvores, PDFs</span></div>
+                <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'album_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-images"></i></div>
+                <div><span class="crud-item-title">Galeria de Fotos</span><span class="crud-item-sub">Álbuns e fotos de eventos</span></div>
+                <a href="{% url 'album_create' %}" class="crud-new-btn" title="Novo Álbum" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'notice_list' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-bell"></i></div>
+                <div><span class="crud-item-title">Avisos Internos</span><span class="crud-item-sub">Comunicados para membros</span></div>
+                <a href="{% url 'notice_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'ebd_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
+                <div><span class="crud-item-title">EBD</span><span class="crud-item-sub">Turmas, trimestres e lições</span></div>
+                <a href="{% url 'ebd_class_create' %}" class="crud-new-btn" title="Nova turma" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'devotional_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
+                <div><span class="crud-item-title">Devocionais</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
+                <a href="{% url 'devotional_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'heroslide_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-panorama"></i></div>
+                <div><span class="crud-item-title">Página Principal</span><span class="crud-item-sub">Banners e destaques da capa</span></div>
+                <a href="{% url 'heroslide_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'exportar_centro' %}" class="crud-item">
+                <div class="crud-item-icon" style="background:rgba(39,124,60,.1)"><i class="fa fa-file-export" style="color:#27783c"></i></div>
+                <div><span class="crud-item-title">Exportar Dados</span><span class="crud-item-sub">Excel e CSV</span></div>
+            </a>
+            <a href="{% url 'delete_request_manage' %}" class="crud-item">
+                <div class="crud-item-icon" style="background:rgba(231,76,60,.08)"><i class="fa fa-trash" style="color:#e74c3c"></i></div>
+                <div><span class="crud-item-title">Solicitações de Exclusão</span><span class="crud-item-sub">Revisar e aprovar</span></div>
+                {% if pending_delete_requests %}<span class="crud-badge crud-badge-alert">{{ pending_delete_requests }}</span>{% endif %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="crud-group" style="grid-column: 1 / -1;">
+        <div class="crud-group-title" style="justify-content:space-between;">
+            <span><i class="fa fa-photo-film"></i> Midiateca</span>
+            <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo item" style="margin-left:auto;" onclick="event.stopPropagation()"><i class="fa fa-plus"></i> Novo</a>
+        </div>
+
+        {% if recent_media %}
+        <div class="manage-table-wrap" style="border:none;border-radius:0;">
+            <table class="manage-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th class="hide-mobile">Categoria</th>
+                        <th class="hide-mobile">Pregador / Autor</th>
+                        <th class="hide-mobile">Data</th>
+                        <th>Pub.</th>
+                        <th>Dest.</th>
+                        <th style="width:90px">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent_media %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:.6rem">
+                                {% if item.thumbnail %}
+                                <img src="{{ item.thumbnail.url }}" style="width:32px;height:32px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                                {% else %}
+                                <div style="width:32px;height:32px;background:rgba(201,168,76,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                    <i class="fa fa-photo-film" style="color:var(--gold);font-size:.75rem"></i>
+                                </div>
+                                {% endif %}
+                                <span style="font-weight:500;color:var(--text-heading)">{{ item.title }}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge">{{ item.get_media_type_display }}</span></td>
+                        <td class="hide-mobile">{{ item.category|default:"—" }}</td>
+                        <td class="hide-mobile">{{ item.speaker|default:"—" }}</td>
+                        <td class="hide-mobile">{{ item.pub_date|date:"d/m/Y"|default:"—" }}</td>
+                        <td>
+                            {% if item.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>
+                            {% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}
+                        </td>
+                        <td>
+                            <i class="fa fa-star" style="color:{% if item.featured %}var(--gold){% else %}rgba(0,0,0,.15){% endif %}"></i>
+                        </td>
+                        <td>
+                            <div class="manage-actions">
+                                <a href="{% url 'media_edit' item.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                                <a href="{% url 'media_delete' item.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:.78rem;color:var(--text-muted)">{{ total_media }} item{{ total_media|pluralize }} publicado{{ total_media|pluralize }} no total</span>
+            <a href="{% url 'media_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver todos <i class="fa fa-arrow-right"></i></a>
+        </div>
+        {% else %}
+        <div class="crud-items">
+            <div class="crud-item" style="justify-content:center;color:var(--text-muted);font-size:.85rem;padding:1.5rem;">
+                <i class="fa fa-photo-film" style="margin-right:.5rem;opacity:.4"></i> Nenhum item na midiateca ainda.
+                <a href="{% url 'media_create' %}" style="margin-left:.5rem;color:var(--gold-dark)">Adicionar o primeiro</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="crud-group">
+        <div class="crud-group-title"><i class="fa fa-graduation-cap"></i> Cursos</div>
+        <div class="crud-items">
+            <a href="{% url 'manage_courses' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-graduation-cap"></i></div>
+                <div><span class="crud-item-title">Gerenciar Cursos</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
+                <a href="{% url 'manage_course_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="{% url 'course_list' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-eye"></i></div>
+                <div><span class="crud-item-title">Ver como Aluno</span><span class="crud-item-sub">Visualizar catálogo</span></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="crud-group">
+        <div class="crud-group-title"><i class="fa fa-heart"></i> Comunidade</div>
+        <div class="crud-items">
+            <a href="{% url 'testimony_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-hands-praying"></i></div>
+                <div><span class="crud-item-title">Testemunhos</span><span class="crud-item-sub">Revisar e aprovar</span></div>
+                {% if pending_testimonies %}<span class="crud-badge crud-badge-alert">{{ pending_testimonies }}</span>{% endif %}
+            </a>
+            <a href="{% url 'prayer_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-pray"></i></div>
+                <div><span class="crud-item-title">Pedidos de Oração</span><span class="crud-item-sub">Acompanhar e responder</span></div>
+                {% if pending_prayers %}<span class="crud-badge crud-badge-alert">{{ pending_prayers }}</span>{% endif %}
+            </a>
+            <a href="{% url 'offering_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-hand-holding-heart"></i></div>
+                <div><span class="crud-item-title">Contribuições</span><span class="crud-item-sub">Dízimos e ofertas</span></div>
+            </a>
+        </div>
+    </div>
+
+    {% if request.user.is_superuser %}
+    <div class="crud-group">
+        <div class="crud-group-title"><i class="fa fa-calendar-alt"></i> Agenda & Config</div>
+        <div class="crud-items">
+            <a href="{% url 'event_manage' %}" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-calendar"></i></div>
+                <div><span class="crud-item-title">Eventos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
+                <a href="{% url 'event_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
+            </a>
+            <a href="/membros/agenda/lista/" class="crud-item">
+                <div class="crud-item-icon"><i class="fa fa-map-marker-alt"></i></div>
+                <div><span class="crud-item-title">Reserva de Espaços</span><span class="crud-item-sub">Agendamentos e locais</span></div>
+            </a>
+            <a href="{% url 'admin:index' %}" class="crud-item" target="_blank">
+                <div class="crud-item-icon"><i class="fa fa-cog"></i></div>
+                <div><span class="crud-item-title">Painel Admin</span><span class="crud-item-sub">Configurações avançadas</span></div>
+                <i class="fa fa-external-link-alt" style="font-size:.7rem;color:var(--text-muted);flex-shrink:0;"></i>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% if new_members %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;">
+    <div class="section-label-sm">Novos Membros (últimos 30 dias)</div>
+    <a href="{% url 'members_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver todos <i class="fa fa-arrow-right"></i></a>
+</div>
+<div class="manage-table-wrap" style="margin-top:.8rem;">
+    <table class="manage-table">
+        <thead><tr><th>Membro</th><th>E-mail</th><th>Desde</th></tr></thead>
+        <tbody>
+        {% for p in new_members %}
+        <tr>
+            <td>{% if p.photo %}<img src="{{ p.photo.url }}" style="width:28px;height:28px;border-radius:50%;object-fit:cover;margin-right:.5rem;vertical-align:middle;">{% endif %}<strong>{{ p.full_name }}</strong></td>
+            <td class="td-sub">{{ p.user.email }}</td>
+            <td class="td-sub">{{ p.created_at|date:"d/m/Y" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% if birthday_members %}
+<div class="section-label-sm" style="margin-top:2.5rem;">🎂 Aniversariantes do Mês</div>
+<div class="dash-events" style="margin-top:.8rem;">
+    {% for p in birthday_members %}
+    <div class="dash-event-item">
+        <div class="dash-event-date" style="background:rgba(201,168,76,0.15);">
+            <span style="color:var(--gold-dark);">{{ p.birth_date|date:"d" }}</span>
+            <span style="color:var(--gold-dark);">{{ p.birth_date|date:"M" }}</span>
+        </div>
+        <div style="flex:1">
+            <strong>{{ p.full_name }}</strong>
+            <small>{% for mm in p.member_ministries.all %}{{ mm.ministry.name }}{% if not forloop.last %}, {% endif %}{% empty %}Membro{% endfor %}</small>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endif %}{# end staff/admin block #}
+
+{% if not request.user.is_staff and not request.user.is_superuser %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem">
+  <div class="section-label-sm">Minha Jornada de Aprendizado</div>
+  <a href="{% url 'student_profile' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver tudo <i class="fa fa-arrow-right"></i></a>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:.75rem">
+  <a href="{% url 'course_list' %}" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1rem;text-align:center;text-decoration:none;display:block">
+    <i class="fa fa-graduation-cap" style="font-size:1.5rem;color:var(--gold-dark);display:block;margin-bottom:.4rem"></i>
+    <span style="font-size:.82rem;font-weight:600;color:var(--text-heading)">Cursos</span>
+    <span style="display:block;font-size:.72rem;color:var(--text-muted)">Meu progresso</span>
+  </a>
+  <a href="{% url 'ebd_home' %}" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1rem;text-align:center;text-decoration:none;display:block">
+    <i class="fa fa-bible" style="font-size:1.5rem;color:var(--gold-dark);display:block;margin-bottom:.4rem"></i>
+    <span style="font-size:.82rem;font-weight:600;color:var(--text-heading)">EBD</span>
+    <span style="display:block;font-size:.72rem;color:var(--text-muted)">Escola Bíblica</span>
+  </a>
+  <a href="{% url 'student_profile' %}" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1rem;text-align:center;text-decoration:none;display:block">
+    <i class="fa fa-certificate" style="font-size:1.5rem;color:var(--gold-dark);display:block;margin-bottom:.4rem"></i>
+    <span style="font-size:.82rem;font-weight:600;color:var(--text-heading)">Conquistas</span>
+    <span style="display:block;font-size:.72rem;color:var(--text-muted)">Certificados e badges</span>
+  </a>
+</div>
+{% endif %}
+
+{% if my_delete_requests %}
+<div class="section-label-sm" style="margin-top:2rem">Minhas Solicitações de Exclusão</div>
+<div class="manage-table-wrap" style="margin-top:.75rem">
+  <table class="manage-table">
+    <thead><tr><th>Item</th><th>Tipo</th><th>Status</th><th class="hide-mobile">Data</th></tr></thead>
+    <tbody>
+    {% for dr in my_delete_requests %}
+    <tr>
+      <td><strong>{{ dr.object_title }}</strong></td>
+      <td><span class="badge">{{ dr.get_content_type_display }}</span></td>
+      <td>
+        <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;
+          {% if dr.status == 'pending' %}background:rgba(243,156,18,.12);color:#946b00{% elif dr.status == 'approved' %}background:rgba(39,174,96,.12);color:#1a7a40{% else %}background:rgba(231,76,60,.12);color:#c0392b{% endif %}">
+          {{ dr.get_status_display }}
+        </span>
+      </td>
+      <td class="hide-mobile" style="font-size:.82rem;color:var(--text-muted)">{{ dr.created_at|date:"d/m/Y" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if devotional %}
+<div class="section-label-sm" style="margin-top:2.5rem;">Palavra do Dia</div>
+<div class="devotional-dash-card">
+    <div class="devotional-dash-left">
+        <span class="devotional-verse-ref">{{ devotional.verse }}</span>
+        <h3 class="devotional-dash-title">{{ devotional.title }}</h3>
+        <p class="devotional-dash-verse">"{{ devotional.verse_text|truncatewords:20 }}"</p>
+        <a href="{% url 'devotional_detail' devotional.pk %}" class="event-link">Ler reflexão completa <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="devotional-dash-date">
+        <span>{{ devotional.pub_date|date:"d" }}</span>
+        <span>{{ devotional.pub_date|date:"M" }}</span>
+    </div>
+</div>
+{% endif %}
+
+{% if notices %}
+<div class="section-label-sm" style="margin-top:2.5rem;">Avisos Internos</div>
+<div class="notices-list">
+    {% for notice in notices %}
+    <div class="notice-item notice-{{ notice.priority }}">
+        <div class="notice-icon">
+            {% if notice.priority == 'urgent' %}<i class="fa fa-exclamation-circle"></i>
+            {% elif notice.priority == 'important' %}<i class="fa fa-info-circle"></i>
+            {% else %}<i class="fa fa-bell"></i>{% endif %}
+        </div>
+        <div style="flex:1">
+            <strong>{{ notice.title }}</strong>
+            <div>{{ notice.body|safe }}</div>
+            <small>{{ notice.created_at|date:"d/m/Y" }}</small>
+        </div>
+        {% if request.user.is_staff or request.user.is_superuser %}
+        <a href="{% url 'notice_edit' notice.pk %}" class="notice-edit-btn"><i class="fa fa-pen"></i></a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if upcoming_events %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;">
+    <div class="section-label-sm">Próximos Eventos</div>
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <a href="{% url 'event_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver agenda completa <i class="fa fa-arrow-right"></i></a>
+    {% endif %}
+</div>
+<div class="dash-events">
+    {% for event in upcoming_events %}
+    <div class="dash-event-item">
+        <div class="dash-event-date">
+            <span>{{ event.date|date:"d" }}</span>
+            <span>{{ event.date|date:"M" }}</span>
+        </div>
+        <div style="flex:1">
+            <strong>{{ event.title }}</strong>
+            <small><i class="fa fa-clock"></i> {{ event.date|date:"H:i" }}{% if event.location %} · {{ event.location }}{% endif %}</small>
+        </div>
+        {% if request.user.is_superuser %}
+        <a href="{% url 'event_edit' event.pk %}" class="notice-edit-btn"><i class="fa fa-pen"></i></a>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% if offering_monthly_json %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function(){
+    var data = {{ offering_monthly_json|safe }};
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var gridColor  = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+    var labelColor = isDark ? '#9A9690' : '#6B6B6B';
+    var ctx = document.getElementById('dashOfferingChart');
+    if (!ctx) return;
+    new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.label),
+            datasets: [{
+                data: data.map(d => d.value),
+                backgroundColor: data.map((d,i) => i===data.length-1 ? 'rgba(201,168,76,0.85)' : 'rgba(201,168,76,0.3)'),
+                borderColor: 'rgba(201,168,76,0.7)', borderWidth: 1, borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false },
+                tooltip: { callbacks: { label: c => 'R$ ' + c.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits:2}) }}},
+            scales: {
+                x: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 } } },
+                y: { grid: { color: gridColor }, ticks: { color: labelColor, font: { size: 11 },
+                    callback: v => 'R$ ' + v.toLocaleString('pt-BR') }}
+            }
+        }
+    });
+})();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block page_title %}{{ course.title }}{% endblock %}
+{% block meta_description %}{{ course.meta_description|default:course.description|striptags|truncatechars:160 }}{% endblock %}
+
+{% block content %}
+<div class="course-detail-wrap">
+
+    <!-- Header do curso -->
+    <div class="course-detail-header">
+        <div class="course-detail-info">
+            <div class="course-card-meta" style="margin-bottom:.6rem">
+                {% if course.category %}<span class="course-cat-badge"><i class="fa {{ course.category.icon }}"></i> {{ course.category.name }}</span>{% endif %}
+                <span class="course-level-badge course-level-{{ course.level }}">{{ course.get_level_display }}</span>
+            </div>
+            <div class="course-detail-desc">{{ course.description|safe }}</div>
+            <div class="course-detail-stats">
+                <span><i class="fa fa-book-open"></i> {{ total_lessons }} aula{{ total_lessons|pluralize }}</span>
+                {% if course.workload %}<span><i class="fa fa-clock"></i> {{ course.workload }} min</span>{% endif %}
+                {% if course.instructor %}<span><i class="fa fa-user-tie"></i> {{ course.instructor.get_full_name|default:course.instructor.username }}</span>{% endif %}
+                <span><i class="fa fa-users"></i> {{ course.enrolled_count }} inscrito{{ course.enrolled_count|pluralize }}</span>
+            </div>
+        </div>
+        {% if course.cover %}
+        <div class="course-detail-cover"><img src="{{ course.cover.url }}" alt="{{ course.title }}"></div>
+        {% endif %}
+    </div>
+
+    <!-- Progresso (se inscrito) -->
+    {% if enrollment %}
+    <div class="course-progress-bar-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+            <span style="font-size:.82rem;color:var(--text-muted)">Seu progresso</span>
+            <span style="font-size:.85rem;font-weight:600;color:var(--gold-dark)">{{ done_lessons }}/{{ total_lessons }} aulas &mdash; {{ pct }}%</span>
+        </div>
+        <div class="progress"><div class="progress-bar" style="width:{{ pct }}%"></div></div>
+    </div>
+    {% endif %}
+
+    <!-- Ação de inscrição -->
+    <div class="course-enroll-box">
+        {% if enrollment %}
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <span style="color:#27ae60;font-weight:500"><i class="fa fa-check-circle"></i> Você está inscrito</span>
+            <a href="{% url 'course_unenroll' course.slug %}" class="btn btn-outline btn-sm" style="color:#e74c3c;border-color:#e74c3c">Cancelar inscrição</a>
+        </div>
+        {% elif request.user.is_authenticated %}
+        <a href="{% url 'course_enroll' course.slug %}" class="btn btn-primary">
+            <i class="fa fa-graduation-cap"></i> Inscrever-se gratuitamente
+        </a>
+        {% else %}
+        <a href="{% url 'member_login' %}?next={{ request.path }}" class="btn btn-primary">
+            <i class="fa fa-sign-in-alt"></i> Faça login para se inscrever
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Módulos e aulas -->
+    <div class="course-modules">
+        {% for module in modules %}
+        <div class="course-module">
+            <div class="course-module-header">
+                <span class="course-module-title"><i class="fa fa-folder-open"></i> {{ module.title }}</span>
+                <span class="text-muted" style="font-size:.8rem">{{ module.lessons.count }} aula{{ module.lessons.count|pluralize }}</span>
+            </div>
+            <div class="course-lessons-list">
+                {% for lesson in module.lessons.all %}
+                {% if lesson.published %}
+                <div class="course-lesson-item {% if lesson.pk in completed_ids %}lesson-done{% endif %}">
+                    <div class="course-lesson-icon">
+                        {% if lesson.pk in completed_ids %}
+                        <i class="fa fa-check-circle" style="color:#27ae60"></i>
+                        {% elif lesson.video_url %}
+                        <i class="fa fa-play-circle" style="color:var(--gold)"></i>
+                        {% elif lesson.pdf_file %}
+                        <i class="fa fa-file-pdf" style="color:#e74c3c"></i>
+                        {% else %}
+                        <i class="fa fa-book-open" style="color:var(--gold)"></i>
+                        {% endif %}
+                    </div>
+                    <div class="course-lesson-info">
+                        {% if enrollment or request.user.is_staff or request.user.is_superuser %}
+                        <a href="{% url 'lesson_detail' lesson.pk %}">{{ lesson.title }}</a>
+                        {% else %}
+                        <span>{{ lesson.title }}</span>
+                        {% endif %}
+                        {% if lesson.description %}<small class="text-muted">{{ lesson.description|truncatewords:12 }}</small>{% endif %}
+                    </div>
+                    {% if lesson.duration %}<span class="text-muted" style="font-size:.75rem;flex-shrink:0">{{ lesson.duration }} min</span>{% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted" style="text-align:center;padding:2rem">Nenhum módulo cadastrado ainda.</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+<style>
+.course-detail-wrap { display:flex; flex-direction:column; gap:1.25rem; max-width:860px; }
+.course-detail-header { display:grid; grid-template-columns:1fr 260px; gap:1.5rem; align-items:start; background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.5rem; }
+.course-detail-desc { font-size:.9rem; color:var(--text-muted); line-height:1.7; margin:.6rem 0; }
+.course-detail-stats { display:flex; flex-wrap:wrap; gap:.75rem; font-size:.8rem; color:var(--text-muted); }
+.course-detail-stats span { display:flex; align-items:center; gap:.3rem; }
+.course-detail-stats i { color:var(--gold,#C9A84C); }
+.course-detail-cover img { width:100%; border-radius:8px; object-fit:cover; }
+.course-progress-bar-wrap { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1rem 1.25rem; }
+.course-enroll-box { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1rem 1.25rem; }
+.course-modules { display:flex; flex-direction:column; gap:.75rem; }
+.course-module { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; overflow:hidden; }
+.course-module-header { display:flex; align-items:center; justify-content:space-between; padding:.85rem 1.1rem; background:var(--surface-alt,#FAF7F2); border-bottom:1px solid var(--border,rgba(201,168,76,.1)); }
+.course-module-title { font-weight:600; font-size:.9rem; color:var(--text-heading,#1A2340); display:flex; align-items:center; gap:.5rem; }
+.course-module-title i { color:var(--gold,#C9A84C); }
+.course-lessons-list { display:flex; flex-direction:column; }
+.course-lesson-item { display:flex; align-items:center; gap:.75rem; padding:.75rem 1.1rem; border-bottom:1px solid var(--border,rgba(201,168,76,.08)); }
+.course-lesson-item:last-child { border-bottom:none; }
+.course-lesson-item.lesson-done { background:rgba(39,174,96,.04); }
+.course-lesson-icon { font-size:1rem; flex-shrink:0; width:22px; text-align:center; }
+.course-lesson-info { flex:1; display:flex; flex-direction:column; gap:.15rem; }
+.course-lesson-info a { font-size:.875rem; color:var(--text-heading,#1A2340); text-decoration:none; font-weight:500; }
+.course-lesson-info a:hover { color:var(--gold,#C9A84C); }
+.course-lesson-info span { font-size:.875rem; color:var(--text-muted); }
+.course-lesson-info small { font-size:.75rem; }
+.course-cat-badge { font-size:.7rem; background:rgba(201,168,76,.12); color:var(--gold-dark,#8B6914); padding:.15rem .55rem; border-radius:20px; display:inline-flex; align-items:center; gap:.25rem; }
+.course-level-badge { font-size:.7rem; padding:.15rem .55rem; border-radius:20px; font-weight:600; }
+.course-level-beginner { background:rgba(39,174,96,.1); color:#1a7a45; }
+.course-level-intermediate { background:rgba(201,168,76,.1); color:var(--gold-dark,#8B6914); }
+.course-level-advanced { background:rgba(231,76,60,.08); color:#c0392b; }
+[data-theme="dark"] .course-detail-header,
+[data-theme="dark"] .course-enroll-box,
+[data-theme="dark"] .course-module,
+[data-theme="dark"] .course-progress-bar-wrap { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .course-module-header { background:#25252D; }
+[data-theme="dark"] .course-module-title { color:#E8E4DC; }
+[data-theme="dark"] .course-lesson-info a { color:#E8E4DC; }
+@media(max-width:640px){ .course-detail-header { grid-template-columns:1fr; } .course-detail-cover { display:none; } }
+</style>
+{% endblock %}

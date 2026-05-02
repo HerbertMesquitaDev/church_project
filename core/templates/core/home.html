@@ -1,0 +1,326 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ site_settings.church_name }} — {{ site_settings.tagline }}{% endblock %}
+
+{% block content %}
+
+<!-- HERO CAROUSEL -->
+{% if slides %}
+<section class="hero-carousel-section">
+    <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5500">
+
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            {% for slide in slides %}
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner">
+            {% for slide in slides %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="carousel-bg" style="background-image: url('{{ slide.image.url }}');"></div>
+                <div class="carousel-overlay"></div>
+                <div class="carousel-caption-custom">
+                    <div class="hero-ornament">✦ ✦ ✦</div>
+                    <h1 class="hero-title animate-slide">{{ slide.title }}</h1>
+                    {% if slide.subtitle %}
+                    <p class="hero-subtitle animate-slide">{{ slide.subtitle }}</p>
+                    {% endif %}
+                    {% if slide.button_text or slide.button_text_2 %}
+                    <div class="hero-actions animate-slide">
+                        {% if slide.button_text %}
+                        <a href="{{ slide.button_url|default:'#' }}" class="btn btn-primary">{{ slide.button_text }}</a>
+                        {% endif %}
+                        {% if slide.button_text_2 %}
+                        <a href="{{ slide.button_url_2|default:'#' }}" class="btn btn-ghost">{{ slide.button_text_2 }}</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Controls -->
+        {% if slides|length > 1 %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-ctrl"><i class="fa fa-chevron-left"></i></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-ctrl"><i class="fa fa-chevron-right"></i></span>
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="hero-scroll-hint">
+        <span>Role para descobrir</span>
+        <i class="fa fa-chevron-down"></i>
+    </div>
+</section>
+
+{% else %}
+<!-- Fallback se não houver slides cadastrados -->
+<section class="hero">
+    <div class="hero-bg hero-bg-default"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content animate-in">
+        <div class="hero-ornament">✦ ✦ ✦</div>
+        <h1 class="hero-title">{{ site_settings.hero_title }}</h1>
+        {% if site_settings.hero_subtitle %}
+            <p class="hero-subtitle">{{ site_settings.hero_subtitle }}</p>
+        {% endif %}
+        <div class="hero-actions">
+            <a href="{% url 'event_list' %}" class="btn btn-primary">Ver Próximos Eventos</a>
+            <a href="{% url 'about' %}" class="btn btn-ghost">Conheça-nos</a>
+        </div>
+    </div>
+    <div class="hero-scroll-hint">
+        <span>Role para descobrir</span>
+        <i class="fa fa-chevron-down"></i>
+    </div>
+</section>
+{% endif %}
+
+<!-- VERSÍCULO -->
+<section class="verse-banner">
+    <div class="container">
+        <blockquote class="verse-text">
+            <span class="verse-mark">"</span>
+            Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito,
+            para que todo aquele que nele crê não pereça, mas tenha a vida eterna.
+            <span class="verse-ref">— João 3:16</span>
+        </blockquote>
+    </div>
+</section>
+
+
+<!-- DEVOCIONAL DO DIA -->
+{% if devotional %}
+<section class="section devotional-section section-logo-watermark">
+    <div class="container">
+        <div class="devotional-home-card">
+            <div class="devotional-home-left">
+                <span class="section-label">Palavra do Dia</span>
+                <h2 class="devotional-home-title">{{ devotional.title }}</h2>
+                <div class="devotional-verse-block">
+                    <span class="devotional-verse-ref">{{ devotional.verse }}</span>
+                    <p class="devotional-verse-text">"{{ devotional.verse_text }}"</p>
+                </div>
+                <p class="devotional-reflection">{{ devotional.reflection|truncatewords:40 }}</p>
+                <div class="devotional-home-footer">
+                    {% if devotional.author %}<span class="devotional-author"><i class="fa fa-user-tie"></i> {{ devotional.author }}</span>{% endif %}
+                    <a href="{% url 'devotional_detail' devotional.pk %}" class="btn btn-outline">
+                        Ler completo <i class="fa fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="devotional-home-right">
+                <div class="devotional-cross-decor">✝</div>
+                <div class="devotional-date-badge">
+                    <span class="devotional-date-day">{{ devotional.pub_date|date:"d" }}</span>
+                    <span class="devotional-date-month">{{ devotional.pub_date|date:"F" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- PRÓXIMOS EVENTOS -->
+{% if upcoming_events %}
+<section class="section events-home section-logo-watermark">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Agenda</span>
+            <h2 class="section-title">Próximos Eventos</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="events-grid">
+            {% for event in upcoming_events %}
+            <article class="event-card" style="--i:{{ forloop.counter }}">
+                {% if event.image %}
+                <div class="event-card-img">
+                    <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                    {% if event.category %}
+                    <span class="event-badge" style="background:{{ event.category.color }}">{{ event.category.name }}</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="event-card-img event-card-no-img">
+                    <i class="fa fa-church"></i>
+                    {% if event.category %}
+                    <span class="event-badge" style="background:{{ event.category.color }}">{{ event.category.name }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="event-card-body">
+                    <div class="event-date-block">
+                        <span class="event-day">{{ event.date|date:"d" }}</span>
+                        <span class="event-month">{{ event.date|date:"M" }}</span>
+                    </div>
+                    <div class="event-info">
+                        <h3><a href="{{ event.get_absolute_url }}">{{ event.title }}</a></h3>
+                        <p class="event-meta"><i class="fa fa-clock"></i> {{ event.date|date:"H:i" }}</p>
+                        {% if event.location %}<p class="event-meta"><i class="fa fa-map-marker-alt"></i> {{ event.location }}</p>{% endif %}
+                        <p class="event-desc">{{ event.short_description|default:event.description|truncatewords:18 }}</p>
+                        <a href="{{ event.get_absolute_url }}" class="event-link">Ver detalhes <i class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{% url 'event_list' %}" class="btn btn-outline">Ver Todos os Eventos</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- MINISTÉRIOS -->
+{% if ministries %}
+<section class="section ministries-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Comunidade</span>
+            <h2 class="section-title">Nossos Ministérios</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="ministries-grid">
+            {% for ministry in ministries %}
+            <div class="ministry-card" style="--i:{{ forloop.counter }}">
+                <div class="ministry-icon">
+                    <i class="fa {{ ministry.icon }}"></i>
+                </div>
+                <h3>{{ ministry.name }}</h3>
+                <p>{{ ministry.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- TESTEMUNHOS -->
+{% if testimonies %}
+<section class="section testimonies-section section-logo-watermark">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Fé em Ação</span>
+            <h2 class="section-title">Testemunhos</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="testimonies-grid">
+            {% for t in testimonies %}
+            <div class="testimony-card">
+                <div class="testimony-quote">"</div>
+                <p>{{ t.text }}</p>
+                <div class="testimony-author">
+                    {% if t.profile.photo %}
+                    <img src="{{ t.profile.photo.url }}" alt="{{ t.profile.user.get_full_name }}">
+                    {% else %}
+                    <div class="testimony-avatar"><i class="fa fa-user"></i></div>
+                    {% endif %}
+                    <div>
+                        <strong>{{ t.profile.user.get_full_name|default:t.profile.user.username }}</strong>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+
+<!-- MIDIATECA DESTAQUE -->
+{% if featured_media %}
+<section class="section media-home-section">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Conteúdo</span>
+            <h2 class="section-title">Midiateca</h2>
+            <div class="section-line"></div>
+        </div>
+        <div class="media-home-grid">
+            {% for item in featured_media %}
+            <a href="{% url 'media_detail' item.pk %}" class="media-card">
+                <div class="media-card-thumb">
+                    {% if item.thumbnail %}
+                        <img src="{{ item.thumbnail.url }}" alt="{{ item.title }}">
+                    {% else %}
+                        <div class="media-card-no-thumb">
+                            {% if item.media_type == 'video' or item.media_type == 'live' %}<i class="fa fa-play-circle"></i>
+                            {% elif item.media_type == 'audio' %}<i class="fa fa-headphones"></i>
+                            {% elif item.media_type == 'pdf' %}<i class="fa fa-file-pdf"></i>{% endif %}
+                        </div>
+                    {% endif %}
+                    <span class="media-type-badge media-type-{{ item.media_type }}">
+                        {% if item.media_type == 'video' %}Vídeo
+                        {% elif item.media_type == 'audio' %}Áudio
+                        {% elif item.media_type == 'pdf' %}PDF
+                        {% elif item.media_type == 'live' %}<i class="fa fa-circle" style="font-size:.55rem;vertical-align:middle"></i> Ao Vivo
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="media-card-body">
+                    {% if item.category %}<span class="media-cat-label">{{ item.category.name }}</span>{% endif %}
+                    <h3>{{ item.title }}</h3>
+                    {% if item.speaker %}<p class="media-speaker"><i class="fa fa-user-tie"></i> {{ item.speaker }}</p>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="section-cta">
+            <a href="{% url 'media_list' %}" class="btn btn-outline">Ver toda a Midiateca</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- CTA CONTATO -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Venha nos visitar</h2>
+            <p>Você é muito bem-vindo. Nossas portas estão abertas para recebê-lo.</p>
+
+            {% if site_settings.address %}
+            <div class="cta-address">
+                <i class="fa fa-map-marker-alt"></i>
+                <span>{{ site_settings.address }}</span>
+            </div>
+            {% endif %}
+
+            <div class="cta-actions">
+                {% if site_settings.maps_url %}
+                <a href="{{ site_settings.maps_url }}" target="_blank" rel="noopener" class="btn btn-primary">
+                    <i class="fa fa-map-marker-alt"></i> Como chegar
+                </a>
+                {% elif site_settings.address %}
+                <a href="https://www.google.com/maps/search/?api=1&query={{ site_settings.address|urlencode }}"
+                   target="_blank" rel="noopener" class="btn btn-primary">
+                    <i class="fa fa-map-marker-alt"></i> Como chegar
+                </a>
+                {% else %}
+                <a href="{% url 'contact' %}" class="btn btn-primary">
+                    <i class="fa fa-map-marker-alt"></i> Como chegar
+                </a>
+                {% endif %}
+
+                {% if site_settings.phone %}
+                <a href="https://wa.me/55{{ site_settings.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}"
+                   target="_blank" rel="noopener" class="btn btn-ghost">
+                    <i class="fa fa-phone"></i> {{ site_settings.phone }}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

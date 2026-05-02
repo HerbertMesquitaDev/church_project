@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% block title %}Devocionais — {{ site_settings.church_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-content">
+        <span class="section-label">Palavra de Deus</span>
+        <h1>Devocionais</h1>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if devos %}
+        <div class="devotional-list-grid">
+            {% for d in devos %}
+            <a href="{% url 'devotional_detail' d.pk %}" class="devotional-list-card">
+                <div class="devotional-list-date">
+                    <span>{{ d.pub_date|date:"d" }}</span>
+                    <span>{{ d.pub_date|date:"M" }}</span>
+                </div>
+                <div class="devotional-list-body">
+                    <span class="devotional-list-verse">{{ d.verse }}</span>
+                    <h3>{{ d.title }}</h3>
+                    <p>{{ d.reflection|truncatewords:20 }}</p>
+                    {% if d.author %}<small><i class="fa fa-user-tie"></i> {{ d.author }}</small>{% endif %}
+                </div>
+                <i class="fa fa-arrow-right devotional-list-arrow"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa fa-book-open"></i>
+            <h3>Nenhum devocional publicado ainda.</h3>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

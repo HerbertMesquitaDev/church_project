@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Django/local runtime
+.env
+*.sqlite3
+db.sqlite3
+staticfiles/
+media/
+logs/*.log
+
+# Local editor/assistant state
+.claude/
+.codex/
+.agents/
+
+# Build/export artifacts and local backups
+*.zip
+projeto_final/

@@ -1,0 +1,49 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}Entrar — Área de Membros{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/members.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <img src="{% static 'img/logo_icone.png' %}" alt="{{ site_settings.church_name }}" class="auth-logo-img">
+            <h2>Área de Membros</h2>
+            <p>{{ site_settings.church_name }}</p>
+        </div>
+
+        {% if messages %}
+            {% for msg in messages %}
+            <div class="auth-alert auth-alert-error">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>E-mail ou usuário</label>
+                <input type="text" name="username" placeholder="seu@email.com ou nome de usuário" required autofocus autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" name="password" placeholder="Sua senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'password_reset_request' %}"><i class="fa fa-key"></i> Esqueci minha senha</a>
+        </div>
+        <div class="auth-footer">
+            Ainda não tem conta?
+            <a href="{% url 'member_register' %}">Cadastre-se aqui</a>
+        </div>
+        <div class="auth-footer">
+            <a href="{% url 'home' %}"><i class="fa fa-arrow-left"></i> Voltar ao site</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

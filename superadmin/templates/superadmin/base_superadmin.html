@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Super Admin{% endblock %} — Painel Central</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-dark: #8B6914;
+      --navy: #1A2340;
+      --navy-light: #243050;
+      --surface: #fff;
+      --bg: #F4F3EF;
+      --border: #E5E0D5;
+      --text: #2C2C2C;
+      --text-muted: #8A8070;
+      --radius: 10px;
+      --sidebar-w: 240px;
+    }
+    [data-theme="dark"] {
+      --surface: #1A1A20;
+      --bg: #111118;
+      --border: rgba(201,168,76,.12);
+      --text: #E8E4DC;
+      --text-muted: #9A9080;
+    }
+
+    body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sa-sidebar { width: var(--sidebar-w); background: var(--navy); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; }
+    .sa-brand { padding: 1.5rem 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .sa-brand-title { color: var(--gold); font-size: .85rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+    .sa-brand-sub { color: rgba(255,255,255,.4); font-size: .7rem; margin-top: .2rem; }
+    .sa-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+    .sa-nav a { display: flex; align-items: center; gap: .75rem; padding: .6rem 1.25rem; color: rgba(255,255,255,.6); font-size: .83rem; text-decoration: none; transition: .15s; }
+    .sa-nav a:hover, .sa-nav a.active { background: rgba(201,168,76,.12); color: var(--gold); }
+    .sa-nav a i { width: 16px; text-align: center; }
+    .sa-nav .sa-section { padding: .75rem 1.25rem .25rem; font-size: .65rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.25); }
+    .sa-footer { padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,.08); }
+    .sa-footer a { color: rgba(255,255,255,.4); font-size: .78rem; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+    .sa-footer a:hover { color: var(--gold); }
+
+    /* MAIN */
+    .sa-main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+    .sa-topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: .9rem 1.75rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .sa-topbar-title { font-size: 1rem; font-weight: 600; color: var(--text); }
+    .sa-topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .sa-user { font-size: .8rem; color: var(--text-muted); }
+    .sa-content { padding: 1.75rem; flex: 1; }
+
+    /* CARDS */
+    .sa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+    .sa-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .sa-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+    .sa-stat-value { font-size: 2rem; font-weight: 600; color: var(--gold); line-height: 1; }
+    .sa-stat-label { font-size: .75rem; color: var(--text-muted); margin-top: .35rem; text-transform: uppercase; letter-spacing: .08em; }
+
+    /* TABLE */
+    .sa-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .sa-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .sa-table th { background: var(--bg); padding: .75rem 1rem; text-align: left; font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .sa-table td { padding: .85rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .sa-table tr:last-child td { border-bottom: none; }
+    .sa-table tr:hover td { background: rgba(201,168,76,.04); }
+
+    /* BADGES */
+    .badge { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .65rem; border-radius: 20px; font-size: .7rem; font-weight: 600; }
+    .badge-green  { background: rgba(39,174,96,.1);  color: #1a7a40; }
+    .badge-red    { background: rgba(231,76,60,.1);  color: #c0392b; }
+    .badge-gold   { background: rgba(201,168,76,.15); color: var(--gold-dark); }
+    .badge-grey   { background: rgba(0,0,0,.06);     color: var(--text-muted); }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: .4rem; padding: .5rem 1rem; border-radius: var(--radius); font-size: .82rem; font-weight: 500; cursor: pointer; text-decoration: none; border: 1px solid transparent; transition: .15s; }
+    .btn-primary { background: var(--gold); color: #fff; border-color: var(--gold); }
+    .btn-primary:hover { background: var(--gold-dark); border-color: var(--gold-dark); }
+    .btn-outline { background: transparent; color: var(--text); border-color: var(--border); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-danger { background: transparent; color: #e74c3c; border-color: rgba(231,76,60,.3); }
+    .btn-danger:hover { background: rgba(231,76,60,.08); }
+    .btn-sm { padding: .3rem .7rem; font-size: .75rem; }
+
+    /* FORM */
+    .sa-form-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; max-width: 700px; }
+    .sa-form label { display: block; font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .4rem; }
+    .sa-form input, .sa-form select, .sa-form textarea { width: 100%; padding: .7rem .9rem; border: 1px solid var(--border); border-radius: var(--radius); font-family: 'Jost', sans-serif; font-size: .85rem; background: var(--surface); color: var(--text); }
+    .sa-form input:focus, .sa-form select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.1); }
+    .sa-form .form-group { margin-bottom: 1.1rem; }
+    .sa-form .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.25rem; }
+    .sa-form .form-hint { font-size: .75rem; color: var(--text-muted); margin-top: .3rem; display: block; }
+    .sa-form .form-check { display: flex; align-items: center; gap: .5rem; }
+    .sa-form .form-check input { width: auto; }
+
+    /* ALERTS */
+    .alert { padding: .8rem 1rem; border-radius: var(--radius); margin-bottom: 1rem; font-size: .83rem; display: flex; align-items: center; justify-content: space-between; }
+    .alert-success { background: rgba(39,174,96,.1); color: #1a7a40; border: 1px solid rgba(39,174,96,.2); }
+    .alert-error, .alert-danger { background: rgba(231,76,60,.1); color: #c0392b; border: 1px solid rgba(231,76,60,.2); }
+    .alert button { background: none; border: none; cursor: pointer; color: inherit; font-size: 1rem; }
+
+    /* SEARCH BAR */
+    .sa-filters { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+    .sa-filters input, .sa-filters select { padding: .45rem .85rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: .82rem; background: var(--surface); color: var(--text); }
+    .sa-filters input:focus, .sa-filters select:focus { outline: none; border-color: var(--gold); }
+
+    [data-theme="dark"] .sa-form input,
+    [data-theme="dark"] .sa-form select,
+    [data-theme="dark"] .sa-filters input,
+    [data-theme="dark"] .sa-filters select { background: #1E1E24; border-color: rgba(201,168,76,.15); }
+  </style>
+  {% block extra_css %}{% endblock %}
+  <script>!function(){var t=localStorage.getItem("church_theme")||"";if(t)document.documentElement.setAttribute("data-theme",t);}();</script>
+</head>
+<body>
+
+<aside class="sa-sidebar">
+  <div class="sa-brand">
+    <div class="sa-brand-title"><i class="fa fa-crown"></i> Super Admin</div>
+    <div class="sa-brand-sub">Painel Central de Gestão</div>
+  </div>
+  <nav class="sa-nav">
+    <span class="sa-section">Painel</span>
+    <a href="{% url 'sa_dashboard' %}" class="{% if request.resolver_match.url_name == 'sa_dashboard' %}active{% endif %}">
+      <i class="fa fa-gauge"></i> Dashboard
+    </a>
+    <span class="sa-section">Igrejas</span>
+    <a href="{% url 'sa_igreja_list' %}" class="{% if 'sa_igreja' in request.resolver_match.url_name %}active{% endif %}">
+      <i class="fa fa-church"></i> Todas as Igrejas
+    </a>
+    <a href="{% url 'sa_igreja_create' %}">
+      <i class="fa fa-plus"></i> Nova Igreja
+    </a>
+  </nav>
+  <div class="sa-footer">
+    <a href="{% url 'member_dashboard' %}"><i class="fa fa-arrow-left"></i> Voltar ao Sistema</a>
+  </div>
+</aside>
+
+<div class="sa-main">
+  <header class="sa-topbar">
+    <span class="sa-topbar-title">{% block page_title %}Super Admin{% endblock %}</span>
+    <div class="sa-topbar-right">
+      <span class="sa-user"><i class="fa fa-user-shield"></i> {{ request.user.get_full_name|default:request.user.username }}</span>
+      <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;" title="Alternar tema">
+        <i class="fa fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="sa-content">
+    {% if messages %}{% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}{% endif %}
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<script>
+function toggleTheme() {
+  var cur = document.documentElement.getAttribute('data-theme');
+  var next = cur === 'dark' ? '' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('church_theme', next);
+}
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

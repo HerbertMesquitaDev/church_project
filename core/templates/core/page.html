@@ -1,0 +1,25 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ page.title }} — {{ site_settings.church_name }}{% endblock %}
+
+{% if page.meta_description %}
+{% block meta_description %}{{ page.meta_description }}{% endblock %}
+{% endif %}
+
+{% block content %}
+<section class="page-hero">
+    {% if page.cover %}
+    <div class="page-hero-bg" style="background-image: url('{{ page.cover.url }}');"></div>
+    {% endif %}
+    <div class="page-hero-content">
+        <h1>{{ page.title }}</h1>
+    </div>
+</section>
+
+<section class="section-light">
+    <div class="container">
+        <div class="dynamic-page-body prose">
+            {{ page.content|safe }}
+        </div>
+    </div>
+</section>
+{% endblock %}

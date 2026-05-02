@@ -1,0 +1,107 @@
+{% extends 'members/base_members.html' %}
+{% load static %}
+{% block title %}Conteúdos — Gestão{% endblock %}
+{% block page_title %}Conteúdos Exclusivos{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+    <!-- Topbar: filtros + novo -->
+    <div class="manage-topbar">
+        <form method="get" class="manage-search-row">
+            <select name="tipo" class="form-input" onchange="this.form.submit()" style="min-width:150px">
+                <option value="">Todos os tipos</option>
+                {% for val, label in tipos %}
+                <option value="{{ val }}" {% if tipo == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select name="categoria" class="form-input" onchange="this.form.submit()" style="min-width:160px">
+                <option value="">Todas as categorias</option>
+                {% for cat in categories %}
+                <option value="{{ cat.pk }}" {% if cat_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar título..." class="form-input" style="flex:1;min-width:180px">
+            <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
+        </form>
+        <a href="{% url 'content_create_manage' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Conteúdo</a>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Tabela -->
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Categoria</th>
+                    <th>Autor</th>
+                    <th>Data</th>
+                    <th>Pub.</th>
+                    <th>Destaque</th>
+                    <th style="width:110px">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:.6rem">
+                            {% if item.thumbnail %}
+                            <img src="{{ item.thumbnail.url }}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                            {% else %}
+                            <div style="width:36px;height:36px;background:rgba(201,168,76,.1);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <i class="fa {{ item.category.icon|default:'fa-book' }}" style="color:var(--gold);font-size:.8rem"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <span class="td-title">{{ item.title }}</span>
+                                {% if item.body %}<br><small class="text-muted">{{ item.body|truncatewords:8 }}</small>{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge content-type-badge content-{{ item.content_type }}">{{ item.get_content_type_display }}</span></td>
+                    <td>{{ item.category|default:"—" }}</td>
+                    <td>{{ item.author.get_full_name|default:item.author.username|default:"—" }}</td>
+                    <td>{{ item.created_at|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if item.published %}
+                        <i class="fa fa-check-circle" style="color:#27ae60" title="Publicado"></i>
+                        {% else %}
+                        <i class="fa fa-times-circle" style="color:#e74c3c" title="Rascunho"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <i class="fa fa-star" style="color:{% if item.featured %}var(--gold){% else %}rgba(0,0,0,.15){% endif %}"></i>
+                    </td>
+                    <td>
+                        <div class="manage-actions">
+                            <a href="{% url 'content_detail' item.pk %}" class="manage-btn manage-btn-view" title="Ver"><i class="fa fa-eye"></i></a>
+                            <a href="{% url 'content_edit_manage' item.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                            {% if request.user.is_superuser %}<a href="{% url 'content_delete_manage' item.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>{% else %}{% include 'members/delete_request_btn.html' with ct="content" oid=item.pk title=item.title %}{% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhum conteúdo encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination-wrap">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q }}&tipo={{ tipo }}&categoria={{ cat_id }}" class="page-btn">&laquo;</a>{% endif %}
+        <span class="page-info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q }}&tipo={{ tipo }}&categoria={{ cat_id }}" class="page-btn">&raquo;</a>{% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

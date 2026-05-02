@@ -1,0 +1,157 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Configurações — Redes Sociais{% endblock %}
+{% block page_title %}Redes Sociais — Configurações{% endblock %}
+
+{% block extra_css %}
+<style>
+.token-field { font-family:monospace;font-size:.8rem;letter-spacing:.02em; }
+.cfg-section { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem; }
+.cfg-section-title { display:flex;align-items:center;gap:.75rem;margin:0 0 1.25rem; }
+.cfg-section-title i { font-size:1.4rem; }
+.cfg-section-title h3 { margin:0;font-size:1rem; }
+.step-list { counter-reset:steps;list-style:none;padding:0;margin:0 0 1.25rem; }
+.step-list li { counter-increment:steps;display:flex;gap:.75rem;margin-bottom:.75rem;font-size:.82rem; }
+.step-list li::before { content:counter(steps);min-width:22px;height:22px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;margin-top:.05rem; }
+.step-list li a { color:var(--gold-dark); }
+.cfg-docs { background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:1rem 1.25rem;font-size:.8rem;margin-bottom:1.25rem; }
+.cfg-docs strong { display:block;margin-bottom:.35rem; }
+.test-result { padding:.6rem .9rem;border-radius:8px;font-size:.82rem;margin-top:.75rem; }
+.test-ok   { background:rgba(39,174,96,.1);color:#1a7a40;border:1px solid rgba(39,174,96,.2); }
+.test-fail { background:rgba(231,76,60,.1);color:#c0392b;border:1px solid rgba(231,76,60,.2); }
+
+[data-theme="dark"] .cfg-section { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .cfg-section-title h3 { color:#E8E4DC; }
+[data-theme="dark"] .cfg-docs { background:rgba(201,168,76,.04);border-color:rgba(201,168,76,.12); }
+[data-theme="dark"] .test-ok   { background:rgba(39,174,96,.08);color:#58d68d; }
+[data-theme="dark"] .test-fail { background:rgba(231,76,60,.08);color:#e87c6f; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<!-- ── Instruções gerais ── -->
+<div class="cfg-docs">
+  <strong><i class="fa fa-circle-info" style="color:var(--gold-dark)"></i> Como obter as credenciais</strong>
+  Para usar as APIs, você precisa de um <strong>App Meta</strong> aprovado com as permissões corretas.
+  Acesse <a href="https://developers.facebook.com/apps/" target="_blank" style="color:var(--gold-dark)">developers.facebook.com/apps</a>
+  → crie um App → vá em "Permissões e recursos" → solicite <code>instagram_content_publish</code> e <code>pages_manage_posts</code>.
+  Enquanto aguarda aprovação, você pode testar com usuários de teste no painel do desenvolvedor.
+</div>
+
+<!-- ── URL do site ── -->
+<div class="cfg-section">
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save">
+    <div class="cfg-section-title">
+      <i class="fa fa-globe" style="color:var(--gold-dark)"></i>
+      <h3>URL Pública do Site</h3>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin:0 0 1rem">
+      A API da Meta acessa as fotos diretamente pela URL pública do seu servidor.
+      O site precisa estar hospedado com HTTPS. <strong>Não funciona em localhost.</strong>
+    </p>
+    <div class="form-group">
+      <label>URL base do site <span style="color:#e74c3c">*</span></label>
+      <input type="url" name="site_base_url" class="form-input" value="{{ config.site_base_url }}"
+        placeholder="https://meusite.com.br">
+      <small class="form-hint">Sem barra no final. Ex: https://meusite.com.br</small>
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar URL</button>
+  </form>
+</div>
+
+<!-- ── Instagram ── -->
+<div class="cfg-section">
+  <div class="cfg-section-title">
+    <i class="fab fa-instagram" style="color:#E1306C"></i>
+    <h3>Instagram Business</h3>
+    {% if config.ig_configured %}<span class="cfg-status cfg-ok" style="display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:600;background:rgba(39,174,96,.1);color:#1a7a40"><i class="fa fa-check"></i> Configurado</span>{% endif %}
+  </div>
+
+  <ol class="step-list">
+    <li>Vá em <a href="https://developers.facebook.com/" target="_blank">developers.facebook.com</a> → Seu App → Configurações Básicas</li>
+    <li>Em "Produtos", adicione <strong>Instagram Graph API</strong></li>
+    <li>Conecte uma conta Instagram Business/Creator à sua Página do Facebook</li>
+    <li>Gere um <strong>User Access Token</strong> com escopo <code>instagram_content_publish,instagram_basic</code></li>
+    <li>No Instagram Graph API, chame <code>GET /me/accounts</code> para obter o <strong>Instagram User ID</strong></li>
+  </ol>
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="test_ig">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Instagram User ID</label>
+        <input type="text" name="ig_user_id" class="form-input token-field" value="{{ config.ig_user_id }}"
+          placeholder="17841400000000000">
+      </div>
+      <div class="form-group">
+        <label>Access Token</label>
+        <input type="text" name="ig_access_token" class="form-input token-field" value="{{ config.ig_access_token }}"
+          placeholder="EAAxxxxxx...">
+        <small class="form-hint">Use um token de longa duração (60 dias). <a href="https://developers.facebook.com/docs/facebook-login/guides/access-tokens/get-long-lived" target="_blank" style="color:var(--gold-dark)">Como gerar →</a></small>
+      </div>
+    </div>
+    {% if ig_info and not ig_info.ok %}
+    <div class="test-result test-fail"><i class="fa fa-times-circle"></i> {{ ig_info.error }}</div>
+    {% elif ig_info and ig_info.ok %}
+    <div class="test-result test-ok"><i class="fa fa-check-circle"></i> Conectado como @{{ ig_info.data.username }}</div>
+    {% endif %}
+    <div style="display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap">
+      <button type="submit" class="btn btn-outline" style="border-color:#E1306C;color:#E1306C">
+        <i class="fab fa-instagram"></i> Salvar e Testar conexão
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- ── Facebook ── -->
+<div class="cfg-section">
+  <div class="cfg-section-title">
+    <i class="fab fa-facebook" style="color:#1877F2"></i>
+    <h3>Facebook Page</h3>
+    {% if config.fb_configured %}<span style="display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:600;background:rgba(39,174,96,.1);color:#1a7a40"><i class="fa fa-check"></i> Configurado</span>{% endif %}
+  </div>
+
+  <ol class="step-list">
+    <li>No <a href="https://developers.facebook.com/" target="_blank">painel do desenvolvedor</a>, adicione o produto <strong>Facebook Login</strong> ao seu App</li>
+    <li>Solicite a permissão <code>pages_manage_posts</code> e <code>pages_read_engagement</code></li>
+    <li>No Graph API Explorer, gere um token com estas permissões e troque-o por um <strong>Page Access Token</strong></li>
+    <li>O <strong>Page ID</strong> aparece em "Sobre" na sua Página do Facebook, ou via <code>GET /me/accounts</code></li>
+  </ol>
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="test_fb">
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Facebook Page ID</label>
+        <input type="text" name="fb_page_id" class="form-input token-field" value="{{ config.fb_page_id }}"
+          placeholder="123456789012345">
+      </div>
+      <div class="form-group">
+        <label>Page Access Token</label>
+        <input type="text" name="fb_access_token" class="form-input token-field" value="{{ config.fb_access_token }}"
+          placeholder="EAAxxxxxx...">
+        <small class="form-hint"><a href="https://developers.facebook.com/tools/explorer/" target="_blank" style="color:var(--gold-dark)">Graph API Explorer →</a> para gerar e testar tokens.</small>
+      </div>
+    </div>
+    {% if fb_info and not fb_info.ok %}
+    <div class="test-result test-fail"><i class="fa fa-times-circle"></i> {{ fb_info.error }}</div>
+    {% elif fb_info and fb_info.ok %}
+    <div class="test-result test-ok"><i class="fa fa-check-circle"></i> Conectado: {{ fb_info.data.name }}</div>
+    {% endif %}
+    <div style="display:flex;gap:.75rem;margin-top:.75rem;flex-wrap:wrap">
+      <button type="submit" class="btn btn-outline" style="border-color:#1877F2;color:#1877F2">
+        <i class="fab fa-facebook"></i> Salvar e Testar conexão
+      </button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

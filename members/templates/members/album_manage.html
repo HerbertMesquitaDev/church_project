@@ -1,0 +1,85 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Galeria de Fotos — Gestão{% endblock %}
+{% block page_title %}Galeria de Fotos{% endblock %}
+
+{% block content %}
+<div class="manage-wrap">
+
+    <div class="manage-topbar">
+        <form method="get" class="manage-search-row">
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar álbum..." class="form-input" style="flex:1;min-width:200px">
+            <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
+        </form>
+        <a href="{% url 'album_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Álbum</a>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="album-grid">
+        {% for album in albums %}
+        <div class="album-card">
+            <div class="album-cover">
+                {% if album.cover %}
+                <img src="{{ album.cover.url }}" alt="{{ album.title }}">
+                {% else %}
+                <div class="album-cover-placeholder"><i class="fa fa-images"></i></div>
+                {% endif %}
+                <span class="album-badge">{{ album.photo_count }} foto{{ album.photo_count|pluralize }}</span>
+                {% if not album.published %}<span class="album-badge album-badge-draft">Rascunho</span>{% endif %}
+            </div>
+            <div class="album-info">
+                <strong>{{ album.title }}</strong>
+                {% if album.event_date %}
+                <span><i class="fa fa-calendar"></i> {{ album.event_date|date:"d/m/Y" }}</span>
+                {% endif %}
+                {% if album.description %}
+                <p class="album-desc">{{ album.description|truncatewords:10 }}</p>
+                {% endif %}
+            </div>
+            <div class="album-actions">
+                <a href="{% url 'album_photos' album.pk %}" class="btn btn-outline btn-sm"><i class="fa fa-images"></i> Fotos</a>
+                <a href="{% url 'album_edit' album.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                <a href="{% url 'album_delete' album.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column:1/-1;text-align:center;padding:3rem" class="text-muted">
+            <i class="fa fa-images" style="font-size:2.5rem;opacity:.25;display:block;margin-bottom:1rem"></i>
+            Nenhum álbum cadastrado ainda.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination-wrap">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}&q={{ q }}" class="page-btn">&laquo;</a>{% endif %}
+        <span class="page-info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}&q={{ q }}" class="page-btn">&raquo;</a>{% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.album-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:1.25rem; }
+.album-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+.album-cover { position:relative; aspect-ratio:16/9; background:var(--surface-alt,#FAF7F2); overflow:hidden; }
+.album-cover img { width:100%; height:100%; object-fit:cover; }
+.album-cover-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:rgba(201,168,76,.3); }
+.album-badge { position:absolute; bottom:.5rem; right:.5rem; background:rgba(0,0,0,.6); color:#fff; font-size:.7rem; padding:.2rem .55rem; border-radius:20px; backdrop-filter:blur(4px); }
+.album-badge-draft { right:auto; left:.5rem; background:rgba(231,76,60,.7); }
+.album-info { padding:.9rem 1rem .5rem; flex:1; display:flex; flex-direction:column; gap:.25rem; }
+.album-info strong { font-size:.95rem; color:var(--text-heading,#1A2340); font-weight:500; }
+.album-info span { font-size:.78rem; color:var(--text-muted); display:flex; align-items:center; gap:.3rem; }
+.album-info span i { color:var(--gold,#C9A84C); font-size:.7rem; }
+.album-desc { font-size:.8rem; color:var(--text-muted); margin:0; line-height:1.4; }
+.album-actions { padding:.6rem 1rem .9rem; display:flex; align-items:center; gap:.5rem; border-top:1px solid var(--border,rgba(201,168,76,.1)); }
+[data-theme="dark"] .album-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .album-cover { background:#2a2a34; }
+[data-theme="dark"] .album-info strong { color:#E8E4DC; }
+</style>
+{% endblock %}

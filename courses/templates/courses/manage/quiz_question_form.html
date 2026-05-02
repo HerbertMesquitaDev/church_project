@@ -1,0 +1,120 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="manage-wrap" style="max-width:720px">
+
+    <div style="font-size:.85rem" class="text-muted">
+        <a href="{% url 'manage_quiz' lesson_pk=lesson.pk %}" style="color:var(--gold)">
+            <i class="fa fa-arrow-left"></i> Voltar ao Quiz: {{ lesson.title }}
+        </a>
+    </div>
+
+    <!-- Formulário da pergunta -->
+    <div class="quiz-manage-card">
+        <div class="quiz-manage-card-header">
+            <i class="fa fa-question-circle"></i>
+            <div><strong>{{ title }}</strong></div>
+        </div>
+        <form method="post" class="members-form" style="margin-top:.75rem">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>{{ form.text.label }}</label>
+                {{ form.text }}
+                {% if form.text.errors %}<span class="field-error">{{ form.text.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label>{{ form.explanation.label }}</label>
+                {{ form.explanation }}
+            </div>
+            <div class="form-group" style="max-width:150px">
+                <label>{{ form.order.label }}</label>
+                {{ form.order }}
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar Pergunta</button>
+                <a href="{% url 'manage_quiz' lesson_pk=lesson.pk %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    {% if question %}
+    <!-- Alternativas desta pergunta -->
+    <div class="manage-topbar">
+        <h3 style="font-size:.95rem;font-weight:600;color:var(--text-heading);margin:0">
+            <i class="fa fa-list" style="color:var(--gold)"></i>
+            Alternativas ({{ choices|length }})
+        </h3>
+        <a href="{% url 'manage_quiz_choice_create' question_pk=question.pk %}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Nova Alternativa
+        </a>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="manage-table-wrap">
+        <table class="manage-table">
+            <thead>
+                <tr>
+                    <th>Alternativa</th>
+                    <th style="width:80px;text-align:center">Correta?</th>
+                    <th style="width:60px">Ordem</th>
+                    <th style="width:90px">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for choice in choices %}
+                <tr class="{% if choice.is_correct %}choice-row-correct{% endif %}">
+                    <td>{{ choice.text }}</td>
+                    <td style="text-align:center">
+                        {% if choice.is_correct %}
+                        <i class="fa fa-check-circle" style="color:#27ae60;font-size:1.1rem"></i>
+                        {% else %}
+                        <i class="fa fa-circle" style="color:var(--border);font-size:.6rem"></i>
+                        {% endif %}
+                    </td>
+                    <td style="color:var(--text-muted);font-size:.85rem">{{ choice.order }}</td>
+                    <td>
+                        <div class="manage-actions">
+                            <a href="{% url 'manage_quiz_choice_edit' choice.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+                            <a href="{% url 'manage_quiz_choice_delete' choice.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align:center;padding:1.5rem" class="text-muted">
+                        Nenhuma alternativa ainda. Clique em <strong>Nova Alternativa</strong>.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="quiz-manage-tip">
+        <i class="fa fa-lightbulb"></i>
+        Marque <strong>apenas uma</strong> alternativa como correta. O aluno deverá escolher entre todas as alternativas listadas.
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+.quiz-manage-card { background:var(--card-bg,#fff); border:1px solid var(--border,rgba(201,168,76,.2)); border-radius:10px; padding:1.25rem; }
+.quiz-manage-card-header { display:flex; align-items:center; gap:.75rem; margin-bottom:.25rem; }
+.quiz-manage-card-header i { font-size:1.1rem; color:var(--gold,#C9A84C); }
+.quiz-manage-card-header strong { font-size:.95rem; color:var(--text-heading,#1A2340); }
+.choice-row-correct td { background:rgba(39,174,96,.05); }
+.quiz-manage-tip { display:flex; align-items:flex-start; gap:.6rem; background:rgba(201,168,76,.07); border:1px solid rgba(201,168,76,.2); border-radius:8px; padding:.8rem 1rem; font-size:.82rem; color:var(--text-muted); }
+.quiz-manage-tip i { color:var(--gold,#C9A84C); margin-top:.1rem; flex-shrink:0; }
+[data-theme="dark"] .quiz-manage-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .quiz-manage-card-header strong { color:#E8E4DC; }
+[data-theme="dark"] .choice-row-correct td { background:rgba(39,174,96,.06); }
+</style>
+{% endblock %}

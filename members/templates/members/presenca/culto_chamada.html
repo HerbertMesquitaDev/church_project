@@ -1,0 +1,296 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Chamada — {{ culto }}{% endblock %}
+{% block page_title %}Chamada: {{ culto }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.chamada-header { background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem; }
+.chamada-stat { text-align:center; }
+.chamada-stat-num { font-size:1.6rem;font-weight:600;color:var(--gold-dark);line-height:1; }
+.chamada-stat-label { font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem; }
+.chamada-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.6rem; }
+.chamada-card { display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;border-radius:10px;border:2px solid var(--border);background:var(--card-bg,#fff);cursor:pointer;transition:.15s;user-select:none; }
+.chamada-card:hover { border-color:var(--gold);background:rgba(201,168,76,.04); }
+.chamada-card.presente { border-color:#27ae60;background:rgba(39,174,96,.07); }
+.chamada-card.presente .chamada-check { background:#27ae60;border-color:#27ae60;color:#fff; }
+.chamada-check { width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;color:transparent;font-size:.85rem; }
+.chamada-name { font-size:.88rem;font-weight:600;color:var(--text-heading);line-height:1.2; }
+.chamada-photo { width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0; }
+.chamada-photo-ph { width:36px;height:36px;border-radius:50%;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.chamada-photo-ph i { color:var(--text-muted);font-size:.85rem; }
+.chamada-progress-bar { height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-bottom:1.25rem; }
+.chamada-progress-fill { height:100%;border-radius:20px;background:linear-gradient(90deg,#27ae60,#2ecc71);transition:width .4s; }
+.quick-btns { display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap; }
+
+/* Modal */
+.modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:1rem; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--card-bg,#fff);border-radius:16px;padding:2rem;max-width:460px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:modalIn .2s ease; }
+@keyframes modalIn { from{transform:scale(.96);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-box h3 { margin:0 0 .4rem;font-size:1.1rem;color:var(--text-heading); }
+.modal-box p  { margin:0 0 1rem;font-size:.85rem;color:var(--text-muted); }
+.visitor-count-wrap { display:flex;align-items:center;justify-content:center;gap:1rem;margin:1rem 0; }
+.visitor-count-btn { width:44px;height:44px;border-radius:50%;border:2px solid var(--border);background:none;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-heading);transition:.15s; }
+.visitor-count-btn:hover { border-color:var(--gold);color:var(--gold-dark); }
+.visitor-count-num { font-size:2.5rem;font-weight:600;color:var(--gold-dark);min-width:60px;text-align:center;line-height:1; }
+.visitor-names-area { width:100%;border:1px solid var(--border);border-radius:8px;padding:.65rem .85rem;font-size:.85rem;font-family:inherit;background:var(--surface-alt);color:var(--text);resize:vertical;min-height:80px;box-sizing:border-box; }
+.visitor-names-area:focus { outline:none;border-color:var(--gold); }
+
+[data-theme="dark"] .chamada-header { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .chamada-card { background:#1E1E24;border-color:rgba(201,168,76,.12); }
+[data-theme="dark"] .chamada-card:hover { background:rgba(201,168,76,.06); }
+[data-theme="dark"] .chamada-card.presente { border-color:#27ae60;background:rgba(39,174,96,.08); }
+[data-theme="dark"] .chamada-name { color:#E8E4DC; }
+[data-theme="dark"] .chamada-progress-bar { background:rgba(255,255,255,.08); }
+[data-theme="dark"] .modal-box { background:#1E1E24; }
+[data-theme="dark"] .modal-box h3 { color:#E8E4DC; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="chamada-header">
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem" class="text-muted">
+    <a href="{% url 'culto_manage' %}" style="color:var(--gold);text-decoration:none">
+      <i class="fa fa-clipboard-check"></i> Presenças
+    </a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ culto.date|date:"d/m/Y" }}</span>
+  </div>
+  <div style="display:flex;gap:1.5rem">
+    <div class="chamada-stat">
+      <div class="chamada-stat-num" id="countPresente">{{ presente_count }}</div>
+      <div class="chamada-stat-label">Membros</div>
+    </div>
+    <div class="chamada-stat">
+      <div class="chamada-stat-num" id="countVisitante">{{ culto.visitor_count }}</div>
+      <div class="chamada-stat-label">Visitantes</div>
+    </div>
+    <div class="chamada-stat">
+      <div class="chamada-stat-num">{{ total }}</div>
+      <div class="chamada-stat-label">Total membros</div>
+    </div>
+    <div class="chamada-stat">
+      <div class="chamada-stat-num" id="pctDisplay">{{ pct }}%</div>
+      <div class="chamada-stat-label">Frequência</div>
+    </div>
+  </div>
+</div>
+
+<!-- Barra de progresso -->
+<div class="chamada-progress-bar">
+  <div class="chamada-progress-fill" id="progressFill" style="width:{{ pct }}%"></div>
+</div>
+
+<!-- Seleção rápida -->
+<div class="quick-btns">
+  <button type="button" class="btn btn-outline" onclick="selectAll()" style="font-size:.8rem;padding:.35rem .85rem">
+    <i class="fa fa-check-square"></i> Marcar todos
+  </button>
+  <button type="button" class="btn btn-outline" onclick="clearAll()" style="font-size:.8rem;padding:.35rem .85rem">
+    <i class="fa fa-square"></i> Desmarcar todos
+  </button>
+  <input type="text" id="searchInput" class="form-input" placeholder="Buscar membro..." oninput="filterCards()" style="max-width:220px;font-size:.85rem">
+</div>
+
+{% if messages %}{% for msg in messages %}
+<div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+{% endfor %}{% endif %}
+
+<!-- FORM ÚNICO — contém checkboxes de presença + campos de visitantes -->
+<form method="post" id="chamadaForm">
+  {% csrf_token %}
+
+  <!-- Campos de visitantes (hidden — preenchidos pela modal) -->
+  <input type="hidden" name="visitor_count" id="formVisCount" value="{{ culto.visitor_count|default:0 }}">
+  <input type="hidden" name="visitor_names" id="formVisNames" value="{{ culto.visitor_names|default:'' }}">
+
+  <!-- Grid de membros -->
+  <div class="chamada-grid" id="chamadaGrid">
+    {% for p in presencas %}
+    <label class="chamada-card {% if p.present %}presente{% endif %}"
+           id="card_{{ p.member.pk }}"
+           data-name="{{ p.member.full_name|lower }}">
+      {% if p.member.photo %}
+      <img src="{{ p.member.photo.url }}" class="chamada-photo" alt="">
+      {% else %}
+      <div class="chamada-photo-ph"><i class="fa fa-user"></i></div>
+      {% endif %}
+      <div class="chamada-check"><i class="fa fa-check"></i></div>
+      <div class="chamada-name">{{ p.member.full_name }}</div>
+      <input type="checkbox" name="present" value="{{ p.member.pk }}"
+             {% if p.present %}checked{% endif %}
+             onchange="onToggle(this)"
+             style="display:none">
+    </label>
+    {% empty %}
+    <p class="text-muted" style="grid-column:1/-1">Nenhum membro aprovado encontrado.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Botão flutuante -->
+  <div style="position:sticky;bottom:1rem;display:flex;justify-content:flex-end;margin-top:1.5rem;pointer-events:none">
+    <button type="button" onclick="abrirModal()"
+      class="btn btn-primary"
+      style="pointer-events:all;box-shadow:0 4px 20px rgba(0,0,0,.25);padding:.75rem 2rem;font-size:.95rem">
+      <i class="fa fa-save"></i> Salvar chamada
+    </button>
+  </div>
+</form>
+
+<!-- ── Modal de visitantes ── -->
+<div id="modalVisitantes" class="modal-overlay">
+  <div class="modal-box">
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,.12);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+        <i class="fa fa-person-walking-arrow-right" style="font-size:1.4rem;color:var(--gold-dark)"></i>
+      </div>
+      <h3>Houve visitantes?</h3>
+      <p>Informe quantos visitantes estiveram presentes neste culto.</p>
+    </div>
+
+    <!-- Contador -->
+    <div class="visitor-count-wrap">
+      <button type="button" class="visitor-count-btn" onclick="ajustar(-1)">
+        <i class="fa fa-minus"></i>
+      </button>
+      <div class="visitor-count-num" id="visDisplay">0</div>
+      <button type="button" class="visitor-count-btn" onclick="ajustar(1)">
+        <i class="fa fa-plus"></i>
+      </button>
+    </div>
+
+    <!-- Nomes (só aparece quando count > 0) -->
+    <div id="visNamesWrap" style="display:none;margin-bottom:1.25rem">
+      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.4rem">
+        Nomes <small style="font-weight:400">(opcional — um por linha)</small>
+      </label>
+      <textarea id="visNamesInput" class="visitor-names-area"
+        placeholder="João Silva&#10;Maria Santos..."></textarea>
+    </div>
+
+    <div style="display:flex;gap:.75rem">
+      <button type="button" onclick="confirmarESalvar()" class="btn btn-primary" style="flex:1">
+        <i class="fa fa-check"></i> Confirmar e salvar
+      </button>
+      <button type="button" onclick="fecharModal()" class="btn btn-outline">
+        Cancelar
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:.75rem">
+      <button type="button" onclick="salvarSemVisitantes()"
+        style="background:none;border:none;color:var(--text-muted);font-size:.78rem;cursor:pointer;text-decoration:underline">
+        Salvar sem registrar visitantes
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const total = {{ total }};
+let visCount = {{ culto.visitor_count|default:0 }};
+
+// ── Inicializar estado visual dos cards ──
+document.querySelectorAll('#chamadaGrid .chamada-card').forEach(card => {
+  const cb = card.querySelector('input[type=checkbox]');
+  if (cb && cb.checked) card.classList.add('presente');
+});
+updateStats();
+
+// ── Toggle de presença ──
+function onToggle(cb) {
+  const card = cb.closest('.chamada-card');
+  card.classList.toggle('presente', cb.checked);
+  updateStats();
+}
+
+// Clique no card inteiro também togla o checkbox
+document.querySelectorAll('#chamadaGrid .chamada-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    if (e.target.tagName === 'INPUT') return; // já tratado pelo onchange
+    const cb = this.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    this.classList.toggle('presente', cb.checked);
+    updateStats();
+  });
+});
+
+function updateStats() {
+  const cnt = document.querySelectorAll('#chamadaGrid .chamada-card.presente').length;
+  document.getElementById('countPresente').textContent = cnt;
+  const pct = total > 0 ? Math.round(cnt / total * 100) : 0;
+  document.getElementById('pctDisplay').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function selectAll() {
+  document.querySelectorAll('#chamadaGrid .chamada-card').forEach(card => {
+    if (card.style.display === 'none') return;
+    const cb = card.querySelector('input[type=checkbox]');
+    cb.checked = true;
+    card.classList.add('presente');
+  });
+  updateStats();
+}
+
+function clearAll() {
+  document.querySelectorAll('#chamadaGrid .chamada-card').forEach(card => {
+    const cb = card.querySelector('input[type=checkbox]');
+    cb.checked = false;
+    card.classList.remove('presente');
+  });
+  updateStats();
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('#chamadaGrid .chamada-card').forEach(card => {
+    card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+  });
+}
+
+// ── Modal de visitantes ──
+function abrirModal() {
+  // Preencher com valor atual
+  document.getElementById('visDisplay').textContent = visCount;
+  const namesInput = document.getElementById('visNamesInput');
+  namesInput.value = document.getElementById('formVisNames').value;
+  document.getElementById('visNamesWrap').style.display = visCount > 0 ? 'block' : 'none';
+  document.getElementById('modalVisitantes').classList.add('open');
+}
+
+function fecharModal() {
+  document.getElementById('modalVisitantes').classList.remove('open');
+}
+
+function ajustar(delta) {
+  visCount = Math.max(0, visCount + delta);
+  document.getElementById('visDisplay').textContent = visCount;
+  document.getElementById('visNamesWrap').style.display = visCount > 0 ? 'block' : 'none';
+  document.getElementById('countVisitante').textContent = visCount;
+}
+
+function confirmarESalvar() {
+  document.getElementById('formVisCount').value = visCount;
+  document.getElementById('formVisNames').value = document.getElementById('visNamesInput').value;
+  document.getElementById('chamadaForm').submit();
+}
+
+function salvarSemVisitantes() {
+  visCount = 0;
+  document.getElementById('formVisCount').value = 0;
+  document.getElementById('formVisNames').value = '';
+  document.getElementById('chamadaForm').submit();
+}
+
+// Fechar modal clicando fora ou Escape
+document.getElementById('modalVisitantes').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal(); });
+</script>
+{% endblock %}

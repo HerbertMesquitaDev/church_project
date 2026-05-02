@@ -1,0 +1,60 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Registrar Culto{% endblock %}
+{% block page_title %}Registrar Culto / Reunião{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap" style="max-width:560px">
+
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.5rem" class="text-muted">
+    <a href="{% url 'culto_manage' %}" style="color:var(--gold);text-decoration:none">
+      <i class="fa fa-clipboard-check"></i> Presenças
+    </a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>Novo Culto</span>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-section-title">Dados do Culto</div>
+
+    <div class="form-group">
+      <label>Tipo *</label>
+      <select name="culto_type" class="form-input" required>
+        {% for val, label in type_choices %}
+        <option value="{{ val }}" {% if data.culto_type == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Data *</label>
+      <input type="date" name="date" class="form-input" value="{{ data.date|default:'' }}" required style="max-width:220px">
+    </div>
+
+    <div class="form-group">
+      <label>Título personalizado <small class="text-muted">(opcional)</small></label>
+      <input type="text" name="title" class="form-input" value="{{ data.title|default:'' }}"
+        placeholder="Ex: Culto de Natal, Retiro de Jovens...">
+      <small class="form-hint">Deixe vazio para usar o tipo como título.</small>
+    </div>
+
+    <div class="form-group">
+      <label>Observações</label>
+      <textarea name="notes" class="form-input" rows="2" placeholder="Pregador, tema, observações...">{{ data.notes|default:'' }}</textarea>
+    </div>
+
+    <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;padding:.75rem 1rem;font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem">
+      <i class="fa fa-info-circle" style="color:var(--gold-dark)"></i>
+      Ao salvar, a chamada será aberta automaticamente com todos os membros aprovados.
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-clipboard-check"></i> Salvar e abrir chamada
+      </button>
+      <a href="{% url 'culto_manage' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

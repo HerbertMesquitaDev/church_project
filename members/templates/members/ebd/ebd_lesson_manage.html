@@ -1,0 +1,88 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Lições — {{ tri.title }}{% endblock %}
+{% block page_title %}Lições: {{ tri.title }}{% endblock %}
+{% block content %}
+<div class="manage-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem;margin-bottom:1.25rem;flex-wrap:wrap" class="text-muted">
+    <a href="{% url 'ebd_manage' %}" style="color:var(--gold);text-decoration:none"><i class="fa fa-users"></i> Turmas</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <a href="{% url 'ebd_trimester_manage' class_pk=tri.ebd_class_id %}" style="color:var(--gold);text-decoration:none">{{ tri.ebd_class.name }}</a>
+    <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
+    <span>{{ tri.title }}</span>
+    <a href="{% url 'ebd_lesson_create' trimester_pk=tri.pk %}" class="btn btn-primary" style="margin-left:auto;font-size:.82rem;padding:.35rem .9rem">
+      <i class="fa fa-plus"></i> Nova Lição
+    </a>
+  </div>
+
+  {% if messages %}{% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}">{{ msg }}<button onclick="this.parentElement.remove()">×</button></div>
+  {% endfor %}{% endif %}
+
+  <div class="manage-table-wrap">
+    <table class="manage-table">
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Título</th>
+          <th class="hide-mobile">Texto Bíblico</th>
+          <th class="hide-mobile">Conteúdo</th>
+          <th>Pub.</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lesson in lessons %}
+        <tr>
+          <td style="font-weight:600;color:var(--gold-dark)">{{ lesson.number }}</td>
+          <td>
+            <strong class="td-title">{{ lesson.title }}</strong>
+            {% if lesson.summary %}<br><small class="text-muted">{{ lesson.summary|truncatewords:8 }}</small>{% endif %}
+          </td>
+          <td class="hide-mobile">
+            {% if lesson.scripture %}<span class="badge">{{ lesson.scripture }}</span>
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td class="hide-mobile">
+            <div style="display:flex;gap:.3rem;flex-wrap:wrap">
+              {% if lesson.video_url %}<span class="badge-blue" style="font-size:.65rem">Vídeo</span>{% endif %}
+              {% if lesson.audio_file %}<span class="badge-grey" style="font-size:.65rem">Áudio</span>{% endif %}
+              {% if lesson.pdf_file %}<span class="badge-grey" style="font-size:.65rem">PDF</span>{% endif %}
+              {% if lesson.body %}<span class="badge-grey" style="font-size:.65rem">Texto</span>{% endif %}
+              {% if lesson.quiz %}<span class="badge-green" style="font-size:.65rem">Quiz</span>{% endif %}
+            </div>
+          </td>
+          <td>
+            {% if lesson.published %}
+            <i class="fa fa-check-circle" style="color:#27ae60" title="Publicada"></i>
+            {% else %}
+            <i class="fa fa-times-circle" style="color:#e74c3c" title="Rascunho"></i>
+            {% endif %}
+          </td>
+          <td>
+            <div class="manage-actions">
+              <a href="{% url 'ebd_lesson_preview' lesson.pk %}" class="manage-btn manage-btn-view" title="Ver" target="_blank"><i class="fa fa-eye"></i></a>
+              <a href="{% url 'ebd_lesson_edit' lesson.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
+              <a href="{% url 'ebd_quiz_manage' lesson_pk=lesson.pk %}" class="manage-btn"
+                style="{% if lesson.quiz %}background:rgba(39,174,96,.1);color:#1a7a40;border-color:rgba(39,174,96,.2){% else %}background:rgba(201,168,76,.08);color:var(--gold-dark);border-color:rgba(201,168,76,.2){% endif %}"
+                title="{% if lesson.quiz %}Editar quiz ({{ lesson.quiz.question_count }} pergunta(s)){% else %}Criar quiz{% endif %}">
+                <i class="fa fa-circle-question"></i>
+              </a>
+              {% if request.user.is_superuser %}
+              <a href="{% url 'ebd_lesson_delete' lesson.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;padding:2.5rem;color:var(--text-muted)">
+          <i class="fa fa-book-open" style="font-size:2rem;opacity:.2;display:block;margin-bottom:.6rem"></i>
+          Nenhuma lição cadastrada. <a href="{% url 'ebd_lesson_create' trimester_pk=tri.pk %}">Criar primeira lição</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

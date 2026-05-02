@@ -1,0 +1,143 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Dízimos & Ofertas{% endblock %}
+{% block page_title %}Dízimos & Ofertas{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- Info de pagamento -->
+{% if site_settings.pix_key or site_settings.bank_account %}
+<div class="offering-info-grid">
+    {% if site_settings.pix_key %}
+    <div class="offering-info-card offering-pix">
+        <div class="offering-info-icon"><i class="fa fa-qrcode"></i></div>
+        <div>
+            <div class="offering-info-label">Chave PIX</div>
+            <div class="offering-info-value">{{ site_settings.pix_key }}</div>
+            {% if site_settings.pix_name %}<small>{{ site_settings.pix_name }}</small>{% endif %}
+        </div>
+        <button class="offering-copy-btn" onclick="copyText('{{ site_settings.pix_key }}', this)" title="Copiar chave">
+            <i class="fa fa-copy"></i>
+        </button>
+    </div>
+    {% endif %}
+    {% if site_settings.bank_name %}
+    <div class="offering-info-card offering-bank">
+        <div class="offering-info-icon"><i class="fa fa-university"></i></div>
+        <div>
+            <div class="offering-info-label">Transferência Bancária</div>
+            <div class="offering-info-value">{{ site_settings.bank_name }}</div>
+            <small>
+                {% if site_settings.bank_agency %}Ag: {{ site_settings.bank_agency }} &nbsp;{% endif %}
+                {% if site_settings.bank_account %}CC: {{ site_settings.bank_account }}{% endif %}
+                {% if site_settings.bank_holder %}<br>{{ site_settings.bank_holder }}{% endif %}
+            </small>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% if site_settings.offering_text %}
+<div class="offering-text-note">{{ site_settings.offering_text|safe }}</div>
+{% endif %}
+{% endif %}
+
+<!-- Registrar contribuição -->
+<div class="offering-form-card">
+    <div class="offering-form-header">
+        <i class="fa fa-hand-holding-heart" style="color:var(--gold);font-size:1.3rem;"></i>
+        <div>
+            <h3>Registrar Contribuição</h3>
+            <p>Registre seu dízimo ou oferta para acompanhar seu histórico.</p>
+        </div>
+    </div>
+    <form method="post" class="members-form">
+        {% csrf_token %}
+        <div class="form-grid">
+            <div class="form-group">
+                <label>{{ form.type.label }}</label>
+                {{ form.type }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.amount.label }}</label>
+                {{ form.amount }}
+            </div>
+            <div class="form-group">
+                <label>{{ form.date.label }}</label>
+                {{ form.date }}
+            </div>
+            <div class="form-group" style="grid-column:1/-1">
+                <label>{{ form.notes.label }}</label>
+                {{ form.notes }}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-check"></i> Registrar
+        </button>
+    </form>
+</div>
+
+<!-- Resumo -->
+{% if my_offerings %}
+<div class="offering-summary-grid" style="margin-top:2rem;">
+    <div class="offering-summary-card offering-summary-total">
+        <span class="offering-summary-label">Total contribuído</span>
+        <span class="offering-summary-value">R$ {{ total|floatformat:2 }}</span>
+    </div>
+    {% for bt in by_type %}
+    <div class="offering-summary-card offering-summary-type">
+        {% if bt.type == 'tithe' %}<span class="offering-summary-label">Dízimo</span>
+        {% elif bt.type == 'offering' %}<span class="offering-summary-label">Oferta</span>
+        {% elif bt.type == 'mission' %}<span class="offering-summary-label">Missões</span>
+        {% elif bt.type == 'building' %}<span class="offering-summary-label">Fundo de Obras</span>
+        {% else %}<span class="offering-summary-label">Outro</span>{% endif %}
+        <span class="offering-summary-value-sm">R$ {{ bt.total|floatformat:2 }}</span>
+        <span class="offering-summary-count">{{ bt.count }} registro{{ bt.count|pluralize:",s" }}</span>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Histórico -->
+<div class="section-label-sm" style="margin-top:2.5rem;margin-bottom:1rem;">Histórico</div>
+<div class="manage-table-wrap">
+    <table class="manage-table">
+        <thead><tr><th>Data</th><th>Tipo</th><th>Valor</th><th>Obs.</th></tr></thead>
+        <tbody>
+        {% for o in my_offerings %}
+        <tr>
+            <td>{{ o.date|date:"d/m/Y" }}</td>
+            <td><span class="offering-type-badge offering-type-{{ o.type }}">{{ o.get_type_display }}</span></td>
+            <td><strong>R$ {{ o.amount|floatformat:2 }}</strong></td>
+            <td style="color:var(--text-muted);font-size:.85rem;">{{ o.notes|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state" style="padding:2rem 0;margin-top:1.5rem;">
+    <i class="fa fa-hand-holding-heart" style="font-size:2rem;opacity:.3;display:block;margin-bottom:.75rem;color:var(--gold)"></i>
+    <p>Nenhuma contribuição registrada ainda.</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        btn.innerHTML = '<i class="fa fa-check"></i>';
+        btn.style.color = '#27ae60';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa fa-copy"></i>';
+            btn.style.color = '';
+        }, 2000);
+    });
+}
+// Set today as default date
+document.addEventListener('DOMContentLoaded', function() {
+    var d = document.querySelector('input[name=date]');
+    if (d && !d.value) d.value = new Date().toISOString().split('T')[0];
+});
+</script>
+{% endblock %}

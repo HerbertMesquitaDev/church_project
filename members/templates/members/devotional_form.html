@@ -1,0 +1,74 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="form-page-wrap">
+    <form method="post" class="members-form">
+        {% csrf_token %}
+
+        <div class="form-section-title"><i class="fa fa-info-circle"></i> Identificação</div>
+        <div class="form-grid">
+            <div class="form-group form-col-2">
+                <label>Título</label>
+                {{ form.title }}
+                {% if form.title.errors %}<span class="field-error">{{ form.title.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label>Data de Publicação</label>
+                {{ form.pub_date }}
+                <span class="form-hint">Cada data deve ser única — um devocional por dia.</span>
+                {% if form.pub_date.errors %}<span class="field-error">{{ form.pub_date.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="form-group">
+                <label>Autor / Pastor</label>
+                {{ form.author }}
+            </div>
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-bible"></i> Versículo</div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Referência</label>
+                {{ form.verse }}
+                <span class="form-hint">Ex: João 3:16, Salmos 23:1</span>
+                {% if form.verse.errors %}<span class="field-error">{{ form.verse.errors.0 }}</span>{% endif %}
+            </div>
+            <div class="form-group form-col-2">
+                <label>Texto do Versículo</label>
+                {{ form.verse_text }}
+                {% if form.verse_text.errors %}<span class="field-error">{{ form.verse_text.errors.0 }}</span>{% endif %}
+            </div>
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-pen"></i> Conteúdo</div>
+        <div class="form-group">
+            <label>Reflexão</label>
+            {{ form.reflection }}
+            {% if form.reflection.errors %}<span class="field-error">{{ form.reflection.errors.0 }}</span>{% endif %}
+        </div>
+        <div class="form-group">
+            <label>Oração do Dia <small class="text-muted">(opcional)</small></label>
+            {{ form.prayer }}
+        </div>
+
+        <div class="form-section-title"><i class="fa fa-cog"></i> Publicação</div>
+        <div class="form-check-group form-group">
+            {{ form.published }}
+            <label for="{{ form.published.id_for_label }}">Publicado</label>
+        </div>
+
+        {% if form.errors %}
+        <div class="non-field-errors" style="margin-top:1rem">
+            {% for field in form %}{% for err in field.errors %}<p><strong>{{ field.label }}:</strong> {{ err }}</p>{% endfor %}{% endfor %}
+            {% for err in form.non_field_errors %}<p>{{ err }}</p>{% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <a href="{% url 'devotional_manage' %}" class="btn btn-outline">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

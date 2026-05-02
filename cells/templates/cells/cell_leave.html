@@ -1,0 +1,23 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Sair do grupo{% endblock %}
+{% block page_title %}Sair do Grupo{% endblock %}
+
+{% block content %}
+<div style="max-width:480px">
+    <div class="aside-card" style="text-align:center;padding:2.5rem">
+        <i class="fa fa-door-open" style="font-size:2.5rem;color:var(--text-muted);margin-bottom:1rem;display:block"></i>
+        <h2 style="color:var(--text-heading);margin-bottom:.75rem">Sair do grupo?</h2>
+        <p style="color:var(--text-muted);margin-bottom:1.5rem">
+            Você tem certeza que deseja sair de <strong>{{ cell.name }}</strong>?
+            Você poderá pedir para entrar novamente no futuro.
+        </p>
+        <form method="post" style="display:flex;gap:.75rem;justify-content:center">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary" style="background:#e74c3c;border-color:#e74c3c">
+                <i class="fa fa-sign-out-alt"></i> Sair do grupo
+            </button>
+            <a href="{% url 'cell_detail' cell.pk %}" class="btn btn-outline">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

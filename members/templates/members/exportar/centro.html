@@ -1,0 +1,224 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Exportar Dados{% endblock %}
+{% block page_title %}Central de Exportação{% endblock %}
+
+{% block extra_css %}
+<style>
+.export-card {
+  background:var(--card-bg,#fff);border:1px solid var(--border);
+  border-radius:12px;padding:1.5rem;transition:.2s;
+}
+.export-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.07); }
+.export-icon {
+  width:52px;height:52px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:1rem;flex-shrink:0;
+}
+.export-title { font-size:.95rem;font-weight:600;color:var(--text-heading);margin:0 0 .3rem; }
+.export-count { font-size:.78rem;color:var(--text-muted);margin-bottom:1rem; }
+.export-btns  { display:flex;gap:.5rem;flex-wrap:wrap; }
+.btn-xlsx { background:rgba(39,124,60,.1);color:#27783c;border:1px solid rgba(39,124,60,.2);border-radius:7px;padding:.35rem .85rem;font-size:.78rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;transition:.15s; }
+.btn-xlsx:hover { background:rgba(39,124,60,.18); }
+.btn-csv  { background:rgba(41,128,185,.08);color:#2475a8;border:1px solid rgba(41,128,185,.18);border-radius:7px;padding:.35rem .85rem;font-size:.78rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;transition:.15s; }
+.btn-csv:hover { background:rgba(41,128,185,.15); }
+.filter-inline { display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.65rem; }
+.filter-inline select { font-size:.78rem;padding:.25rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text); }
+
+[data-theme="dark"] .export-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
+[data-theme="dark"] .export-title { color:#E8E4DC; }
+[data-theme="dark"] .btn-xlsx { background:rgba(39,124,60,.08);color:#58d68d;border-color:rgba(39,124,60,.2); }
+[data-theme="dark"] .btn-csv  { background:rgba(41,128,185,.08);color:#5dade2;border-color:rgba(41,128,185,.2); }
+[data-theme="dark"] .filter-inline select { background:#25252D;border-color:rgba(201,168,76,.15);color:#E8E4DC; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<p class="text-muted" style="margin-bottom:1.5rem;font-size:.88rem">
+  <i class="fa fa-info-circle" style="color:var(--gold-dark)"></i>
+  Todos os arquivos Excel (.xlsx) são gerados com formatação e estilo da igreja.
+  Os arquivos CSV são compatíveis com qualquer planilha.
+</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem">
+
+  <!-- Membros -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(41,128,185,.1)">
+        <i class="fa fa-users" style="color:#2475a8"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Lista de Membros</div>
+        <div class="export-count">{{ stats.membros }} membro(s) aprovado(s)</div>
+        <div class="filter-inline">
+          <select id="memberRole">
+            <option value="">Todos os grupos</option>
+            <option value="member">Membros</option>
+            <option value="collaborator">Colaboradores</option>
+            <option value="admin">Admins</option>
+          </select>
+          <select id="memberBap">
+            <option value="">Qualquer</option>
+            <option value="1">Batizados</option>
+            <option value="0">Não batizados</option>
+          </select>
+        </div>
+        <div class="export-btns">
+          <a href="#" onclick="exportar('{% url 'exportar_membros' %}','xlsx',{role:'memberRole',baptized:'memberBap'})" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel
+          </a>
+          <a href="#" onclick="exportar('{% url 'exportar_membros' %}','csv',{role:'memberRole',baptized:'memberBap'})" class="btn-csv">
+            <i class="fa fa-file-csv"></i> CSV
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Presenças -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(201,168,76,.1)">
+        <i class="fa fa-clipboard-check" style="color:var(--gold-dark)"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Controle de Presenças</div>
+        <div class="export-count">{{ stats.cultos }} culto(s) registrado(s)</div>
+        <div class="filter-inline">
+          <select id="presencaTipo">
+            <option value="">Todos os tipos</option>
+            <option value="culto_domingo_manha">Domingo Manhã</option>
+            <option value="culto_domingo_noite">Domingo Noite</option>
+            <option value="culto_semana">Culto de Semana</option>
+            <option value="culto_oracao">Culto de Oração</option>
+            <option value="celula">Reunião de Célula</option>
+            <option value="conferencia">Conferência</option>
+          </select>
+        </div>
+        <div class="export-btns">
+          <a href="#" onclick="exportar('{% url 'exportar_presencas' %}','xlsx',{tipo:'presencaTipo'})" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel (cruzado)
+          </a>
+          <a href="#" onclick="exportar('{% url 'exportar_presencas' %}','csv',{tipo:'presencaTipo'})" class="btn-csv">
+            <i class="fa fa-file-csv"></i> CSV
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contribuições -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(39,174,96,.1)">
+        <i class="fa fa-hand-holding-heart" style="color:#27ae60"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Contribuições</div>
+        <div class="export-count">{{ stats.contribuicoes }} registro(s)</div>
+        <div class="filter-inline">
+          <select id="contribTipo">
+            <option value="">Todos os tipos</option>
+            <option value="tithe">Dízimo</option>
+            <option value="offering">Oferta</option>
+            <option value="mission">Missões</option>
+            <option value="building">Fundo de Obras</option>
+            <option value="other">Outro</option>
+          </select>
+        </div>
+        <div class="export-btns">
+          <a href="#" onclick="exportar('{% url 'exportar_contribuicoes' %}','xlsx',{tipo:'contribTipo'})" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel
+          </a>
+          <a href="#" onclick="exportar('{% url 'exportar_contribuicoes' %}','csv',{tipo:'contribTipo'})" class="btn-csv">
+            <i class="fa fa-file-csv"></i> CSV
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eventos -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(108,52,131,.1)">
+        <i class="fa fa-calendar-check" style="color:#6c3483"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Inscrições em Eventos</div>
+        <div class="export-count">{{ stats.eventos }} inscrição(ões)</div>
+        <div class="export-btns" style="margin-top:.65rem">
+          <a href="{% url 'exportar_eventos' %}?fmt=xlsx" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel (todos)
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visitantes -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(231,76,60,.08)">
+        <i class="fa fa-door-open" style="color:#c0392b"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Visitantes</div>
+        <div class="export-count">{{ stats.visitantes }} visitante(s)</div>
+        <div class="export-btns" style="margin-top:.65rem">
+          <a href="{% url 'exportar_visitantes' %}?fmt=xlsx" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel
+          </a>
+          <a href="{% url 'exportar_visitantes' %}?fmt=csv" class="btn-csv">
+            <i class="fa fa-file-csv"></i> CSV
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aniversariantes -->
+  <div class="export-card">
+    <div style="display:flex;align-items:flex-start;gap:1rem">
+      <div class="export-icon" style="background:rgba(243,156,18,.1)">
+        <i class="fa fa-cake-candles" style="color:#f39c12"></i>
+      </div>
+      <div style="flex:1">
+        <div class="export-title">Aniversariantes</div>
+        <div class="export-count">{{ stats.aniversariantes }} com data cadastrada</div>
+        <div class="filter-inline">
+          <select id="anivMes">
+            <option value="">Todos os meses</option>
+            <option value="1">Janeiro</option><option value="2">Fevereiro</option>
+            <option value="3">Março</option><option value="4">Abril</option>
+            <option value="5">Maio</option><option value="6">Junho</option>
+            <option value="7">Julho</option><option value="8">Agosto</option>
+            <option value="9">Setembro</option><option value="10">Outubro</option>
+            <option value="11">Novembro</option><option value="12">Dezembro</option>
+          </select>
+        </div>
+        <div class="export-btns">
+          <a href="#" onclick="exportar('{% url 'exportar_aniversariantes' %}','xlsx',{mes:'anivMes'})" class="btn-xlsx">
+            <i class="fa fa-file-excel"></i> Excel
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function exportar(baseUrl, fmt, selects) {
+  const params = new URLSearchParams({ fmt });
+  Object.entries(selects).forEach(([param, selectId]) => {
+    const val = document.getElementById(selectId)?.value;
+    if (val) params.set(param, val);
+  });
+  window.location.href = baseUrl + '?' + params.toString();
+}
+</script>
+{% endblock %}

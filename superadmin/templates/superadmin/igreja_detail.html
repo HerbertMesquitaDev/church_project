@@ -1,0 +1,78 @@
+{% extends 'members/base_members.html' %}
+{% block title %}{{ igreja.nome }}{% endblock %}
+{% block page_title %}{{ igreja.nome }}{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap">
+  <a href="{% url 'sa_igreja_list' %}" class="btn btn-outline"><i class="fa fa-arrow-left"></i> Voltar</a>
+  <a href="{% url 'sa_igreja_edit' igreja.pk %}" class="btn btn-primary"><i class="fa fa-pen"></i> Editar</a>
+  <a href="{% url 'sa_igreja_toggle' igreja.pk %}"
+     class="btn {% if igreja.ativo %}btn-outline{% else %}btn-primary{% endif %}"
+     onclick="return confirm('{% if igreja.ativo %}Desativar{% else %}Ativar{% endif %} esta igreja?')">
+    <i class="fa {% if igreja.ativo %}fa-ban{% else %}fa-check{% endif %}"></i>
+    {% if igreja.ativo %}Desativar{% else %}Ativar{% endif %}
+  </a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+  <div class="form-page-wrap" style="padding:1.25rem">
+    <p class="section-label-sm" style="margin-bottom:1rem">Informações</p>
+    <table style="width:100%;font-size:.83rem;border-collapse:collapse">
+      <tr><td style="color:var(--text-muted);padding:.35rem 0;width:40%">Nome</td><td><strong>{{ igreja.nome }}</strong></td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Slug</td><td><code>{{ igreja.slug }}</code></td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Domínio</td><td>{{ igreja.dominio_proprio|default:"—" }}</td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Plano</td>
+        <td>{% if ig.plano == 'pro' %}<span class="badge-gold">Pro</span>
+            {% elif ig.plano == 'basic' %}<span class="badge-grey">Básico</span>
+            {% else %}<span class="badge-grey">Trial</span>{% endif %}</td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Trial até</td><td>{{ igreja.trial_ate|date:"d/m/Y"|default:"—" }}</td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Status</td>
+        <td>{% if igreja.ativo %}<span class="badge-green">Ativa</span>
+            {% else %}<span class="badge-red">Inativa</span>{% endif %}</td></tr>
+      <tr><td style="color:var(--text-muted);padding:.35rem 0">Criada em</td><td>{{ igreja.criado_em|date:"d/m/Y" }}</td></tr>
+    </table>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-content:start">
+    <div class="dash-stat-card">
+      <div class="dash-stat-value">{{ total_membros }}</div>
+      <div class="dash-stat-label">Membros</div>
+    </div>
+    <div class="dash-stat-card">
+      <div class="dash-stat-value">{{ admins|length }}</div>
+      <div class="dash-stat-label">Admins</div>
+    </div>
+  </div>
+</div>
+
+<span class="section-label-sm" style="display:block;margin-bottom:.75rem">Membros</span>
+<div class="manage-table-wrap">
+  <table class="manage-table">
+    <thead>
+      <tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Status</th><th>Desde</th></tr>
+    </thead>
+    <tbody>
+    {% for m in membros %}
+    <tr>
+      <td><strong>{{ m.full_name }}</strong></td>
+      <td style="color:var(--text-muted)">{{ m.user.email }}</td>
+      <td>
+        {% if m.role == 'admin' %}<span class="badge-gold">Admin</span>
+        {% elif m.role == 'collaborator' %}<span class="badge-grey">Colaborador</span>
+        {% else %}<span class="badge-grey">Membro</span>{% endif %}
+      </td>
+      <td>
+        {% if m.approved %}<span class="badge-green">Aprovado</span>
+        {% else %}<span class="badge-red">Pendente</span>{% endif %}
+      </td>
+      <td>{{ m.created_at|date:"d/m/Y" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Nenhum membro cadastrado.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}
