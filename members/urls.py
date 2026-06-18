@@ -57,6 +57,9 @@ urlpatterns = [
 
     # ministries
     path('ministerios-gestao/', views.ministry_manage, name='ministry_manage'),
+    path('ministerios-gestao/novo/', views.ministry_create, name='ministry_create'),
+    path('ministerios-gestao/<int:pk>/edit/', views.ministry_edit, name='ministry_edit'),
+    path('ministerios-gestao/<int:pk>/del/', views.ministry_delete, name='ministry_delete'),
 
     # events (superuser)
     path('eventos-gestao/',              views.event_manage, name='event_manage'),

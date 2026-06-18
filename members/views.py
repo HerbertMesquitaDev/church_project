@@ -17,7 +17,7 @@ from .emails import (
 )
 from .forms import (RegisterForm, ProfileForm, MemberMinistryFormSet,
                     EventForm, ContentForm, NoticeForm, TestimonyForm, PrayerRequestForm,
-                    OfferingForm)
+                    OfferingForm, MinistryForm)
 from events.models import Event, Category as EventCategory
 
 PER_PAGE = 12
@@ -587,6 +587,38 @@ def member_delete(request, pk):
 def ministry_manage(request):
     ministries = Ministry.objects.all().prefetch_related('members__profile__user')
     return render(request, 'members/ministry_manage.html', {'ministries': ministries})
+
+
+# CRUD para Ministérios (painel)
+@staff_only
+def ministry_create(request):
+    form = MinistryForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Ministério criado!')
+        return redirect('ministry_manage')
+    return render(request, 'members/ministry_form.html', {'form': form, 'title': 'Novo Ministério'})
+
+
+@staff_only
+def ministry_edit(request, pk):
+    ministry = get_object_or_404(Ministry, pk=pk)
+    form = MinistryForm(request.POST or None, instance=ministry)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Ministério atualizado!')
+        return redirect('ministry_manage')
+    return render(request, 'members/ministry_form.html', {'form': form, 'title': 'Editar Ministério', 'ministry': ministry})
+
+
+@admin_only
+def ministry_delete(request, pk):
+    ministry = get_object_or_404(Ministry, pk=pk)
+    if request.method == 'POST':
+        ministry.delete()
+        messages.success(request, 'Ministério removido.')
+        return redirect('ministry_manage')
+    return render(request, 'members/confirm_delete.html', {'object': ministry, 'tipo': 'ministério'})
 
 
 # ── Events (staff pode ver, superuser pode editar) ────────

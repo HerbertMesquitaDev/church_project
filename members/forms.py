@@ -351,6 +351,26 @@ class DevotionalForm(forms.ModelForm):
         }
 
 
+# ── Ministry form (CMS dashboard) ───────────────────────
+class MinistryForm(forms.ModelForm):
+    class Meta:
+        model = Ministry
+        fields = ('name', 'description', 'icon', 'order', 'active')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-input'}),
+            'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 4}),
+            'icon': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'fa-church'}),
+            'order': forms.NumberInput(attrs={'class': 'form-input'}),
+        }
+        labels = {
+            'name': 'Nome',
+            'description': 'Descrição',
+            'icon': 'Ícone (Font Awesome class)',
+            'order': 'Ordem',
+            'active': 'Ativo',
+        }
+
+
 # ── HeroSlide form (staff) ────────────────────────────────
 from core.models import HeroSlide
 

@@ -122,9 +122,11 @@
             <a href="{% url 'media_list' %}" class="sidebar-link {% if request.resolver_match.url_name in 'media_list,media_detail' %}active{% endif %}">
                 <i class="fa fa-photo-film"></i> Midiateca
             </a>
+            {% if not request.user.is_staff and not request.user.is_superuser %}
             <a href="{% url 'ebd_home' %}" class="sidebar-link {% if 'ebd' in request.resolver_match.url_name %}active{% endif %}">
                 <i class="fa fa-bible"></i> EBD
             </a>
+            {% endif %}
             <a href="{% url 'ebd_my_progress' %}" class="sidebar-link {% if 'ebd_my_progress' in request.resolver_match.url_name %}active{% endif %}">
                 <i class="fa fa-certificate"></i> Meus Certificados
             </a>

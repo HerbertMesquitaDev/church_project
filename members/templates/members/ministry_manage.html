@@ -3,9 +3,12 @@
 {% block page_title %}Gerenciar Ministérios{% endblock %}
 
 {% block content %}
-<p style="color:var(--text-muted);margin-bottom:1.5rem;font-size:0.9rem">
-    Para criar ou editar ministérios, acesse o <a href="{% url 'admin:core_ministry_changelist' %}" target="_blank" style="color:var(--gold-dark)">Painel Admin <i class="fa fa-external-link-alt fa-xs"></i></a>.
-</p>
+<div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem">
+    <a href="{% url 'ministry_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Ministério</a>
+    <p style="color:var(--text-muted);margin:0;font-size:0.9rem">
+        Ou use o <a href="{% url 'admin:core_ministry_changelist' %}" target="_blank" style="color:var(--gold-dark)">Painel Admin <i class="fa fa-external-link-alt fa-xs"></i></a>.
+    </p>
+</div>
 
 {% for ministry in ministries %}
 <div class="manage-ministry-block">
@@ -16,6 +19,10 @@
             <small>{{ ministry.description|truncatewords:12 }}</small>
         </div>
         <span style="margin-left:auto;font-size:0.8rem;color:var(--text-muted)">{{ ministry.members.count }} membro(s)</span>
+        <div style="margin-left:1rem;display:flex;gap:.5rem">
+            <a href="{% url 'ministry_edit' ministry.pk %}" class="btn btn-ghost" title="Editar"><i class="fa fa-edit"></i></a>
+            <a href="{% url 'ministry_delete' ministry.pk %}" class="btn btn-ghost" title="Excluir"><i class="fa fa-trash"></i></a>
+        </div>
     </div>
     {% with members=ministry.members.all %}
     {% if members %}
