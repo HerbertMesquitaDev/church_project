@@ -129,6 +129,14 @@
 .course-level-beginner { background:rgba(39,174,96,.1); color:#1a7a45; }
 .course-level-intermediate { background:rgba(201,168,76,.1); color:var(--gold-dark,#8B6914); }
 .course-level-advanced { background:rgba(231,76,60,.08); color:#c0392b; }
+
+@media (max-width: 640px) {
+  .course-detail-header { grid-template-columns: 1fr; }
+  .course-detail-cover { order: -1; }
+  .course-detail-cover img { max-height: 200px; }
+}
+</style>
+.course-level-advanced { background:rgba(231,76,60,.08); color:#c0392b; }
 [data-theme="dark"] .course-detail-header,
 [data-theme="dark"] .course-enroll-box,
 [data-theme="dark"] .course-module,

@@ -42,12 +42,19 @@
 .agenda-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
 /* Calendário Grid */
+.calendar-outer-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 2rem;
+  border-radius: var(--radius);
+}
 .calendar-wrap {
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   overflow: hidden;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
+  min-width: 540px;
 }
 .calendar-weekdays {
   display: grid;
@@ -78,6 +85,12 @@
 }
 .calendar-day:nth-child(7n) { border-right: none; }
 .calendar-day.empty { background: var(--surface-alt); }
+
+@media (max-width: 540px) {
+  .calendar-day { min-height: 60px; padding: 0.3rem; }
+  .calendar-weekdays span { font-size: 0.6rem; padding: 0.4rem 0; }
+  .calendar-booking { font-size: 0.65rem; padding: 1px 3px; margin-bottom: 1px; }
+}
 .calendar-day.today { background: rgba(201,168,76,0.06); }
 .calendar-day.today .day-num {
   background: var(--gold);
@@ -254,6 +267,7 @@
 {% endif %}
 
 <!-- Calendário -->
+<div class="calendar-outer-wrap">
 <div class="calendar-wrap">
   <div class="calendar-weekdays">
     <span>Dom</span><span>Seg</span><span>Ter</span>
@@ -289,6 +303,7 @@
       {% endfor %}
     {% endfor %}
   </div>
+</div>
 </div>
 
 {% endblock %}

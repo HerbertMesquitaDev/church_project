@@ -454,7 +454,7 @@ img { max-width: 100%; display: block; }
 
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
   gap: 2rem;
 }
 
@@ -1255,7 +1255,32 @@ img { max-width: 100%; display: block; }
   .featured-inner { grid-template-columns: 1fr; }
 }
 
-/* ── NAV OVERLAY E CLOSE ── */
+@media (max-width: 768px) {
+  .events-grid { grid-template-columns: 1fr; }
+  .contact-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .about-values { grid-template-columns: 1fr 1fr; }
+  .footer-container { grid-template-columns: 1fr 1fr; }
+  .section { padding: 4rem 0; }
+}
+
+@media (max-width: 600px) {
+  .container { padding: 0 1rem; }
+  .footer-container { grid-template-columns: 1fr; gap: 1.5rem; }
+  .section { padding: 3rem 0; }
+  .featured-img img { max-height: 200px; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 1rem; }
+  .footer-container { grid-template-columns: 1fr; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .about-values { grid-template-columns: 1fr; }
+  .ministries-grid { grid-template-columns: 1fr 1fr; }
+  .section { padding: 2.5rem 0; }
+  .page-hero { padding: 5rem 0 2rem; }
+  .verse-banner { padding: 3rem 0; }
+  .section-header { margin-bottom: 2rem; }
+}
 .nav-overlay {
   display: none;
   position: fixed;
@@ -1281,7 +1306,7 @@ img { max-width: 100%; display: block; }
 }
 .nav-close:hover { background: rgba(255,255,255,.15); color: #fff; }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   /* Container mobile: altura automática */
   .nav-container {
     height: 60px;

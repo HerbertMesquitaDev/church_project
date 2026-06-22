@@ -10,7 +10,7 @@ from django.utils.html import strip_tags
 def _base_html(title, body_html, church_name, church_email='', unsubscribe_url=''):
     return f"""<!DOCTYPE html>
 <html lang="pt-br">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>
   body {{ font-family: Arial, sans-serif; background:#f4f1eb; margin:0; padding:0; }}
   .wrap {{ max-width:560px; margin:32px auto; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.08); }}

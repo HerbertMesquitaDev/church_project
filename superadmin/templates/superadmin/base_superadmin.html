@@ -3,7 +3,13 @@
 <html lang="pt-BR" data-theme="">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1A2340" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E0E12" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Igreja Admin">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
   <title>{% block title %}Super Admin{% endblock %} — Painel Central</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -63,8 +69,8 @@
     .sa-stat-label { font-size: .75rem; color: var(--text-muted); margin-top: .35rem; text-transform: uppercase; letter-spacing: .08em; }
 
     /* TABLE */
-    .sa-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .sa-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .sa-table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .sa-table { width: 100%; border-collapse: collapse; font-size: .83rem; min-width: 560px; }
     .sa-table th { background: var(--bg); padding: .75rem 1rem; text-align: left; font-size: .7rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
     .sa-table td { padding: .85rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .sa-table tr:last-child td { border-bottom: none; }
@@ -109,6 +115,50 @@
     .sa-filters input, .sa-filters select { padding: .45rem .85rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: .82rem; background: var(--surface); color: var(--text); }
     .sa-filters input:focus, .sa-filters select:focus { outline: none; border-color: var(--gold); }
 
+    .sa-sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 99;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .sa-sidebar-overlay.open {
+      display: block;
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .sa-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      .sa-sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 30px rgba(0,0,0,0.25);
+      }
+      .sa-main { margin-left: 0; }
+      .sa-topbar {
+        padding: .9rem 1rem;
+        flex-wrap: wrap;
+        gap: .5rem;
+      }
+      .sa-topbar-title { flex: 1; }
+      .sa-topbar-right { gap: .75rem; }
+      .sa-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .sa-nav { max-height: calc(100vh - 68px); overflow-y: auto; }
+      .sa-footer { padding: 1rem; }
+      #saSidebarToggle { display: inline-block !important; }
+    }
+
+    @media (max-width: 640px) {
+      .sa-topbar { padding: .9rem .85rem; }
+      .sa-content { padding: 1rem; }
+      .sa-form-wrap { padding: 1.25rem; }
+      .sa-form .form-grid { grid-template-columns: 1fr; }
+    }
+
     [data-theme="dark"] .sa-form input,
     [data-theme="dark"] .sa-form select,
     [data-theme="dark"] .sa-filters input,
@@ -119,7 +169,7 @@
 </head>
 <body>
 
-<aside class="sa-sidebar">
+<aside class="sa-sidebar" id="saSidebar">
   <div class="sa-brand">
     <div class="sa-brand-title"><i class="fa fa-crown"></i> Super Admin</div>
     <div class="sa-brand-sub">Painel Central de Gestão</div>
@@ -142,14 +192,21 @@
   </div>
 </aside>
 
+<div class="sa-sidebar-overlay" id="saSidebarOverlay"></div>
+
 <div class="sa-main">
   <header class="sa-topbar">
     <span class="sa-topbar-title">{% block page_title %}Super Admin{% endblock %}</span>
     <div class="sa-topbar-right">
       <span class="sa-user"><i class="fa fa-user-shield"></i> {{ request.user.get_full_name|default:request.user.username }}</span>
-      <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;" title="Alternar tema">
-        <i class="fa fa-moon"></i>
-      </button>
+      <div>
+        <button id="saSidebarToggle" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;margin-right:.75rem;display:none;" title="Menu">
+          <i class="fa fa-bars"></i>
+        </button>
+        <button onclick="toggleTheme()" style="background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:1rem;" title="Alternar tema">
+          <i class="fa fa-moon"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -169,6 +226,32 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('church_theme', next);
 }
+(function(){
+  const toggle = document.getElementById('saSidebarToggle');
+  const sidebar = document.getElementById('saSidebar');
+  const overlay = document.getElementById('saSidebarOverlay');
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  }
+
+  if (toggle) toggle.addEventListener('click', function() {
+    sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+  });
+  overlay?.addEventListener('click', closeSidebar);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSidebar();
+  });
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 900) closeSidebar();
+  });
+})();
 </script>
 {% block extra_js %}{% endblock %}
 </body>

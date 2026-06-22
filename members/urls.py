@@ -15,6 +15,7 @@ urlpatterns = [
     # member
     path('dashboard/', views.member_dashboard, name='member_dashboard'),
     path('perfil/',    views.member_profile,   name='member_profile'),
+    path('professor/', views.teacher_dashboard, name='teacher_dashboard'),
 
     # contents
     path('conteudos/',              views.content_list,   name='content_list'),

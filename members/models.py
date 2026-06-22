@@ -46,6 +46,8 @@ class MemberProfile(models.Model):
     ROLE_CHOICES = [
         ('member',       'Membro'),
         ('collaborator', 'Colaborador'),
+        ('teacher',      'Professor'),
+        ('student',      'Aluno'),
         ('admin',        'Administrador'),
     ]
     approved = models.BooleanField("Cadastro Aprovado", default=False,
@@ -84,6 +86,10 @@ class MemberProfile(models.Model):
     @property
     def full_name(self):
         return self.user.get_full_name() or self.user.username
+
+    @property
+    def is_teacher(self):
+        return self.role == 'teacher'
 
 
 class ContentCategory(models.Model):

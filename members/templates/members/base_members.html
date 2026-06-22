@@ -3,7 +3,13 @@
 <html lang="pt-BR" data-theme="">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ site_settings.color_secondary|default:'#1A2340' }}" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0E0E12" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{ site_settings.church_name|truncatewords:2 }}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
     <title>{% block title %}Área de Membros{% endblock %} — {{ site_settings.church_name }}</title>
     <meta name="description" content="{% block meta_description %}Área exclusiva para membros de {{ site_settings.church_name }}{% endblock %}">
     <meta name="robots" content="noindex, nofollow">
@@ -27,6 +33,45 @@
         [data-theme="dark"] {
             --text-heading: #E8E4DC;
             --navy: #1A2340;
+        }
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,.45);
+          z-index: 250;
+          opacity: 0;
+          transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.open {
+          display: block;
+          opacity: 1;
+          pointer-events: auto;
+        }
+        @media (max-width: 900px) {
+          .members-topbar {
+            flex-wrap: wrap;
+            align-items: stretch;
+            height: auto;
+            padding: 1rem;
+          }
+          .topbar-title {
+            width: 100%;
+            margin-bottom: 0.75rem;
+          }
+          .global-search {
+            order: 3;
+            width: 100%;
+            max-width: 100%;
+            margin: 0.75rem 0;
+          }
+          .global-search-input-wrap {
+            width: 100%;
+          }
+          .topbar-theme-btn,
+          .topbar-user {
+            margin-left: auto;
+          }
         }
         /* ── BUSCA GLOBAL ── */
 .global-search { position:relative; flex:1; max-width:380px; margin:0 1rem; }
@@ -110,6 +155,17 @@
             <a href="{% url 'offering_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'offering_list' %}active{% endif %}">
                 <i class="fa fa-hand-holding-heart"></i> Dízimos & Ofertas
             </a>
+            {% if request.user.profile.role == 'teacher' %}
+            <a href="{% url 'teacher_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
+                <i class="fa fa-chalkboard-teacher"></i> Dashboard do Professor
+            </a>
+            <a href="{% url 'manage_courses' %}" class="sidebar-link {% if 'manage_course' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-graduation-cap"></i> Meus Cursos
+            </a>
+            <a href="{% url 'booking_list' %}" class="sidebar-link {% if 'booking' in request.resolver_match.url_name %}active{% endif %}">
+                <i class="fa fa-calendar"></i> Meus Agendamentos
+            </a>
+            {% endif %}
             {% if request.user.is_staff or request.user.is_superuser %}
             <a href="{% url 'content_manage' %}" class="sidebar-link {% if 'content' in request.resolver_match.url_name %}active{% endif %}">
                 <i class="fa fa-book-open"></i> Conteúdos
@@ -239,6 +295,7 @@
             </a>
         </nav>
     </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- MAIN -->
     <div class="members-main">
@@ -302,7 +359,41 @@
 <script>
     const toggle = document.getElementById('sidebarToggle');
     const sidebar = document.getElementById('sidebar');
-    if (toggle) toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      sidebarOverlay?.classList.remove('open');
+    }
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      sidebarOverlay?.classList.add('open');
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        if (sidebar.classList.contains('open')) closeSidebar();
+        else openSidebar();
+      });
+    }
+
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSidebar();
+    });
+    window.addEventListener('resize', function() {
+      if (window.innerWidth > 900) closeSidebar();
+    });
+
+    // Fechar sidebar ao navegar para um link em dispositivos móveis
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 900) {
+          closeSidebar();
+        }
+      });
+    });
 </script>
 {% block extra_js %}{% endblock %}
 <script>

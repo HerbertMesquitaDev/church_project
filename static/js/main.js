@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Submenus mobile (desktop usa CSS :hover) ---
   document.querySelectorAll('.has-submenu > .nav-link').forEach(link => {
     link.addEventListener('click', function(e) {
-      if (window.innerWidth > 900) return;
+      if (window.innerWidth > 768) return;
       e.preventDefault();
       const li = this.closest('.has-submenu');
       const isOpen = li.classList.contains('open');
@@ -107,6 +107,31 @@ document.querySelectorAll('.btn-delete').forEach(btn => {
 
 function closeModal() {
     document.getElementById('deleteModal').style.display = 'none';
+}
+
+
+// ==========================================
+//  Service Worker Registration
+// ==========================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => {
+        console.log('✓ SW registrado:', reg);
+        // Verificar atualizações a cada 1 hora
+        setInterval(() => reg.update(), 3600000);
+      })
+      .catch(err => console.log('✗ Erro ao registrar SW:', err));
+  });
+}
+
+// Notificar usuário quando nova versão do app está disponível
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (confirm('Nova versão disponível! Deseja atualizar agora?')) {
+      window.location.reload();
+    }
+  });
 }
 
 

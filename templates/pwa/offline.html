@@ -1,16 +1,34 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sem conexão</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1A2340" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E0E12" media="(prefers-color-scheme: dark)">
+  <title>Sem conexão — {{ site_settings.church_name }}</title>
   <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --gold: #C9A84C;
+      --navy: #1A2340;
+      --ivory: #FAF7F2;
+      --text-muted: #6B6B6B;
+    }
+    
+    [data-theme="dark"] {
+      --gold: #D4AF7C;
+      --navy: #E8E4DC;
+      --ivory: #0E0E12;
+      --text-muted: #B0ABA0;
+    }
+    
     body {
-      font-family: 'Jost', system-ui, sans-serif;
-      background: #FAF7F2;
+      font-family: 'Jost', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, var(--ivory) 0%, #F5F2EA 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -18,29 +36,80 @@
       padding: 2rem;
       text-align: center;
     }
-    .card {
-      max-width: 400px;
-      width: 100%;
+    
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #0E0E12 0%, #16161C 100%);
     }
+    
+    .card {
+      max-width: 480px;
+      width: 100%;
+      background: white;
+      border-radius: 12px;
+      padding: 3rem 2rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,.08);
+    }
+    
+    [data-theme="dark"] .card {
+      background: #1E1E24;
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    }
+    
+    .logo {
+      width: 52px;
+      margin-bottom: 1.5rem;
+      opacity: .8;
+    }
+    
     .icon-wrap {
-      width: 80px; height: 80px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background: rgba(201,168,76,.12);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 1.5rem;
-      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.75rem;
+      font-size: 2.5rem;
+      animation: pulse 2s infinite;
     }
+    
+    [data-theme="dark"] .icon-wrap {
+      background: rgba(255,255,255,.05);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .8; transform: scale(0.95); }
+    }
+    
     h1 {
-      font-size: 1.6rem;
-      color: #1A2340;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 600;
+      color: var(--navy);
       margin-bottom: .75rem;
     }
+    
+    [data-theme="dark"] h1 {
+      color: var(--navy);
+    }
+    
     p {
-      color: #6B6B6B;
+      color: var(--text-muted);
       font-size: .95rem;
-      line-height: 1.6;
+      line-height: 1.7;
       margin-bottom: 2rem;
     }
+    
+    .actions {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    
     .btn {
       display: inline-flex;
       align-items: center;
@@ -52,22 +121,55 @@
       cursor: pointer;
       text-decoration: none;
       border: none;
+      transition: all .2s;
+      font-family: inherit;
     }
+    
+    .btn:active { transform: scale(0.98); }
+    
     .btn-primary {
-      background: #1A2340;
-      color: #FAF7F2;
+      background: var(--navy);
+      color: white;
     }
+    
+    .btn-primary:hover {
+      background: #0F1828;
+      box-shadow: 0 4px 12px rgba(26,35,64,.2);
+    }
+    
+    [data-theme="dark"] .btn-primary:hover {
+      background: #2A2A30;
+    }
+    
     .btn-outline {
       background: none;
       border: 1.5px solid #DDD8CC;
-      color: #1A2340;
-      margin-left: .5rem;
+      color: var(--navy);
     }
-    img.logo { width: 48px; margin-bottom: 1.25rem; opacity: .7; }
+    
+    [data-theme="dark"] .btn-outline {
+      border-color: #4A4A50;
+      color: var(--navy);
+    }
+    
+    .btn-outline:hover {
+      background: rgba(26,35,64,.05);
+      border-color: var(--navy);
+    }
+    
+    [data-theme="dark"] .btn-outline:hover {
+      background: rgba(255,255,255,.05);
+    }
+    
     .cached-note {
-      margin-top: 2rem;
       font-size: .78rem;
-      color: #9A9690;
+      color: var(--text-muted);
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(201,168,76,.1);
+    }
+    
+    [data-theme="dark"] .cached-note {
+      border-top-color: rgba(255,255,255,.1);
     }
   </style>
 </head>
@@ -77,27 +179,41 @@
     <div class="icon-wrap">📡</div>
     <h1>Você está offline</h1>
     <p>
-      Não foi possível carregar esta página.<br>
-      Verifique sua conexão com a internet e tente novamente.
+      Parece que sua conexão com a internet foi perdida.<br>
+      Verifique a conexão e tente novamente.
     </p>
-    <div>
+    <div class="actions">
       <button class="btn btn-primary" onclick="tryReload()">
         ↺ Tentar novamente
       </button>
-      <a href="/" class="btn btn-outline">Início</a>
+      <a href="/" class="btn btn-outline">🏠 Início</a>
     </div>
     <p class="cached-note">
-      Algumas páginas visitadas anteriormente podem estar disponíveis offline.
+      💾 Dica: Páginas que você visitou anteriormente podem estar disponíveis offline.
     </p>
   </div>
   <script>
     function tryReload() {
       if (navigator.onLine) {
-        location.reload();
+        window.location.reload();
       } else {
-        alert('Ainda sem conexão. Verifique sua internet.');
+        alert('⚠️ Ainda sem conexão. Por favor, verifique sua internet.');
       }
     }
+    
+    // Auto-reload quando voltar online
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+    
+    // Load theme preference
+    (function() {
+      var t = localStorage.getItem('church_theme') || '';
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</body>
+</html>
     // Recarrega automaticamente quando voltar online
     window.addEventListener('online', () => location.reload());
   </script>

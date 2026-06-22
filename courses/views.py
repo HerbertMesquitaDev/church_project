@@ -5,8 +5,10 @@ from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
 
+from members.permissions import is_teacher, teacher_or_staff_required
 from .models import (Course, Module, Lesson, Enrollment, LessonProgress,
-                     LessonComment, LessonQuiz, QuizAttempt, CourseCategory)
+                     LessonComment, LessonQuiz, QuizAttempt, QuizQuestion,
+                     QuizChoice, CourseCategory)
 
 
 # ── Helpers ───────────────────────────────────────────────
@@ -284,10 +286,12 @@ def lesson_quiz(request, pk):
 # ── STAFF — Gestão de Cursos ──────────────────────────────
 # ══════════════════════════════════════════════════════════
 
-@staff_only
+@teacher_or_staff_required
 def manage_courses(request):
     q  = request.GET.get('q', '').strip()
     qs = Course.objects.select_related('category', 'instructor').order_by('order', 'title')
+    if is_teacher(request.user):
+        qs = qs.filter(instructor=request.user)
     if q:
         qs = qs.filter(Q(title__icontains=q) | Q(description__icontains=q))
     page_obj = Paginator(qs, 20).get_page(request.GET.get('page'))
@@ -296,13 +300,15 @@ def manage_courses(request):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_course_create(request):
     from .forms import CourseForm
     form = CourseForm(request.POST or None, request.FILES or None)
+    if is_teacher(request.user):
+        form.fields.pop('instructor', None)
     if request.method == 'POST' and form.is_valid():
         course = form.save(commit=False)
-        if not course.instructor_id:
+        if is_teacher(request.user):
             course.instructor = request.user
         course.save()
         messages.success(request, 'Curso criado! Agora adicione os módulos e aulas.')
@@ -312,13 +318,21 @@ def manage_course_create(request):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_course_edit(request, pk):
     from .forms import CourseForm
     course = get_object_or_404(Course, pk=pk)
+    if is_teacher(request.user) and course.instructor != request.user:
+        messages.error(request, 'Você não pode editar este curso.')
+        return redirect('manage_courses')
     form   = CourseForm(request.POST or None, request.FILES or None, instance=course)
+    if is_teacher(request.user):
+        form.fields.pop('instructor', None)
     if request.method == 'POST' and form.is_valid():
-        form.save()
+        course = form.save(commit=False)
+        if is_teacher(request.user):
+            course.instructor = request.user
+        course.save()
         messages.success(request, 'Curso atualizado!')
         return redirect('manage_courses')
     return render(request, 'courses/manage/course_form.html', {
@@ -326,9 +340,12 @@ def manage_course_edit(request, pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_course_delete(request, pk):
     course = get_object_or_404(Course, pk=pk)
+    if is_teacher(request.user) and course.instructor != request.user:
+        messages.error(request, 'Você não pode excluir este curso.')
+        return redirect('manage_courses')
     if request.method == 'POST':
         course.delete()
         messages.success(request, 'Curso removido.')
@@ -337,10 +354,13 @@ def manage_course_delete(request, pk):
                   {'object': course, 'tipo': 'curso'})
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_modules(request, pk):
     from .forms import ModuleForm
     course  = get_object_or_404(Course, pk=pk)
+    if is_teacher(request.user) and course.instructor != request.user:
+        messages.error(request, 'Você não pode gerenciar módulos deste curso.')
+        return redirect('manage_courses')
     modules = course.modules.prefetch_related('lessons').all()
 
     form = ModuleForm(request.POST or None)
@@ -357,19 +377,25 @@ def manage_modules(request, pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_lessons(request, pk):
     module  = get_object_or_404(Module, pk=pk)
+    if is_teacher(request.user) and module.course.instructor != request.user:
+        messages.error(request, 'Você não pode gerenciar aulas deste curso.')
+        return redirect('manage_courses')
     lessons = module.lessons.all()
     return render(request, 'courses/manage/lessons.html', {
         'module': module, 'lessons': lessons
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_lesson_create(request, module_pk):
     from .forms import LessonForm
     module = get_object_or_404(Module, pk=module_pk)
+    if is_teacher(request.user) and module.course.instructor != request.user:
+        messages.error(request, 'Você não pode adicionar aulas a este curso.')
+        return redirect('manage_courses')
     form   = LessonForm(request.POST or None, request.FILES or None)
     if request.method == 'POST' and form.is_valid():
         lesson = form.save(commit=False)
@@ -383,10 +409,13 @@ def manage_lesson_create(request, module_pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_lesson_edit(request, pk):
     from .forms import LessonForm
     lesson = get_object_or_404(Lesson, pk=pk)
+    if is_teacher(request.user) and lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode editar esta aula.')
+        return redirect('manage_courses')
     form   = LessonForm(request.POST or None, request.FILES or None, instance=lesson)
     if request.method == 'POST' and form.is_valid():
         form.save()
@@ -397,9 +426,12 @@ def manage_lesson_edit(request, pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_lesson_delete(request, pk):
     lesson = get_object_or_404(Lesson, pk=pk)
+    if is_teacher(request.user) and lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode excluir esta aula.')
+        return redirect('manage_courses')
     module_pk = lesson.module_id
     if request.method == 'POST':
         lesson.delete()
@@ -409,9 +441,12 @@ def manage_lesson_delete(request, pk):
                   {'object': lesson, 'tipo': 'aula'})
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_enrollments(request, pk):
     course      = get_object_or_404(Course, pk=pk)
+    if is_teacher(request.user) and course.instructor != request.user:
+        messages.error(request, 'Você não pode ver inscrições deste curso.')
+        return redirect('manage_courses')
     enrollments = course.enrollments.filter(active=True).select_related('user')
     data = [{'enr': e, 'pct': e.progress_percent} for e in enrollments]
     return render(request, 'courses/manage/enrollments.html', {
@@ -426,10 +461,13 @@ from .models import LessonQuiz, QuizQuestion, QuizChoice
 from .forms import LessonQuizForm, QuizQuestionForm, QuizChoiceForm
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz(request, lesson_pk):
     """Página principal do quiz de uma aula: configura o quiz e lista perguntas."""
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    if is_teacher(request.user) and lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode gerenciar este quiz.')
+        return redirect('manage_courses')
     quiz   = getattr(lesson, 'quiz', None)
 
     # Criar ou editar configurações do quiz
@@ -451,9 +489,12 @@ def manage_quiz(request, lesson_pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_question_create(request, lesson_pk):
     lesson = get_object_or_404(Lesson, pk=lesson_pk)
+    if is_teacher(request.user) and lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode adicionar perguntas a este quiz.')
+        return redirect('manage_courses')
     quiz   = get_object_or_404(LessonQuiz, lesson=lesson)
     form   = QuizQuestionForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -468,10 +509,13 @@ def manage_quiz_question_create(request, lesson_pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_question_edit(request, pk):
     question = get_object_or_404(QuizQuestion, pk=pk)
     lesson   = question.quiz.lesson
+    if is_teacher(request.user) and lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode editar esta pergunta.')
+        return redirect('manage_courses')
     form     = QuizQuestionForm(request.POST or None, instance=question)
     if request.method == 'POST' and form.is_valid():
         form.save()
@@ -484,9 +528,12 @@ def manage_quiz_question_edit(request, pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_question_delete(request, pk):
     question  = get_object_or_404(QuizQuestion, pk=pk)
+    if is_teacher(request.user) and question.quiz.lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode excluir esta pergunta.')
+        return redirect('manage_courses')
     lesson_pk = question.quiz.lesson_id
     if request.method == 'POST':
         question.delete()
@@ -496,9 +543,12 @@ def manage_quiz_question_delete(request, pk):
                   {'object': question, 'tipo': 'pergunta do quiz'})
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_choice_create(request, question_pk):
     question = get_object_or_404(QuizQuestion, pk=question_pk)
+    if is_teacher(request.user) and question.quiz.lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode adicionar alternativas a esta pergunta.')
+        return redirect('manage_courses')
     lesson   = question.quiz.lesson
     form     = QuizChoiceForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -513,10 +563,13 @@ def manage_quiz_choice_create(request, question_pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_choice_edit(request, pk):
     choice   = get_object_or_404(QuizChoice, pk=pk)
     question = choice.question
+    if is_teacher(request.user) and question.quiz.lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode editar esta alternativa.')
+        return redirect('manage_courses')
     lesson   = question.quiz.lesson
     form     = QuizChoiceForm(request.POST or None, instance=choice)
     if request.method == 'POST' and form.is_valid():
@@ -529,9 +582,12 @@ def manage_quiz_choice_edit(request, pk):
     })
 
 
-@staff_only
+@teacher_or_staff_required
 def manage_quiz_choice_delete(request, pk):
     choice      = get_object_or_404(QuizChoice, pk=pk)
+    if is_teacher(request.user) and choice.question.quiz.lesson.module.course.instructor != request.user:
+        messages.error(request, 'Você não pode excluir esta alternativa.')
+        return redirect('manage_courses')
     question_pk = choice.question_id
     if request.method == 'POST':
         choice.delete()

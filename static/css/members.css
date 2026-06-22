@@ -754,7 +754,24 @@
   .auth-full { grid-column: 1; }
 }
 
-/* ── MINISTRY FORMSET ───────────────────── */
+@media (max-width: 768px) {
+  .members-topbar { flex-wrap: wrap; gap: 0.75rem; }
+}
+
+@media (max-width: 600px) {
+  .members-content { padding: 1rem; }
+  .members-topbar { padding: 0 1rem; height: auto; flex-wrap: wrap; align-items: center; }
+  .topbar-title { width: 100%; max-width: 150px; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-user span { display: none; }
+  .topbar-theme-btn { margin-left: auto; }
+  .dashboard-welcome { padding: 1.25rem 1.25rem; }
+  .dashboard-welcome h2 { font-size: 1.2rem; }
+  .dashboard-welcome::after { display: none; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .profile-card { position: static; }
+  .form-grid { grid-template-columns: 1fr; }
+  .ministry-formset-row { flex-direction: column; }
+}
 .form-hint {
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -881,6 +898,7 @@
 /* ── TABLES ─────────────────────────────── */
 .manage-table-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -891,6 +909,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
+  min-width: 560px;
 }
 
 .manage-table th {

@@ -38,9 +38,16 @@ def agenda_view(request):
 
     # não-admin vê só aprovados + os próprios
     if not (request.user.is_staff or request.user.is_superuser):
-        bookings = bookings.filter(
-            Q(status='approved') | Q(responsible=request.user)
-        )
+        # Professores veem seus agendamentos + os aprovados
+        if hasattr(request.user, 'profile') and request.user.profile.role == 'teacher':
+            bookings = bookings.filter(
+                Q(status='approved') | Q(responsible=request.user)
+            )
+        # membros comuns veem só aprovados + os próprios
+        else:
+            bookings = bookings.filter(
+                Q(status='approved') | Q(responsible=request.user)
+            )
 
     bookings = bookings.order_by('date', 'start_time')
 
@@ -106,8 +113,11 @@ def booking_list(request):
     if date_to:
         bookings = bookings.filter(date__lte=date_to)
 
+    # Professores veem apenas seus próprios agendamentos + aprovados
+    if hasattr(request.user, 'profile') and request.user.profile.role == 'teacher':
+        bookings = bookings.filter(Q(responsible=request.user) | Q(status='approved'))
     # membros comuns veem apenas aprovados + os próprios
-    if not (request.user.is_staff or request.user.is_superuser):
+    elif not (request.user.is_staff or request.user.is_superuser):
         bookings = bookings.filter(
             Q(status='approved') | Q(responsible=request.user)
         )

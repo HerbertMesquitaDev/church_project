@@ -15,10 +15,11 @@
   </a>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem">
   <div class="form-page-wrap" style="padding:1.25rem">
     <p class="section-label-sm" style="margin-bottom:1rem">Informações</p>
-    <table style="width:100%;font-size:.83rem;border-collapse:collapse">
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <table style="width:100%;font-size:.83rem;border-collapse:collapse;min-width:300px">
       <tr><td style="color:var(--text-muted);padding:.35rem 0;width:40%">Nome</td><td><strong>{{ igreja.nome }}</strong></td></tr>
       <tr><td style="color:var(--text-muted);padding:.35rem 0">Slug</td><td><code>{{ igreja.slug }}</code></td></tr>
       <tr><td style="color:var(--text-muted);padding:.35rem 0">Domínio</td><td>{{ igreja.dominio_proprio|default:"—" }}</td></tr>
@@ -32,9 +33,10 @@
             {% else %}<span class="badge-red">Inativa</span>{% endif %}</td></tr>
       <tr><td style="color:var(--text-muted);padding:.35rem 0">Criada em</td><td>{{ igreja.criado_em|date:"d/m/Y" }}</td></tr>
     </table>
+    </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-content:start">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1rem;align-content:start">
     <div class="dash-stat-card">
       <div class="dash-stat-value">{{ total_membros }}</div>
       <div class="dash-stat-label">Membros</div>

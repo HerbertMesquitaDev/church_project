@@ -9,6 +9,7 @@ const STATIC_CACHE  = 'portal-static-v1';
 // Assets que sempre ficam em cache (shell do app)
 const SHELL_ASSETS = [
   '/',
+  '/offline/',
   '/ebd/',
   '/eventos/',
   '/static/css/style.css',
@@ -17,6 +18,7 @@ const SHELL_ASSETS = [
   '/static/img/icon_192.png',
   '/static/img/icon_512.png',
   '/static/manifest.json',
+  '/static/js/main.js',
 ];
 
 // Página de fallback offline
@@ -26,11 +28,18 @@ const OFFLINE_PAGE = '/offline/';
 // ── Install: pré-cachear o shell ──────────────────────────
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then(cache => {
-      return cache.addAll(SHELL_ASSETS).catch(() => {
-        // Falha silenciosa — alguns assets podem não existir ainda
-      });
-    }).then(() => self.skipWaiting())
+    Promise.all([
+      caches.open(STATIC_CACHE).then(cache => {
+        return cache.addAll(SHELL_ASSETS).catch(() => {
+          console.log('[SW] Alguns assets não puderam ser cachados');
+        });
+      }),
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.add(OFFLINE_PAGE).catch(() => {
+          console.log('[SW] Página offline não pôde ser cachada');
+        });
+      })
+    ]).then(() => self.skipWaiting())
   );
 });
 
@@ -121,23 +130,57 @@ async function networkFirstWithFallback(request) {
     const offline = await caches.match(OFFLINE_PAGE);
     return offline || new Response(
       `<!DOCTYPE html>
-       <html lang="pt-BR">
-       <head><meta charset="UTF-8"><title>Sem conexão</title>
-       <meta name="viewport" content="width=device-width,initial-scale=1">
-       <style>
-         body{font-family:system-ui,sans-serif;display:flex;align-items:center;
-              justify-content:center;min-height:100vh;margin:0;background:#FAF7F2;text-align:center;padding:2rem}
-         h1{color:#1A2340;font-size:1.5rem}p{color:#6B6B6B}
-         a{color:#C9A84C;font-weight:600}
-       </style></head>
-       <body>
-         <div>
-           <div style="font-size:3rem;margin-bottom:1rem">📡</div>
-           <h1>Você está offline</h1>
-           <p>Verifique sua conexão e tente novamente.</p>
-           <a href="/" onclick="location.reload()">Tentar novamente</a>
-         </div>
-       </body></html>`,
+<html lang="pt-BR" data-theme="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1A2340">
+  <title>Sem conexão</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#FAF7F2;padding:2rem;text-align:center}
+    [data-theme="dark"] body{background:#0E0E12}
+    .card{max-width:480px;background:white;border-radius:12px;padding:3rem 2rem;box-shadow:0 8px 32px rgba(0,0,0,.08)}
+    [data-theme="dark"] .card{background:#1E1E24;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    .logo{width:52px;margin-bottom:1.5rem;opacity:.8}
+    .icon-wrap{width:80px;height:80px;border-radius:50%;background:rgba(201,168,76,.12);display:flex;align-items:center;justify-content:center;margin:0 auto 1.75rem;font-size:2.5rem;animation:pulse 2s infinite}
+    [data-theme="dark"] .icon-wrap{background:rgba(255,255,255,.05)}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(.95)}}
+    h1{font-size:1.9rem;font-weight:600;color:#1A2340;margin-bottom:.75rem}
+    [data-theme="dark"] h1{color:#E8E4DC}
+    p{color:#6B6B6B;font-size:.95rem;line-height:1.7;margin-bottom:2rem}
+    [data-theme="dark"] p{color:#B0ABA0}
+    .actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem}
+    .btn{padding:.65rem 1.75rem;border-radius:8px;font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s}
+    .btn:active{transform:scale(.98)}
+    .btn-primary{background:#1A2340;color:white}
+    .btn-primary:hover{background:#0F1828;box-shadow:0 4px 12px rgba(26,35,64,.2)}
+    [data-theme="dark"] .btn-primary:hover{background:#2A2A30}
+    .btn-outline{border:1.5px solid #DDD8CC;color:#1A2340;background:none}
+    [data-theme="dark"] .btn-outline{border-color:#4A4A50}
+    .btn-outline:hover{background:rgba(26,35,64,.05);border-color:#1A2340}
+    [data-theme="dark"] .btn-outline:hover{background:rgba(255,255,255,.05)}
+    .note{font-size:.78rem;color:#6B6B6B;padding-top:1.5rem;border-top:1px solid rgba(201,168,76,.1)}
+    [data-theme="dark"] .note{color:#B0ABA0;border-top-color:rgba(255,255,255,.1)}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="font-size:2.5rem;margin-bottom:1rem">📡</div>
+    <h1>Você está offline</h1>
+    <p>Parece que sua conexão foi perdida.<br>Verifique e tente novamente.</p>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="if(navigator.onLine){location.reload()}else{alert('Sem conexão')}">↺ Tentar</button>
+      <a href="/" class="btn btn-outline">🏠 Início</a>
+    </div>
+    <p class="note">💾 Páginas visitadas podem estar disponíveis offline</p>
+  </div>
+  <script>
+    (function(){var t=localStorage.getItem('church_theme')||'';if(t)document.documentElement.setAttribute('data-theme',t)})();
+    window.addEventListener('online',function(){location.reload()});
+  </script>
+</body>
+</html>`,
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     );
   }

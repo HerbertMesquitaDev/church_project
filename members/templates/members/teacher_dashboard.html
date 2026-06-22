@@ -1,0 +1,68 @@
+{% extends 'members/base_members.html' %}
+{% block title %}Dashboard do Professor{% endblock %}
+{% block page_title %}Dashboard do Professor{% endblock %}
+
+{% block content %}
+<div class="stats-grid" style="margin-bottom:1.5rem;">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(39,174,96,.1)"><i class="fa fa-graduation-cap" style="color:#27ae60"></i></div>
+    <div><span class="stat-number">{{ courses|length }}</span><span class="stat-label">Cursos</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:rgba(201,168,76,.1)"><i class="fa fa-calendar" style="color:var(--gold-dark)"></i></div>
+    <div><span class="stat-number">{{ bookings|length }}</span><span class="stat-label">Agendamentos</span></div>
+  </div>
+</div>
+
+<div class="section-label-sm">Meus Cursos</div>
+<div class="manage-table-wrap" style="margin-bottom:2rem;">
+  <table class="manage-table">
+    <thead>
+      <tr>
+        <th>Curso</th>
+        <th class="hide-mobile">Categoria</th>
+        <th>Publicado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in courses %}
+      <tr>
+        <td>{{ course.title }}</td>
+        <td class="hide-mobile">{{ course.category }}</td>
+        <td>{% if course.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
+        <td><a href="{% url 'manage_course_edit' course.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-muted" style="padding:2rem;text-align:center;">Nenhum curso encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="section-label-sm">Meus Agendamentos</div>
+<div class="manage-table-wrap">
+  <table class="manage-table">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Título</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for booking in bookings %}
+      <tr>
+        <td>{{ booking.date|date:'d/m/Y' }}</td>
+        <td>{{ booking.title }}</td>
+        <td>{{ booking.get_status_display }}</td>
+        <td><a href="{% url 'booking_detail' booking.pk %}" class="manage-btn manage-btn-view" title="Detalhes"><i class="fa fa-eye"></i></a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-muted" style="padding:2rem;text-align:center;">Nenhum agendamento encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

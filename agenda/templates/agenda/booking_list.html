@@ -43,12 +43,14 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .bookings-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.88rem;
+  min-width: 580px;
 }
 .bookings-table th {
   background: var(--navy);

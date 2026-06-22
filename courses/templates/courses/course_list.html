@@ -104,5 +104,20 @@
 [data-theme="dark"] .course-card { background:#1E1E24; border-color:rgba(201,168,76,.1); }
 [data-theme="dark"] .course-card-img { background:#25252D; }
 [data-theme="dark"] .course-card-body h3 { color:#E8E4DC; }
+
+@media (max-width: 768px) {
+  .course-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .manage-topbar { flex-direction: column; }
+  .manage-topbar input,
+  .manage-topbar select,
+  .manage-topbar button {
+    width: 100%;
+    min-width: unset !important;
+  }
+  .course-grid { grid-template-columns: 1fr; }
+}
 </style>
 {% endblock %}

@@ -8,6 +8,8 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 
 from core.models import Ministry, Devotional, Offering, Visitor, SiteSettings
+from courses.models import Course
+from agenda.models import Booking
 from .models import MemberProfile, ExclusiveContent, ContentCategory, Notice, MemberMinistry, Testimony, PrayerRequest, DeleteRequest, PasswordResetToken
 from .emails import (
     send_password_reset, send_member_approved, send_member_rejected,
@@ -41,6 +43,11 @@ def is_admin(user):
 
 def is_collaborator(user):
     return user.is_authenticated and (user.is_staff or is_admin(user))
+
+
+def is_teacher(user):
+    return user.is_authenticated and getattr(getattr(user, 'profile', None), 'role', '') == 'teacher'
+
 
 def members_only(view_func):
     def wrapper(request, *args, **kwargs):
@@ -76,6 +83,28 @@ def admin_only(view_func):
         return view_func(request, *args, **kwargs)
     return wrapper
 
+def teacher_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('member_login')
+        if not is_teacher(request.user):
+            messages.error(request, 'Acesso restrito a professores.')
+            return redirect('member_dashboard')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+def teacher_or_staff_only(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('member_login')
+        if not (is_teacher(request.user) or is_collaborator(request.user)):
+            messages.error(request, 'Acesso restrito.')
+            return redirect('member_dashboard')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
 def superuser_only(view_func):
     """Compatibilidade — redireciona para admin_only."""
     return admin_only(view_func)
@@ -99,6 +128,17 @@ def member_login(request):
 def member_logout(request):
     logout(request)
     return redirect('home')
+
+
+@teacher_only
+def teacher_dashboard(request):
+    courses = Course.objects.filter(instructor=request.user).select_related('category')
+    bookings = Booking.objects.filter(responsible=request.user).order_by('-date')[:10]
+    return render(request, 'members/teacher_dashboard.html', {
+        'courses': courses,
+        'bookings': bookings,
+    })
+
 
 def member_register(request):
     if request.user.is_authenticated:

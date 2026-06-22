@@ -14,7 +14,8 @@
 
 <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
   {% if locations %}
-  <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+  <table style="width:100%;border-collapse:collapse;font-size:0.88rem;min-width:560px;">
     <thead>
       <tr>
         <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Local</th>
@@ -47,6 +48,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <div style="text-align:center;padding:3rem 2rem;color:var(--text-muted);">
     <i class="fa fa-map-marker-alt" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:0.75rem;"></i>
