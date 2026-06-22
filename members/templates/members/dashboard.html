@@ -95,17 +95,21 @@
                 <div class="crud-item-icon"><i class="fa fa-church"></i></div>
                 <div><span class="crud-item-title">Ministérios</span><span class="crud-item-sub">Membros por ministério</span></div>
             </a>
-            <a href="{% url 'cell_manage_dashboard' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-sitemap"></i></div>
-                <div><span class="crud-item-title">Células</span><span class="crud-item-sub">Grupos e líderes</span></div>
-                {% if pending_cell_count %}<span class="crud-badge crud-badge-alert">{{ pending_cell_count }}</span>{% endif %}
-                <a href="{% url 'cell_create_dashboard' %}" class="crud-new-btn" title="Nova célula" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'culto_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-clipboard-check"></i></div>
-                <div><span class="crud-item-title">Presenças</span><span class="crud-item-sub">Chamada e frequência</span></div>
-                <a href="{% url 'culto_create' %}" class="crud-new-btn" title="Registrar culto" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
+            <div class="crud-item">
+                <a href="{% url 'cell_manage_dashboard' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-sitemap"></i></div>
+                    <div><span class="crud-item-title">Células</span><span class="crud-item-sub">Grupos e líderes</span></div>
+                    {% if pending_cell_count %}<span class="crud-badge crud-badge-alert">{{ pending_cell_count }}</span>{% endif %}
+                </a>
+                <a href="{% url 'cell_create_dashboard' %}" class="crud-new-btn" title="Nova célula"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'culto_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-clipboard-check"></i></div>
+                    <div><span class="crud-item-title">Presenças</span><span class="crud-item-sub">Chamada e frequência</span></div>
+                </a>
+                <a href="{% url 'culto_create' %}" class="crud-new-btn" title="Registrar culto"><i class="fa fa-plus"></i></a>
+            </div>
         </div>
     </div>
 
@@ -113,47 +117,61 @@
         <div class="crud-group-title"><i class="fa fa-layer-group"></i> Conteúdo</div>
         <div class="crud-items">
             {% if request.user.is_staff or request.user.is_superuser %}
-            <a href="{% url 'content_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-book-open"></i></div>
-                <div><span class="crud-item-title">Conteúdos Exclusivos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
-                <a href="{% url 'content_create_manage' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
+            <div class="crud-item">
+                <a href="{% url 'content_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-book-open"></i></div>
+                    <div><span class="crud-item-title">Conteúdos Exclusivos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
+                </a>
+                <a href="{% url 'content_create_manage' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
             {% else %}
             <a href="{% url 'content_list' %}" class="crud-item">
                 <div class="crud-item-icon"><i class="fa fa-book-open"></i></div>
                 <div><span class="crud-item-title">Conteúdos Exclusivos</span><span class="crud-item-sub">Artigos, vídeos e estudos</span></div>
             </a>
             {% endif %}
-            <a href="{% url 'media_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-photo-film"></i></div>
-                <div><span class="crud-item-title">Midiateca</span><span class="crud-item-sub">Pregações, louvores, PDFs</span></div>
-                <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'album_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-images"></i></div>
-                <div><span class="crud-item-title">Galeria de Fotos</span><span class="crud-item-sub">Álbuns e fotos de eventos</span></div>
-                <a href="{% url 'album_create' %}" class="crud-new-btn" title="Novo Álbum" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'notice_list' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-bell"></i></div>
-                <div><span class="crud-item-title">Avisos Internos</span><span class="crud-item-sub">Comunicados para membros</span></div>
-                <a href="{% url 'notice_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'ebd_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
-                <div><span class="crud-item-title">EBD</span><span class="crud-item-sub">Turmas, trimestres e lições</span></div>
-                <a href="{% url 'ebd_class_create' %}" class="crud-new-btn" title="Nova turma" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'devotional_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
-                <div><span class="crud-item-title">Devocionais</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
-                <a href="{% url 'devotional_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
-            <a href="{% url 'heroslide_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-panorama"></i></div>
-                <div><span class="crud-item-title">Página Principal</span><span class="crud-item-sub">Banners e destaques da capa</span></div>
-                <a href="{% url 'heroslide_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
+            <div class="crud-item">
+                <a href="{% url 'media_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-photo-film"></i></div>
+                    <div><span class="crud-item-title">Midiateca</span><span class="crud-item-sub">Pregações, louvores, PDFs</span></div>
+                </a>
+                <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'album_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-images"></i></div>
+                    <div><span class="crud-item-title">Galeria de Fotos</span><span class="crud-item-sub">Álbuns e fotos de eventos</span></div>
+                </a>
+                <a href="{% url 'album_create' %}" class="crud-new-btn" title="Novo Álbum"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'notice_list' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-bell"></i></div>
+                    <div><span class="crud-item-title">Avisos Internos</span><span class="crud-item-sub">Comunicados para membros</span></div>
+                </a>
+                <a href="{% url 'notice_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'ebd_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
+                    <div><span class="crud-item-title">EBD</span><span class="crud-item-sub">Turmas, trimestres e lições</span></div>
+                </a>
+                <a href="{% url 'ebd_class_create' %}" class="crud-new-btn" title="Nova turma"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'devotional_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-bible"></i></div>
+                    <div><span class="crud-item-title">Devocionais</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
+                </a>
+                <a href="{% url 'devotional_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
+            <div class="crud-item">
+                <a href="{% url 'heroslide_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-panorama"></i></div>
+                    <div><span class="crud-item-title">Página Principal</span><span class="crud-item-sub">Banners e destaques da capa</span></div>
+                </a>
+                <a href="{% url 'heroslide_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
             {% if request.user.is_superuser %}
             <a href="{% url 'exportar_centro' %}" class="crud-item">
                 <div class="crud-item-icon" style="background:rgba(39,124,60,.1)"><i class="fa fa-file-export" style="color:#27783c"></i></div>

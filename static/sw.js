@@ -3,8 +3,8 @@
  * Estratégia: Cache First para assets estáticos, Network First para páginas
  */
 
-const CACHE_NAME    = 'portal-igreja-v1';
-const STATIC_CACHE  = 'portal-static-v1';
+const CACHE_NAME    = 'portal-igreja-v2';
+const STATIC_CACHE  = 'portal-static-v2';
 
 // Assets que sempre ficam em cache (shell do app)
 const SHELL_ASSETS = [

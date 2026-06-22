@@ -1950,6 +1950,15 @@
   transition: var(--transition);
   position: relative;
 }
+.crud-item-main {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
 .crud-item:last-child { border-bottom: none; }
 .crud-item:hover { background: var(--surface-alt); }
 
