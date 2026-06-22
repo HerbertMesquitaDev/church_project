@@ -261,11 +261,13 @@
     <div class="crud-group">
         <div class="crud-group-title"><i class="fa fa-graduation-cap"></i> Cursos</div>
         <div class="crud-items">
-            <a href="{% url 'manage_courses' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-graduation-cap"></i></div>
-                <div><span class="crud-item-title">Gerenciar Cursos</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
-                <a href="{% url 'manage_course_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
+            <div class="crud-item">
+                <a href="{% url 'manage_courses' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-graduation-cap"></i></div>
+                    <div><span class="crud-item-title">Gerenciar Cursos</span><span class="crud-item-sub">Criar, editar e publicar</span></div>
+                </a>
+                <a href="{% url 'manage_course_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
             <a href="{% url 'course_list' %}" class="crud-item">
                 <div class="crud-item-icon"><i class="fa fa-eye"></i></div>
                 <div><span class="crud-item-title">Ver como Aluno</span><span class="crud-item-sub">Visualizar catálogo</span></div>
@@ -297,11 +299,13 @@
     <div class="crud-group">
         <div class="crud-group-title"><i class="fa fa-calendar-alt"></i> Agenda & Config</div>
         <div class="crud-items">
-            <a href="{% url 'event_manage' %}" class="crud-item">
-                <div class="crud-item-icon"><i class="fa fa-calendar"></i></div>
-                <div><span class="crud-item-title">Eventos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
-                <a href="{% url 'event_create' %}" class="crud-new-btn" title="Novo" onclick="event.stopPropagation()"><i class="fa fa-plus"></i></a>
-            </a>
+            <div class="crud-item">
+                <a href="{% url 'event_manage' %}" class="crud-item-main">
+                    <div class="crud-item-icon"><i class="fa fa-calendar"></i></div>
+                    <div><span class="crud-item-title">Eventos</span><span class="crud-item-sub">Listar, criar, editar</span></div>
+                </a>
+                <a href="{% url 'event_create' %}" class="crud-new-btn" title="Novo"><i class="fa fa-plus"></i></a>
+            </div>
             <a href="/membros/agenda/lista/" class="crud-item">
                 <div class="crud-item-icon"><i class="fa fa-map-marker-alt"></i></div>
                 <div><span class="crud-item-title">Reserva de Espaços</span><span class="crud-item-sub">Agendamentos e locais</span></div>

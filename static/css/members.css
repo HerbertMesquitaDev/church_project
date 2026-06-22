@@ -767,6 +767,11 @@
   .dashboard-welcome { padding: 1.25rem 1.25rem; }
   .dashboard-welcome h2 { font-size: 1.2rem; }
   .dashboard-welcome::after { display: none; }
+  .crud-panel { grid-template-columns: 1fr; }
+  .crud-item { align-items: flex-start; gap: .75rem; }
+  .crud-item-main { align-items: flex-start; }
+  .crud-badge,
+  .crud-new-btn { margin-left: 0; align-self: center; }
   .stats-grid { grid-template-columns: 1fr; }
   .profile-card { position: static; }
   .form-grid { grid-template-columns: 1fr; }
