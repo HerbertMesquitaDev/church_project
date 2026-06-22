@@ -39,7 +39,7 @@
           position: fixed;
           inset: 0;
           background: rgba(0,0,0,.45);
-          z-index: 250;
+          z-index: 240;
           opacity: 0;
           transition: opacity 0.25s ease;
         }
@@ -47,6 +47,9 @@
           display: block;
           opacity: 1;
           pointer-events: auto;
+        }
+        .sidebar {
+          z-index: 260;
         }
         @media (max-width: 900px) {
           .members-topbar {
