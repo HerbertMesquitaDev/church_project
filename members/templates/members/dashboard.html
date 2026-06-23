@@ -2,6 +2,68 @@
 {% block title %}Dashboard{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
 
+{% block extra_css %}
+<style>
+.dash-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+.dash-section-head.compact { margin-top: 2rem; }
+.dash-section-head-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.dash-summary-row {
+    padding: .75rem 1.1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+}
+.dash-empty-item {
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: .85rem;
+    padding: 1.5rem;
+}
+.dash-student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-top: .75rem;
+}
+.crud-group-wide { grid-column: 1 / -1; }
+.crud-group-title-between { justify-content: space-between; }
+
+@media (max-width: 768px) {
+    .dash-section-head,
+    .dash-section-head-meta,
+    .dash-summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dash-section-head,
+    .dash-section-head.compact {
+        margin-top: 1.75rem;
+        margin-bottom: .75rem;
+    }
+    .crud-group-wide { grid-column: auto; }
+    .crud-group-title-between {
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+    .dash-student-grid { grid-template-columns: 1fr; }
+    .offering-chart-wrap { padding: .85rem .85rem .65rem !important; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="dashboard-welcome">
@@ -62,14 +124,14 @@
 </div>
 
 {% if offering_monthly_json %}
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;margin-bottom:1rem;">
+<div class="dash-section-head">
     <div class="section-label-sm">Contribuições — Últimos 6 meses</div>
-    <div style="display:flex;align-items:center;gap:1rem;">
+    <div class="dash-section-head-meta">
         <span style="font-size:.82rem;color:var(--text-muted)">Este mês: <strong style="color:var(--gold-dark)">R$ {{ total_month_offering|floatformat:2 }}</strong></span>
         <a href="{% url 'offering_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver completo <i class="fa fa-arrow-right"></i></a>
     </div>
 </div>
-<div class="offering-chart-wrap" style="padding:1rem 1.5rem .75rem;">
+<div class="offering-chart-wrap">
     <canvas id="dashOfferingChart" height="70"></canvas>
 </div>
 {% endif %}
@@ -186,10 +248,10 @@
         </div>
     </div>
 
-    <div class="crud-group" style="grid-column: 1 / -1;">
-        <div class="crud-group-title" style="justify-content:space-between;">
+    <div class="crud-group crud-group-wide">
+        <div class="crud-group-title crud-group-title-between">
             <span><i class="fa fa-photo-film"></i> Midiateca</span>
-            <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo item" style="margin-left:auto;" onclick="event.stopPropagation()"><i class="fa fa-plus"></i> Novo</a>
+            <a href="{% url 'media_create' %}" class="crud-new-btn" title="Novo item"><i class="fa fa-plus"></i> Novo</a>
         </div>
 
         {% if recent_media %}
@@ -244,13 +306,13 @@
                 </tbody>
             </table>
         </div>
-        <div style="padding:.75rem 1.1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <div class="dash-summary-row">
             <span style="font-size:.78rem;color:var(--text-muted)">{{ total_media }} item{{ total_media|pluralize }} publicado{{ total_media|pluralize }} no total</span>
             <a href="{% url 'media_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver todos <i class="fa fa-arrow-right"></i></a>
         </div>
         {% else %}
         <div class="crud-items">
-            <div class="crud-item" style="justify-content:center;color:var(--text-muted);font-size:.85rem;padding:1.5rem;">
+            <div class="crud-item dash-empty-item">
                 <i class="fa fa-photo-film" style="margin-right:.5rem;opacity:.4"></i> Nenhum item na midiateca ainda.
                 <a href="{% url 'media_create' %}" style="margin-left:.5rem;color:var(--gold-dark)">Adicionar o primeiro</a>
             </div>
@@ -322,7 +384,7 @@
 </div>
 
 {% if new_members %}
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;">
+<div class="dash-section-head">
     <div class="section-label-sm">Novos Membros (últimos 30 dias)</div>
     <a href="{% url 'members_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver todos <i class="fa fa-arrow-right"></i></a>
 </div>
@@ -363,11 +425,11 @@
 {% endif %}{# end staff/admin block #}
 
 {% if not request.user.is_staff and not request.user.is_superuser %}
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2rem">
+<div class="dash-section-head compact">
   <div class="section-label-sm">Minha Jornada de Aprendizado</div>
   <a href="{% url 'student_profile' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver tudo <i class="fa fa-arrow-right"></i></a>
 </div>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:.75rem">
+<div class="dash-student-grid">
   <a href="{% url 'course_list' %}" style="background:var(--card-bg,#fff);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1rem;text-align:center;text-decoration:none;display:block">
     <i class="fa fa-graduation-cap" style="font-size:1.5rem;color:var(--gold-dark);display:block;margin-bottom:.4rem"></i>
     <span style="font-size:.82rem;font-weight:600;color:var(--text-heading)">Cursos</span>
@@ -450,7 +512,7 @@
 {% endif %}
 
 {% if upcoming_events %}
-<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2.5rem;">
+<div class="dash-section-head">
     <div class="section-label-sm">Próximos Eventos</div>
     {% if request.user.is_staff or request.user.is_superuser %}
     <a href="{% url 'event_manage' %}" style="font-size:.8rem;color:var(--gold-dark);text-decoration:none">Ver agenda completa <i class="fa fa-arrow-right"></i></a>

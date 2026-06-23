@@ -261,6 +261,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-width: 0;
 }
 
 .members-topbar {
@@ -317,6 +318,7 @@
 .members-content {
   padding: 2rem;
   flex: 1;
+  min-width: 0;
 }
 
 /* ── ALERTS ─────────────────────────────── */
