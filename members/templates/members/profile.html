@@ -23,11 +23,13 @@
     min-height: 40px;
     display: inline-flex;
     align-items: center;
+    overflow-wrap: anywhere;
 }
 .editable-field-empty { color: var(--text-muted); }
 .editable-field-input-wrap { display: none; width: 100%; }
 .editable-field.is-editing .editable-field-input-wrap { display: block; }
 .editable-field.is-editing .editable-field-display { display: none; }
+.editable-field-input-wrap .errorlist { margin-top: .45rem; }
 
 .profile-save-btn {
     min-height: 42px;
