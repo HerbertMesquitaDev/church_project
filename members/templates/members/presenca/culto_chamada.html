@@ -21,6 +21,58 @@
 .chamada-progress-bar { height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-bottom:1.25rem; }
 .chamada-progress-fill { height:100%;border-radius:20px;background:linear-gradient(90deg,#27ae60,#2ecc71);transition:width .4s; }
 .quick-btns { display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap; }
+.chamada-breadcrumb { display:flex;align-items:center;gap:.5rem;font-size:.85rem; }
+.chamada-breadcrumb-link { color:var(--gold); text-decoration:none; }
+.chamada-stats-row { display:flex; gap:1.5rem; }
+.chamada-quick-btn { font-size:.8rem; padding:.35rem .85rem; }
+.chamada-search { max-width:220px; font-size:.85rem; }
+.chamada-save-wrap {
+  position:sticky;
+  bottom:1rem;
+  display:flex;
+  justify-content:flex-end;
+  margin-top:1.5rem;
+  pointer-events:none;
+}
+.chamada-save-btn {
+  pointer-events:all;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+  padding:.75rem 2rem;
+  font-size:.95rem;
+}
+.modal-icon-wrap {
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  background:rgba(201,168,76,.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto .75rem;
+}
+.modal-icon-wrap i { font-size:1.4rem; color:var(--gold-dark); }
+.vis-names-wrap { display:none; margin-bottom:1.25rem; }
+.vis-label {
+  font-size:.75rem;
+  font-weight:600;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  display:block;
+  margin-bottom:.4rem;
+}
+.vis-label small { font-weight:400; }
+.modal-actions-row { display:flex; gap:.75rem; }
+.modal-confirm-btn { flex:1; }
+.modal-footer-link-wrap { text-align:center; margin-top:.75rem; }
+.modal-footer-link {
+  background:none;
+  border:none;
+  color:var(--text-muted);
+  font-size:.78rem;
+  cursor:pointer;
+  text-decoration:underline;
+}
 
 /* Modal */
 .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;padding:1rem; }
@@ -44,6 +96,44 @@
 [data-theme="dark"] .chamada-progress-bar { background:rgba(255,255,255,.08); }
 [data-theme="dark"] .modal-box { background:#1E1E24; }
 [data-theme="dark"] .modal-box h3 { color:#E8E4DC; }
+
+@media (max-width: 900px) {
+  .chamada-stats-row {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .9rem;
+  }
+  .chamada-stat {
+    min-width: 44%;
+    text-align: left;
+  }
+  .chamada-search {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+  .chamada-save-wrap {
+    bottom: .5rem;
+  }
+  .chamada-save-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .chamada-header {
+    padding: .9rem 1rem;
+  }
+  .chamada-breadcrumb {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .modal-actions-row {
+    flex-direction: column;
+  }
+}
 </style>
 {% endblock %}
 
@@ -51,14 +141,14 @@
 
 <!-- Header -->
 <div class="chamada-header">
-  <div style="display:flex;align-items:center;gap:.5rem;font-size:.85rem" class="text-muted">
-    <a href="{% url 'culto_manage' %}" style="color:var(--gold);text-decoration:none">
+  <div class="text-muted chamada-breadcrumb">
+    <a href="{% url 'culto_manage' %}" class="chamada-breadcrumb-link">
       <i class="fa fa-clipboard-check"></i> Presenças
     </a>
     <i class="fa fa-chevron-right" style="font-size:.65rem"></i>
     <span>{{ culto.date|date:"d/m/Y" }}</span>
   </div>
-  <div style="display:flex;gap:1.5rem">
+  <div class="chamada-stats-row">
     <div class="chamada-stat">
       <div class="chamada-stat-num" id="countPresente">{{ presente_count }}</div>
       <div class="chamada-stat-label">Membros</div>
@@ -85,13 +175,13 @@
 
 <!-- Seleção rápida -->
 <div class="quick-btns">
-  <button type="button" class="btn btn-outline" onclick="selectAll()" style="font-size:.8rem;padding:.35rem .85rem">
+  <button type="button" class="btn btn-outline chamada-quick-btn" onclick="selectAll()">
     <i class="fa fa-check-square"></i> Marcar todos
   </button>
-  <button type="button" class="btn btn-outline" onclick="clearAll()" style="font-size:.8rem;padding:.35rem .85rem">
+  <button type="button" class="btn btn-outline chamada-quick-btn" onclick="clearAll()">
     <i class="fa fa-square"></i> Desmarcar todos
   </button>
-  <input type="text" id="searchInput" class="form-input" placeholder="Buscar membro..." oninput="filterCards()" style="max-width:220px;font-size:.85rem">
+  <input type="text" id="searchInput" class="form-input chamada-search" placeholder="Buscar membro..." oninput="filterCards()">
 </div>
 
 {% if messages %}{% for msg in messages %}
@@ -130,10 +220,9 @@
   </div>
 
   <!-- Botão flutuante -->
-  <div style="position:sticky;bottom:1rem;display:flex;justify-content:flex-end;margin-top:1.5rem;pointer-events:none">
+  <div class="chamada-save-wrap">
     <button type="button" onclick="abrirModal()"
-      class="btn btn-primary"
-      style="pointer-events:all;box-shadow:0 4px 20px rgba(0,0,0,.25);padding:.75rem 2rem;font-size:.95rem">
+      class="btn btn-primary chamada-save-btn">
       <i class="fa fa-save"></i> Salvar chamada
     </button>
   </div>
@@ -143,8 +232,8 @@
 <div id="modalVisitantes" class="modal-overlay">
   <div class="modal-box">
     <div style="text-align:center;margin-bottom:1.25rem">
-      <div style="width:56px;height:56px;border-radius:50%;background:rgba(201,168,76,.12);display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
-        <i class="fa fa-person-walking-arrow-right" style="font-size:1.4rem;color:var(--gold-dark)"></i>
+      <div class="modal-icon-wrap">
+        <i class="fa fa-person-walking-arrow-right"></i>
       </div>
       <h3>Houve visitantes?</h3>
       <p>Informe quantos visitantes estiveram presentes neste culto.</p>
@@ -162,25 +251,25 @@
     </div>
 
     <!-- Nomes (só aparece quando count > 0) -->
-    <div id="visNamesWrap" style="display:none;margin-bottom:1.25rem">
-      <label style="font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:.4rem">
-        Nomes <small style="font-weight:400">(opcional — um por linha)</small>
+    <div id="visNamesWrap" class="vis-names-wrap">
+      <label class="vis-label">
+        Nomes <small>(opcional — um por linha)</small>
       </label>
       <textarea id="visNamesInput" class="visitor-names-area"
         placeholder="João Silva&#10;Maria Santos..."></textarea>
     </div>
 
-    <div style="display:flex;gap:.75rem">
-      <button type="button" onclick="confirmarESalvar()" class="btn btn-primary" style="flex:1">
+    <div class="modal-actions-row">
+      <button type="button" onclick="confirmarESalvar()" class="btn btn-primary modal-confirm-btn">
         <i class="fa fa-check"></i> Confirmar e salvar
       </button>
       <button type="button" onclick="fecharModal()" class="btn btn-outline">
         Cancelar
       </button>
     </div>
-    <div style="text-align:center;margin-top:.75rem">
+    <div class="modal-footer-link-wrap">
       <button type="button" onclick="salvarSemVisitantes()"
-        style="background:none;border:none;color:var(--text-muted);font-size:.78rem;cursor:pointer;text-decoration:underline">
+        class="modal-footer-link">
         Salvar sem registrar visitantes
       </button>
     </div>

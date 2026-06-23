@@ -2774,6 +2774,93 @@
     .manage-topbar { flex-direction: column; align-items: stretch; }
 }
 
+@media (max-width: 900px) {
+  .members-content {
+    overflow-x: clip;
+  }
+
+  .members-content img,
+  .members-content video,
+  .members-content iframe,
+  .members-content canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .form-page-wrap {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .manage-wrap,
+  .manage-topbar,
+  .manage-search-row,
+  .manage-actions,
+  .filter-form,
+  .filter-actions,
+  .form-actions,
+  .action-btns,
+  .status-form-inline {
+    flex-wrap: wrap;
+  }
+
+  .manage-topbar > .form-input,
+  .manage-topbar > select,
+  .manage-topbar > input,
+  .manage-search-row > .form-input,
+  .manage-search-row > select,
+  .manage-search-row > input,
+  .filter-field,
+  .filter-field-grow {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .filter-new-btn {
+    margin-left: 0;
+  }
+
+  .manage-table th,
+  .manage-table td {
+    padding: 0.65rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .members-content [style*="display:flex;justify-content:space-between;align-items:center"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.6rem !important;
+  }
+
+  .members-content [style*="display:flex;gap:2rem"],
+  .members-content [style*="display:flex;gap:1rem"],
+  .members-content [style*="display:flex;gap:.75rem"] {
+    flex-wrap: wrap !important;
+  }
+
+  .members-content [style*="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))"],
+  .members-content [style*="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))"],
+  .members-content [style*="grid-template-columns:repeat(auto-fill,minmax(260px,1fr))"],
+  .members-content [style*="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"],
+  .members-content [style*="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  .members-content [style*="max-width:700px"],
+  .members-content [style*="max-width:720px"],
+  .members-content [style*="max-width:600px"],
+  .members-content [style*="max-width:580px"],
+  .members-content [style*="max-width:560px"],
+  .members-content [style*="max-width:520px"],
+  .members-content [style*="max-width:500px"],
+  .members-content [style*="max-width:480px"] {
+    max-width: 100% !important;
+  }
+}
+
 /* ══ DARK MODE ══ */
 [data-theme="dark"] .notes-box       { background: #1E1E24; border-color: rgba(201,168,76,0.1); color: #E8E4DC; }
 [data-theme="dark"] .upload-card     { background: #1E1E24; border-color: rgba(201,168,76,0.1); }

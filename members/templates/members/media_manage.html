@@ -56,6 +56,15 @@
     font-size: .78rem; color: var(--text-muted);
 }
 .media-stat-pill strong { color: var(--text-heading); }
+.media-cell { display:flex; align-items:center; gap:.65rem; }
+.mm-filter-sm { min-width:130px; }
+.mm-filter-md { min-width:140px; }
+.mm-filter-lg { min-width:160px; }
+.mm-filter-grow { min-width:180px; flex:1; }
+.mm-action-col { width:120px; }
+.mm-date { white-space:nowrap; font-size:.85rem; color:var(--gold-dark); }
+.mm-empty { text-align:center; padding:3rem 2rem; }
+.mm-empty-icon { font-size:2rem; opacity:.25; display:block; margin-bottom:.75rem; }
 
 /* ── Dark mode ── */
 [data-theme="dark"] .media-type-video { background: rgba(231,76,60,.12);  color: #e87c6f; }
@@ -67,6 +76,20 @@
 [data-theme="dark"] .vis-members { background: rgba(201,168,76,.1);  color: #D4A94E; }
 [data-theme="dark"] .media-stat-pill { background: #1E1E24; border-color: rgba(201,168,76,.1); color: #9A9690; }
 [data-theme="dark"] .media-stat-pill strong { color: #E8E4DC; }
+
+@media (max-width: 900px) {
+    .mm-filter-sm,
+    .mm-filter-md,
+    .mm-filter-lg,
+    .mm-filter-grow {
+        min-width: 0;
+        width: 100%;
+        flex: 1 1 100%;
+    }
+    .media-cell {
+        align-items: flex-start;
+    }
+}
 </style>
 {% endblock %}
 
@@ -76,30 +99,30 @@
     <!-- ── Topbar: filtros + novo ── -->
     <div class="manage-topbar">
         <form method="get" class="manage-search-row">
-            <select name="secao" class="form-input" onchange="this.form.submit()" style="min-width:140px">
+            <select name="secao" class="form-input mm-filter-md" onchange="this.form.submit()">
                 <option value="">Todas as seções</option>
                 {% for val, label in sections %}
                 <option value="{{ val }}" {% if section == val %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
-            <select name="tipo" class="form-input" onchange="this.form.submit()" style="min-width:140px">
+            <select name="tipo" class="form-input mm-filter-md" onchange="this.form.submit()">
                 <option value="">Todos os tipos</option>
                 {% for val, label in tipos %}
                 <option value="{{ val }}" {% if tipo == val %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
-            <select name="categoria" class="form-input" onchange="this.form.submit()" style="min-width:160px">
+            <select name="categoria" class="form-input mm-filter-lg" onchange="this.form.submit()">
                 <option value="">Todas as categorias</option>
                 {% for cat in categories %}
                 <option value="{{ cat.pk }}" {% if cat_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
                 {% endfor %}
             </select>
-            <select name="pub" class="form-input" onchange="this.form.submit()" style="min-width:130px">
+            <select name="pub" class="form-input mm-filter-sm" onchange="this.form.submit()">
                 <option value="">Qualquer status</option>
                 <option value="1" {% if pub == '1' %}selected{% endif %}>Publicados</option>
                 <option value="0" {% if pub == '0' %}selected{% endif %}>Rascunhos</option>
             </select>
-            <input type="text" name="q" value="{{ q }}" placeholder="Buscar título ou pregador…" class="form-input" style="flex:1;min-width:180px">
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar título ou pregador…" class="form-input mm-filter-grow">
             <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
             {% if q or section or tipo or cat_id or pub %}
             <a href="{% url 'media_manage' %}" class="btn btn-outline" title="Limpar filtros"><i class="fa fa-times"></i></a>
@@ -138,7 +161,7 @@
                     <th>Vis.</th>
                     <th>Pub.</th>
                     <th>★</th>
-                    <th style="width:120px">Ações</th>
+                    <th class="mm-action-col">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -146,7 +169,7 @@
                 <tr>
                     <!-- Título + thumb -->
                     <td>
-                        <div style="display:flex;align-items:center;gap:.65rem">
+                        <div class="media-cell">
                             {% if item.thumbnail %}
                             <img src="{{ item.thumbnail.url }}" class="media-thumb" alt="">
                             {% else %}
@@ -239,7 +262,7 @@
                 <tr>
                     <td colspan="9" style="text-align:center;padding:3rem 2rem">
                         <i class="fa fa-photo-film" style="font-size:2rem;opacity:.25;display:block;margin-bottom:.75rem"></i>
-                        <strong class="text-muted">Nenhum item encontrado.</strong>
+                    <td class="hide-mobile mm-date">
                         {% if q or section or tipo or cat_id or pub %}
                         <br><small class="text-muted">Tente ajustar os filtros ou <a href="{% url 'media_manage' %}">limpar a busca</a>.</small>
                         {% else %}
@@ -247,8 +270,8 @@
                         {% endif %}
                     </td>
                 </tr>
-                {% endfor %}
-            </tbody>
+                        <td colspan="9" class="mm-empty">
+                            <i class="fa fa-photo-film mm-empty-icon"></i>
         </table>
     </div>
 

@@ -2,11 +2,40 @@
 {% block title %}Cursos — Gestão{% endblock %}
 {% block page_title %}Cursos{% endblock %}
 
+{% block extra_css %}
+<style>
+.course-filter-grow { flex:1; min-width:200px; }
+.course-cell { display:flex; align-items:center; gap:.6rem; }
+.course-cover {
+    width:40px;
+    height:28px;
+    object-fit:cover;
+    border-radius:4px;
+    flex-shrink:0;
+}
+.course-title { font-weight:500; }
+.course-actions-col { width:110px; }
+.course-btn-users { background:rgba(41,128,185,.1); color:#2980b9; }
+.course-empty { text-align:center; padding:2rem; }
+
+@media (max-width: 900px) {
+    .course-filter-grow {
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 100%;
+    }
+    .course-cell {
+        align-items: flex-start;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="manage-wrap">
     <div class="manage-topbar">
         <form method="get" class="manage-search-row">
-            <input type="text" name="q" value="{{ q }}" placeholder="Buscar curso..." class="form-input" style="flex:1;min-width:200px">
+            <input type="text" name="q" value="{{ q }}" placeholder="Buscar curso..." class="form-input course-filter-grow">
             <button type="submit" class="btn btn-outline"><i class="fa fa-search"></i></button>
         </form>
         <a href="{% url 'manage_course_create' %}" class="btn btn-primary"><i class="fa fa-plus"></i> Novo Curso</a>
@@ -24,19 +53,19 @@
                     <th>Aulas</th>
                     <th>Inscritos</th>
                     <th>Pub.</th>
-                    <th style="width:110px">Ações</th>
+                    <th class="course-actions-col">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for course in courses %}
                 <tr>
                     <td>
-                        <div style="display:flex;align-items:center;gap:.6rem">
+                        <div class="course-cell">
                             {% if course.cover %}
-                            <img src="{{ course.cover.url }}" style="width:40px;height:28px;object-fit:cover;border-radius:4px;flex-shrink:0">
+                            <img src="{{ course.cover.url }}" class="course-cover">
                             {% endif %}
                             <div>
-                                <span style="font-weight:500">{{ course.title }}</span>
+                                <span class="course-title">{{ course.title }}</span>
                                 {% if course.instructor %}<br><small class="text-muted">{{ course.instructor.get_full_name|default:course.instructor.username }}</small>{% endif %}
                             </div>
                         </div>
@@ -50,13 +79,13 @@
                         <div class="manage-actions">
                             <a href="{% url 'manage_modules' course.pk %}" class="manage-btn manage-btn-view" title="Módulos/Aulas"><i class="fa fa-list"></i></a>
                             <a href="{% url 'manage_course_edit' course.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
-                            <a href="{% url 'manage_enrollments' course.pk %}" class="manage-btn" title="Inscritos" style="background:rgba(41,128,185,.1);color:#2980b9"><i class="fa fa-users"></i></a>
+                            <a href="{% url 'manage_enrollments' course.pk %}" class="manage-btn course-btn-users" title="Inscritos"><i class="fa fa-users"></i></a>
                             <a href="{% url 'manage_course_delete' course.pk %}" class="manage-btn manage-btn-del" title="Excluir"><i class="fa fa-trash"></i></a>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="7" style="text-align:center;padding:2rem" class="text-muted">Nenhum curso cadastrado.</td></tr>
+                <tr><td colspan="7" class="text-muted course-empty">Nenhum curso cadastrado.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

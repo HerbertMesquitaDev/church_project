@@ -13,6 +13,25 @@
 .ebd-class-stat { font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:.3rem; }
 .ebd-class-stat strong { color:var(--text-heading); }
 .ebd-class-actions { display:flex;gap:.4rem;padding:.65rem 1.25rem;border-top:1px solid var(--border); }
+.ebd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+.ebd-manage-btn {
+  font-size:.8rem;
+  padding:.35rem .85rem;
+  flex:1;
+  text-align:center;
+}
+.ebd-empty {
+  grid-column:1/-1;
+  text-align:center;
+  padding:3rem;
+  color:var(--text-muted);
+}
+.ebd-empty-icon {
+  font-size:2.5rem;
+  opacity:.2;
+  display:block;
+  margin-bottom:.75rem;
+}
 .active-pill  { display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(39,174,96,.1);color:#1a7a40; }
 .inactive-pill{ display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(149,165,166,.12);color:#666; }
 [data-theme="dark"] .ebd-class-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
@@ -21,6 +40,16 @@
 [data-theme="dark"] .ebd-class-actions { border-color:rgba(201,168,76,.08); }
 [data-theme="dark"] .active-pill  { background:rgba(39,174,96,.1);color:#58d68d; }
 [data-theme="dark"] .inactive-pill{ background:rgba(149,165,166,.08);color:#9A9690; }
+
+@media (max-width: 768px) {
+  .ebd-class-actions {
+    flex-wrap: wrap;
+  }
+  .ebd-manage-btn {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
 </style>
 {% endblock %}
 
@@ -52,7 +81,7 @@
 
 <div class="section-label-sm" style="margin-bottom:.75rem">Turmas</div>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+<div class="ebd-grid">
   {% for cls in classes %}
   <div class="ebd-class-card">
     <div class="ebd-class-header">
@@ -71,7 +100,7 @@
       <span class="ebd-class-stat"><i class="fa fa-book-open" style="color:var(--gold-dark)"></i> <strong>{{ cls.trimesters.all|length }}</strong></span>
     </div>
     <div class="ebd-class-actions">
-      <a href="{% url 'ebd_trimester_manage' class_pk=cls.pk %}" class="btn btn-primary" style="font-size:.8rem;padding:.35rem .85rem;flex:1;text-align:center">
+      <a href="{% url 'ebd_trimester_manage' class_pk=cls.pk %}" class="btn btn-primary ebd-manage-btn">
         <i class="fa fa-list"></i> Trimestres
       </a>
       <a href="{% url 'ebd_class_edit' cls.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a>
@@ -81,8 +110,8 @@
     </div>
   </div>
   {% empty %}
-  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">
-    <i class="fa fa-users" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+  <div class="ebd-empty">
+    <i class="fa fa-users ebd-empty-icon"></i>
     Nenhuma turma cadastrada ainda.
     <br><a href="{% url 'ebd_class_create' %}" class="btn btn-primary" style="margin-top:.75rem">Criar primeira turma</a>
   </div>

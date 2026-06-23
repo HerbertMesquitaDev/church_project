@@ -27,6 +27,25 @@
 [data-theme="dark"] .type-badge-ministry { background:rgba(108,52,131,.15);color:#a569bd; }
 [data-theme="dark"] .type-badge-region   { background:rgba(41,128,185,.12);color:#5dade2; }
 [data-theme="dark"] .type-badge-other    { background:rgba(149,165,166,.08);color:#9A9690; }
+
+.cell-filter-grow { flex:1; min-width:160px; }
+.cell-filter-type { min-width:150px; }
+.cell-filter-status { min-width:130px; }
+.cell-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+.cell-head-row { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; margin-bottom:.4rem; }
+.cell-members-btn { font-size:.78rem; padding:.3rem .75rem; flex:1; text-align:center; }
+.cell-empty { grid-column:1/-1; text-align:center; padding:3rem; color:var(--text-muted); }
+.cell-empty-icon { font-size:2.5rem; opacity:.2; display:block; margin-bottom:.75rem; }
+
+@media (max-width: 900px) {
+  .cell-filter-grow,
+  .cell-filter-type,
+  .cell-filter-status {
+    min-width: 0;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
 </style>
 {% endblock %}
 
@@ -55,14 +74,14 @@
 <!-- Filtros -->
 <div class="manage-topbar" style="margin-bottom:1.25rem">
   <form method="get" class="manage-search-row">
-    <input type="text" name="q" value="{{ q }}" placeholder="Buscar célula..." class="form-input" style="flex:1;min-width:160px">
-    <select name="tipo" class="form-input" onchange="this.form.submit()" style="min-width:150px">
+    <input type="text" name="q" value="{{ q }}" placeholder="Buscar célula..." class="form-input cell-filter-grow">
+    <select name="tipo" class="form-input cell-filter-type" onchange="this.form.submit()">
       <option value="">Todos os tipos</option>
       {% for val, label in type_choices %}
       <option value="{{ val }}" {% if tipo == val %}selected{% endif %}>{{ label }}</option>
       {% endfor %}
     </select>
-    <select name="ativo" class="form-input" onchange="this.form.submit()" style="min-width:130px">
+    <select name="ativo" class="form-input cell-filter-status" onchange="this.form.submit()">
       <option value="">Qualquer status</option>
       <option value="1" {% if ativo == '1' %}selected{% endif %}>Ativas</option>
       <option value="0" {% if ativo == '0' %}selected{% endif %}>Inativas</option>
@@ -80,7 +99,7 @@
 {% endfor %}{% endif %}
 
 <!-- Grid de células -->
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem">
+<div class="cell-grid">
   {% for cell in cells %}
   <div class="cell-card">
     {% if cell.cover %}
@@ -90,7 +109,7 @@
     {% endif %}
 
     <div class="cell-body">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.4rem">
+      <div class="cell-head-row">
         <div class="cell-name">{{ cell.name }}</div>
         <span class="badge type-badge-{{ cell.cell_type }}" style="flex-shrink:0;font-size:.65rem">{{ cell.get_cell_type_display }}</span>
       </div>
@@ -114,7 +133,7 @@
     </div>
 
     <div class="cell-actions">
-      <a href="{% url 'cell_members_dashboard' cell.pk %}" class="btn btn-outline" style="font-size:.78rem;padding:.3rem .75rem;flex:1;text-align:center">
+      <a href="{% url 'cell_members_dashboard' cell.pk %}" class="btn btn-outline cell-members-btn">
         <i class="fa fa-users"></i> Membros
       </a>
       <a href="{% url 'cell_detail' cell.pk %}" class="manage-btn manage-btn-view" title="Ver mural" target="_blank"><i class="fa fa-eye"></i></a>
@@ -125,8 +144,8 @@
     </div>
   </div>
   {% empty %}
-  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)">
-    <i class="fa fa-sitemap" style="font-size:2.5rem;opacity:.2;display:block;margin-bottom:.75rem"></i>
+  <div class="cell-empty">
+    <i class="fa fa-sitemap cell-empty-icon"></i>
     {% if q or tipo or ativo %}Nenhuma célula encontrada com esses filtros.
     {% else %}Nenhuma célula cadastrada ainda.{% endif %}
     <br><a href="{% url 'cell_create_dashboard' %}" class="btn btn-primary" style="margin-top:.75rem">Criar primeira célula</a>

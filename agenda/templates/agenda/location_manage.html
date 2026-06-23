@@ -1,47 +1,133 @@
 {% extends 'members/base_members.html' %}
 {% block title %}Gerenciar Locais{% endblock %}
 {% block page_title %}Gerenciar Locais{% endblock %}
+
+{% block extra_css %}
+<style>
+.loc-topbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1.5rem;
+    flex-wrap:wrap;
+    gap:1rem;
+}
+.loc-btn {
+    font-size:0.85rem;
+    padding:0.45rem 1rem;
+}
+.loc-card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+}
+.loc-table-wrap {
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+}
+.loc-table {
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.88rem;
+    min-width:560px;
+}
+.loc-head {
+    background:var(--navy);
+    color:rgba(255,255,255,0.9);
+    padding:0.75rem 1rem;
+    text-align:left;
+    font-size:0.72rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+}
+.loc-cell {
+    padding:0.75rem 1rem;
+    border-bottom:1px solid var(--border);
+}
+.loc-address { color:var(--text-muted); }
+.loc-pill {
+    padding:2px 10px;
+    border-radius:20px;
+    font-size:0.75rem;
+    font-weight:600;
+}
+.loc-pill-active { background:rgba(39,174,96,0.12); color:#1a7a40; }
+.loc-pill-inactive { background:rgba(149,165,166,0.15); color:var(--text-muted); }
+.loc-actions { display:flex; gap:0.4rem; flex-wrap:wrap; }
+.loc-action {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+    text-decoration:none;
+    font-size:0.78rem;
+}
+.loc-action-edit { color:var(--navy); }
+.loc-action-del { color:#e74c3c; }
+.loc-empty {
+    text-align:center;
+    padding:3rem 2rem;
+    color:var(--text-muted);
+}
+.loc-empty-icon {
+    font-size:2.5rem;
+    opacity:0.3;
+    display:block;
+    margin-bottom:0.75rem;
+}
+
+@media (max-width: 768px) {
+    .loc-topbar > * {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
 {% block content %}
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-  <a href="{% url 'agenda_view' %}" class="btn btn-outline" style="font-size:0.85rem;padding:0.45rem 1rem;">
+<div class="loc-topbar">
+  <a href="{% url 'agenda_view' %}" class="btn btn-outline loc-btn">
     <i class="fa fa-arrow-left"></i> Agenda
   </a>
-  <a href="{% url 'location_create' %}" class="btn btn-primary" style="font-size:0.85rem;padding:0.45rem 1rem;">
+  <a href="{% url 'location_create' %}" class="btn btn-primary loc-btn">
     <i class="fa fa-plus"></i> Novo Local
   </a>
 </div>
 
-<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+<div class="loc-card">
   {% if locations %}
-  <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-  <table style="width:100%;border-collapse:collapse;font-size:0.88rem;min-width:560px;">
+  <div class="loc-table-wrap">
+  <table class="loc-table">
     <thead>
       <tr>
-        <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Local</th>
-        <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Endereço</th>
-        <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Capacidade</th>
-        <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Status</th>
-        <th style="background:var(--navy);color:rgba(255,255,255,0.9);padding:0.75rem 1rem;text-align:left;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;">Ações</th>
+        <th class="loc-head">Local</th>
+        <th class="loc-head">Endereço</th>
+        <th class="loc-head">Capacidade</th>
+        <th class="loc-head">Status</th>
+        <th class="loc-head">Ações</th>
       </tr>
     </thead>
     <tbody>
       {% for loc in locations %}
       <tr>
-        <td style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);"><strong>{{ loc.name }}</strong></td>
-        <td style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--text-muted);">{{ loc.address|default:"—" }}</td>
-        <td style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);">{{ loc.capacity|default:"—" }}</td>
-        <td style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);">
+        <td class="loc-cell"><strong>{{ loc.name }}</strong></td>
+        <td class="loc-cell loc-address">{{ loc.address|default:"—" }}</td>
+        <td class="loc-cell">{{ loc.capacity|default:"—" }}</td>
+        <td class="loc-cell">
           {% if loc.active %}
-          <span style="background:rgba(39,174,96,0.12);color:#1a7a40;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;">Ativo</span>
+          <span class="loc-pill loc-pill-active">Ativo</span>
           {% else %}
-          <span style="background:rgba(149,165,166,0.15);color:var(--text-muted);padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;">Inativo</span>
+          <span class="loc-pill loc-pill-inactive">Inativo</span>
           {% endif %}
         </td>
-        <td style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);">
-          <div style="display:flex;gap:0.4rem;">
-            <a href="{% url 'location_edit' loc.pk %}" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);color:var(--navy);text-decoration:none;font-size:0.78rem;" title="Editar"><i class="fa fa-pen"></i></a>
-            <a href="{% url 'location_delete' loc.pk %}" style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:var(--radius);border:1px solid var(--border);color:#e74c3c;text-decoration:none;font-size:0.78rem;" title="Excluir"><i class="fa fa-trash"></i></a>
+        <td class="loc-cell">
+          <div class="loc-actions">
+            <a href="{% url 'location_edit' loc.pk %}" class="loc-action loc-action-edit" title="Editar"><i class="fa fa-pen"></i></a>
+            <a href="{% url 'location_delete' loc.pk %}" class="loc-action loc-action-del" title="Excluir"><i class="fa fa-trash"></i></a>
           </div>
         </td>
       </tr>
@@ -50,8 +136,8 @@
   </table>
   </div>
   {% else %}
-  <div style="text-align:center;padding:3rem 2rem;color:var(--text-muted);">
-    <i class="fa fa-map-marker-alt" style="font-size:2.5rem;opacity:0.3;display:block;margin-bottom:0.75rem;"></i>
+  <div class="loc-empty">
+    <i class="fa fa-map-marker-alt loc-empty-icon"></i>
     <strong>Nenhum local cadastrado ainda.</strong>
     <p><a href="{% url 'location_create' %}">Adicionar primeiro local</a></p>
   </div>

@@ -23,32 +23,48 @@
 .btn-csv:hover { background:rgba(41,128,185,.15); }
 .filter-inline { display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;margin-bottom:.65rem; }
 .filter-inline select { font-size:.78rem;padding:.25rem .5rem;border:1px solid var(--border);border-radius:6px;background:var(--surface-alt);color:var(--text); }
+.export-note { margin-bottom:1.5rem; font-size:.88rem; }
+.export-note i { color:var(--gold-dark); }
+.export-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; }
+.export-row { display:flex; align-items:flex-start; gap:1rem; }
+.export-content { flex:1; min-width:0; }
+.export-btns-top { margin-top:.65rem; }
 
 [data-theme="dark"] .export-card { background:#1E1E24;border-color:rgba(201,168,76,.1); }
 [data-theme="dark"] .export-title { color:#E8E4DC; }
 [data-theme="dark"] .btn-xlsx { background:rgba(39,124,60,.08);color:#58d68d;border-color:rgba(39,124,60,.2); }
 [data-theme="dark"] .btn-csv  { background:rgba(41,128,185,.08);color:#5dade2;border-color:rgba(41,128,185,.2); }
 [data-theme="dark"] .filter-inline select { background:#25252D;border-color:rgba(201,168,76,.15);color:#E8E4DC; }
+
+@media (max-width: 768px) {
+  .export-grid {
+    grid-template-columns: 1fr;
+  }
+  .export-row {
+    flex-direction: column;
+    gap: .75rem;
+  }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<p class="text-muted" style="margin-bottom:1.5rem;font-size:.88rem">
-  <i class="fa fa-info-circle" style="color:var(--gold-dark)"></i>
+<p class="text-muted export-note">
+  <i class="fa fa-info-circle"></i>
   Todos os arquivos Excel (.xlsx) são gerados com formatação e estilo da igreja.
   Os arquivos CSV são compatíveis com qualquer planilha.
 </p>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem">
+<div class="export-grid">
 
   <!-- Membros -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(41,128,185,.1)">
         <i class="fa fa-users" style="color:#2475a8"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Lista de Membros</div>
         <div class="export-count">{{ stats.membros }} membro(s) aprovado(s)</div>
         <div class="filter-inline">
@@ -78,11 +94,11 @@
 
   <!-- Presenças -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(201,168,76,.1)">
         <i class="fa fa-clipboard-check" style="color:var(--gold-dark)"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Controle de Presenças</div>
         <div class="export-count">{{ stats.cultos }} culto(s) registrado(s)</div>
         <div class="filter-inline">
@@ -110,11 +126,11 @@
 
   <!-- Contribuições -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(39,174,96,.1)">
         <i class="fa fa-hand-holding-heart" style="color:#27ae60"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Contribuições</div>
         <div class="export-count">{{ stats.contribuicoes }} registro(s)</div>
         <div class="filter-inline">
@@ -141,14 +157,14 @@
 
   <!-- Eventos -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(108,52,131,.1)">
         <i class="fa fa-calendar-check" style="color:#6c3483"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Inscrições em Eventos</div>
         <div class="export-count">{{ stats.eventos }} inscrição(ões)</div>
-        <div class="export-btns" style="margin-top:.65rem">
+        <div class="export-btns export-btns-top">
           <a href="{% url 'exportar_eventos' %}?fmt=xlsx" class="btn-xlsx">
             <i class="fa fa-file-excel"></i> Excel (todos)
           </a>
@@ -159,14 +175,14 @@
 
   <!-- Visitantes -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(231,76,60,.08)">
         <i class="fa fa-door-open" style="color:#c0392b"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Visitantes</div>
         <div class="export-count">{{ stats.visitantes }} visitante(s)</div>
-        <div class="export-btns" style="margin-top:.65rem">
+        <div class="export-btns export-btns-top">
           <a href="{% url 'exportar_visitantes' %}?fmt=xlsx" class="btn-xlsx">
             <i class="fa fa-file-excel"></i> Excel
           </a>
@@ -180,11 +196,11 @@
 
   <!-- Aniversariantes -->
   <div class="export-card">
-    <div style="display:flex;align-items:flex-start;gap:1rem">
+    <div class="export-row">
       <div class="export-icon" style="background:rgba(243,156,18,.1)">
         <i class="fa fa-cake-candles" style="color:#f39c12"></i>
       </div>
-      <div style="flex:1">
+      <div class="export-content">
         <div class="export-title">Aniversariantes</div>
         <div class="export-count">{{ stats.aniversariantes }} com data cadastrada</div>
         <div class="filter-inline">
