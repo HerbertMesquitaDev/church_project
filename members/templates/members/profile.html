@@ -2,6 +2,39 @@
 {% block title %}Meu Perfil{% endblock %}
 {% block page_title %}Meu Perfil{% endblock %}
 
+{% block extra_css %}
+<style>
+.editable-field {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+.editable-field-display {
+    font-size: 0.88rem;
+    color: var(--text);
+    padding: 0.6rem 0.75rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-alt);
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+.editable-field-empty { color: var(--text-muted); }
+.editable-field-input-wrap { display: none; width: 100%; }
+.editable-field.is-editing .editable-field-input-wrap { display: block; }
+.editable-field.is-editing .editable-field-display { display: none; }
+
+@media (max-width: 640px) {
+    .editable-field-edit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="profile-layout">
 
@@ -26,9 +59,56 @@
             <div class="form-grid">
                 <div class="form-group"><label>Nome</label>{{ form.first_name }}</div>
                 <div class="form-group"><label>Sobrenome</label>{{ form.last_name }}</div>
-                <div class="form-group"><label>E-mail</label>{{ form.email }}</div>
-                <div class="form-group"><label>Telefone</label>{{ form.phone }}</div>
-                <div class="form-group"><label>Data de Nascimento</label>{{ form.birth_date }}</div>
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <div class="editable-field {% if form.email.errors %}is-editing{% endif %}" id="emailField">
+                        <div class="editable-field-display {% if not request.user.email %}editable-field-empty{% endif %}">
+                            {{ request.user.email|default:"Não informado" }}
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm editable-field-edit-btn" id="emailEditBtn">
+                            <i class="fa fa-pen"></i> Editar
+                        </button>
+                        <div class="editable-field-input-wrap">
+                            {{ form.email }}
+                            {% if form.email.errors %}<ul class="errorlist">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <div class="editable-field {% if form.phone.errors %}is-editing{% endif %}" id="phoneField">
+                        <div class="editable-field-display {% if not profile.phone %}editable-field-empty{% endif %}">
+                            {{ profile.phone|default:"Não informado" }}
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm editable-field-edit-btn" id="phoneEditBtn">
+                            <i class="fa fa-pen"></i> Editar
+                        </button>
+                        <div class="editable-field-input-wrap">
+                            {{ form.phone }}
+                            {% if form.phone.errors %}<ul class="errorlist">{% for e in form.phone.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Data de Nascimento</label>
+                    <div class="editable-field {% if form.birth_date.errors %}is-editing{% endif %}" id="birthDateField">
+                        <div class="editable-field-display {% if not profile.birth_date %}editable-field-empty{% endif %}" id="birthDateDisplay">
+                            {% if profile.birth_date %}
+                                {{ profile.birth_date|date:"d/m/Y" }}
+                            {% else %}
+                                Não informado
+                            {% endif %}
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm editable-field-edit-btn" id="birthDateEditBtn">
+                            <i class="fa fa-pen"></i> Editar
+                        </button>
+                        <div class="editable-field-input-wrap" id="birthDateInputWrap">
+                            {{ form.birth_date }}
+                            <small class="form-hint">Clique no calendário para ajustar a data.</small>
+                            {% if form.birth_date.errors %}<ul class="errorlist">{% for e in form.birth_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="form-section-title">Foto de Perfil</div>
@@ -156,5 +236,37 @@ addBtn.addEventListener('click', () => {
     formset.appendChild(newRow);
     totalForms.value = idx + 1;
 });
+
+function bindEditableField(fieldId, buttonId, inputId, openPicker) {
+    const field = document.getElementById(fieldId);
+    const button = document.getElementById(buttonId);
+    const input = document.getElementById(inputId);
+    if (!field || !button || !input) return;
+
+    function syncButtonLabel() {
+        if (field.classList.contains('is-editing')) {
+            button.innerHTML = '<i class="fa fa-times"></i> Fechar';
+        } else {
+            button.innerHTML = '<i class="fa fa-pen"></i> Editar';
+        }
+    }
+
+    button.addEventListener('click', function() {
+        field.classList.toggle('is-editing');
+        if (field.classList.contains('is-editing')) {
+            input.focus();
+            if (openPicker && typeof input.showPicker === 'function') {
+                input.showPicker();
+            }
+        }
+        syncButtonLabel();
+    });
+
+    syncButtonLabel();
+}
+
+bindEditableField('emailField', 'emailEditBtn', 'id_email', false);
+bindEditableField('phoneField', 'phoneEditBtn', 'id_phone', false);
+bindEditableField('birthDateField', 'birthDateEditBtn', 'id_birth_date', true);
 </script>
 {% endblock %}
