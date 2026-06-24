@@ -156,16 +156,26 @@
         min-height: 0;
     }
 
-    .dash-section-head a,
-    .dash-summary-row a,
-    .crud-new-btn {
+    .dash-section-head > a,
+    .dash-summary-row > a {
         width: 100%;
         justify-content: center;
     }
 
     .crud-item,
     .crud-item-main {
-        align-items: flex-start;
+        align-items: center;
+    }
+
+    .crud-item .crud-new-btn {
+        width: 26px;
+        height: 26px;
+        min-width: 26px;
+        margin-left: auto;
+        align-self: center;
+        display: inline-flex;
+        justify-content: center;
+        padding: 0;
     }
 }
 
