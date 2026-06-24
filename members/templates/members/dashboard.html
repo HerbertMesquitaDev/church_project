@@ -41,6 +41,89 @@
 .crud-group-wide { grid-column: 1 / -1; }
 .crud-group-title-between { justify-content: space-between; }
 
+.dashboard-welcome,
+.stat-card,
+.crud-group,
+.offering-chart-wrap {
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+
+.dashboard-welcome {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-welcome h2 {
+    line-height: 1.2;
+}
+
+.dashboard-welcome p {
+    line-height: 1.5;
+}
+
+.dashboard-welcome p strong {
+    color: rgba(250,247,242,0.95);
+}
+
+.stats-grid .stat-card {
+    min-height: 96px;
+}
+
+.stat-card:hover {
+    transform: translateY(-1px);
+}
+
+.stat-action,
+.crud-item,
+.crud-item-main,
+.crud-new-btn,
+.dash-section-head a,
+.dash-summary-row a {
+    min-height: 40px;
+}
+
+.crud-item,
+.crud-item-main,
+.dash-summary-row,
+.dash-events .dash-event-item {
+    min-width: 0;
+}
+
+.crud-item-title,
+.crud-item-sub,
+.dash-summary-row,
+.dash-events .dash-event-item strong,
+.dash-events .dash-event-item small {
+    overflow-wrap: anywhere;
+}
+
+.stat-action:focus-visible,
+.crud-item:focus-visible,
+.crud-item-main:focus-visible,
+.crud-new-btn:focus-visible,
+.dash-section-head a:focus-visible,
+.dash-summary-row a:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+[data-theme="dark"] .dashboard-welcome {
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-welcome,
+    .stat-card,
+    .crud-group,
+    .offering-chart-wrap {
+        transition: none;
+    }
+
+    .stat-card:hover {
+        transform: none;
+    }
+}
+
 @media (max-width: 768px) {
     .dash-section-head,
     .dash-section-head-meta,
@@ -60,6 +143,42 @@
     }
     .dash-student-grid { grid-template-columns: 1fr; }
     .offering-chart-wrap { padding: .85rem .85rem .65rem !important; }
+
+    .dashboard-welcome {
+        padding: 1rem 1rem;
+    }
+
+    .dashboard-welcome h2 {
+        font-size: 1.15rem;
+    }
+
+    .stats-grid .stat-card {
+        min-height: 0;
+    }
+
+    .dash-section-head a,
+    .dash-summary-row a,
+    .crud-new-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .crud-item,
+    .crud-item-main {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .dash-empty-item {
+        flex-direction: column;
+        text-align: center;
+        gap: .5rem;
+    }
+
+    .dash-empty-item a {
+        margin-left: 0 !important;
+    }
 }
 </style>
 {% endblock %}

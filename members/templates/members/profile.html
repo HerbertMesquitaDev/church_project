@@ -25,11 +25,56 @@
     align-items: center;
     overflow-wrap: anywhere;
 }
+.editable-field-display strong {
+    color: var(--text-heading);
+}
 .editable-field-empty { color: var(--text-muted); }
 .editable-field-input-wrap { display: none; width: 100%; }
 .editable-field.is-editing .editable-field-input-wrap { display: block; }
 .editable-field.is-editing .editable-field-display { display: none; }
 .editable-field-input-wrap .errorlist { margin-top: .45rem; }
+
+.profile-card,
+.profile-form-wrap,
+.testimony-status-card,
+.ministry-formset-row {
+    transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.profile-form-wrap {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+}
+
+.profile-card h3 {
+    line-height: 1.25;
+}
+
+.ministry-tag {
+    margin-top: .15rem;
+}
+
+.editable-field-edit-btn,
+.profile-save-btn,
+.profile-testimony .btn-primary,
+#addMinistry {
+    min-height: 42px;
+}
+
+.editable-field-edit-btn:focus-visible,
+.profile-save-btn:focus-visible,
+.profile-testimony .btn-primary:focus-visible,
+#addMinistry:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}
+
+.members-form .form-group:focus-within > label {
+    color: var(--gold-dark);
+}
+
+[data-theme="dark"] .profile-form-wrap {
+    box-shadow: none;
+}
 
 .profile-save-btn {
     min-height: 42px;
@@ -50,6 +95,11 @@
     font-size: 1.1rem;
 }
 
+.profile-card h3,
+.ministry-tag {
+    overflow-wrap: anywhere;
+}
+
 .testimony-date {
     color: var(--text-muted);
 }
@@ -62,6 +112,15 @@
     .profile-card,
     .profile-form-wrap {
         padding: 1.1rem;
+    }
+
+    .profile-card {
+        text-align: left;
+    }
+
+    .profile-card .profile-photo,
+    .profile-card .profile-photo-placeholder {
+        margin: 0 0 .8rem;
     }
 
     .editable-field {
@@ -79,6 +138,9 @@
     }
 
     .ministry-formset-row {
+        flex-direction: column;
+        align-items: stretch;
+        flex-wrap: nowrap;
         gap: .6rem;
         padding: .8rem;
     }
@@ -96,8 +158,26 @@
 }
 
 @media (max-width: 640px) {
+    .profile-layout {
+        gap: .85rem;
+    }
+
+    .profile-card,
+    .profile-form-wrap {
+        padding: .9rem;
+    }
+
     .profile-testimony {
         margin-top: 2rem;
+    }
+
+    .members-form .form-section-title {
+        letter-spacing: .12em;
+    }
+
+    .editable-field-display {
+        font-size: .85rem;
+        min-height: 42px;
     }
 }
 </style>
