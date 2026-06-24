@@ -75,6 +75,77 @@
 .member-role-help { margin-top:.6rem; display:block; }
 .member-actions { margin-top:2rem; }
 
+.member-hero {
+  margin-bottom: 1rem;
+}
+
+.member-hero p {
+  max-width: 760px;
+}
+
+.member-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.member-meta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .85rem .95rem;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  min-width: 0;
+}
+
+.member-meta-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(201,168,76,.12);
+  color: var(--gold-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: .86rem;
+}
+
+.member-meta-content { min-width: 0; }
+
+.member-meta-label {
+  display: block;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+}
+
+.member-meta-value {
+  display: block;
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+
+[data-theme="dark"] .member-meta-card {
+  background: #1E1E24;
+  border-color: rgba(201,168,76,.1);
+}
+
+[data-theme="dark"] .member-meta-icon {
+  background: rgba(201,168,76,.08);
+  color: #D4A94E;
+}
+
+[data-theme="dark"] .member-meta-value {
+  color: #E8E4DC;
+}
+
 @media (max-width: 900px) {
   .member-form-head {
     align-items:flex-start;
@@ -103,10 +174,54 @@
     justify-content:center;
   }
 }
+
+@media (max-width: 640px) {
+  .member-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="dashboard-welcome member-hero">
+  <div>
+    <h2>Editar Membro</h2>
+    <p>Ajuste dados, permissões e status do membro com o mesmo padrão visual da dashboard.</p>
+  </div>
+</div>
+
+<div class="member-meta-grid">
+  <div class="member-meta-card">
+    <span class="member-meta-icon"><i class="fa fa-user"></i></span>
+    <span class="member-meta-content">
+      <span class="member-meta-label">Grupo Atual</span>
+      <span class="member-meta-value">{{ profile.get_role_display }}</span>
+    </span>
+  </div>
+  <div class="member-meta-card">
+    <span class="member-meta-icon"><i class="fa fa-envelope"></i></span>
+    <span class="member-meta-content">
+      <span class="member-meta-label">E-mail</span>
+      <span class="member-meta-value">{{ profile.user.email|default:"Não informado" }}</span>
+    </span>
+  </div>
+  <div class="member-meta-card">
+    <span class="member-meta-icon"><i class="fa fa-phone"></i></span>
+    <span class="member-meta-content">
+      <span class="member-meta-label">Telefone</span>
+      <span class="member-meta-value">{{ profile.phone|default:"Não informado" }}</span>
+    </span>
+  </div>
+  <div class="member-meta-card">
+    <span class="member-meta-icon"><i class="fa fa-check-circle"></i></span>
+    <span class="member-meta-content">
+      <span class="member-meta-label">Batismo</span>
+      <span class="member-meta-value">{% if profile.baptized %}Sim{% else %}Não{% endif %}</span>
+    </span>
+  </div>
+</div>
+
 <div class="form-page-wrap">
 
   <div class="member-form-head">

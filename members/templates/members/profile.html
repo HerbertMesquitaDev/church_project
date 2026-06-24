@@ -10,6 +10,65 @@
     gap: 0.6rem;
     flex-wrap: wrap;
 }
+
+.profile-hero {
+    margin-bottom: 1rem;
+}
+
+.profile-hero p {
+    max-width: 760px;
+}
+
+.profile-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+.profile-meta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: .85rem .95rem;
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    min-width: 0;
+}
+
+.profile-meta-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(201,168,76,0.12);
+    color: var(--gold-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: .86rem;
+}
+
+.profile-meta-content {
+    min-width: 0;
+}
+
+.profile-meta-label {
+    display: block;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+}
+
+.profile-meta-value {
+    display: block;
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    overflow-wrap: anywhere;
+}
 .editable-field > * {
     min-width: 0;
 }
@@ -74,6 +133,20 @@
 
 [data-theme="dark"] .profile-form-wrap {
     box-shadow: none;
+}
+
+[data-theme="dark"] .profile-meta-card {
+    background: #1E1E24;
+    border-color: rgba(201,168,76,0.1);
+}
+
+[data-theme="dark"] .profile-meta-icon {
+    background: rgba(201,168,76,0.08);
+    color: #D4A94E;
+}
+
+[data-theme="dark"] .profile-meta-value {
+    color: #E8E4DC;
 }
 
 .profile-save-btn {
@@ -158,6 +231,10 @@
 }
 
 @media (max-width: 640px) {
+    .profile-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
     .profile-layout {
         gap: .85rem;
     }
@@ -184,6 +261,48 @@
 {% endblock %}
 
 {% block content %}
+<div class="dashboard-welcome profile-hero">
+    <div>
+        <h2>Meu Perfil</h2>
+        <p>Atualize seus dados pessoais, foto, preferências e ministérios no mesmo padrão visual da dashboard.</p>
+    </div>
+</div>
+
+<div class="profile-meta-grid">
+    <div class="profile-meta-card">
+        <span class="profile-meta-icon"><i class="fa fa-envelope"></i></span>
+        <span class="profile-meta-content">
+            <span class="profile-meta-label">E-mail</span>
+            <span class="profile-meta-value">{{ request.user.email|default:"Não informado" }}</span>
+        </span>
+    </div>
+    <div class="profile-meta-card">
+        <span class="profile-meta-icon"><i class="fa fa-phone"></i></span>
+        <span class="profile-meta-content">
+            <span class="profile-meta-label">Telefone</span>
+            <span class="profile-meta-value">{{ profile.phone|default:"Não informado" }}</span>
+        </span>
+    </div>
+    <div class="profile-meta-card">
+        <span class="profile-meta-icon"><i class="fa fa-church"></i></span>
+        <span class="profile-meta-content">
+            <span class="profile-meta-label">Ministérios</span>
+            <span class="profile-meta-value">{{ profile.member_ministries.count }}</span>
+        </span>
+    </div>
+    <div class="profile-meta-card">
+        <span class="profile-meta-icon"><i class="fa fa-shield-alt"></i></span>
+        <span class="profile-meta-content">
+            <span class="profile-meta-label">LGPD Imagem</span>
+            <span class="profile-meta-value">
+                {% if profile.image_consent and not profile.image_consent_revoked %}Autorizado
+                {% elif profile.image_consent_revoked %}Revogado
+                {% else %}Pendente{% endif %}
+            </span>
+        </span>
+    </div>
+</div>
+
 <div class="profile-layout">
 
     <div class="profile-card">
