@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.utils.html import strip_tags
 from django.core.paginator import Paginator
 from django.db.models import Q
+from html import unescape
 
 from members.permissions import is_teacher, teacher_or_staff_required
 from .models import (Course, Module, Lesson, Enrollment, LessonProgress,
@@ -45,6 +47,13 @@ def get_progress(user, course):
     )
 
 
+def normalize_rich_text(text):
+    """Converts escaped/HTML-rich content into plain display text."""
+    if not text:
+        return ''
+    return strip_tags(unescape(text)).strip()
+
+
 # ══════════════════════════════════════════════════════════
 # ── ALUNO — Listagem e detalhes ───────────────────────────
 # ══════════════════════════════════════════════════════════
@@ -73,6 +82,9 @@ def course_list(request):
     page_obj   = Paginator(qs, 12).get_page(request.GET.get('page'))
     categories = CourseCategory.objects.all()
 
+    for course in page_obj.object_list:
+        course.description_plain = normalize_rich_text(course.description)
+
     return render(request, 'courses/course_list.html', {
         'page_obj':     page_obj,
         'courses':      page_obj,
@@ -90,6 +102,7 @@ def course_detail(request, slug):
     modules = course.modules.prefetch_related('lessons').all()
     enrollment = get_enrollment(request.user, course)
     progress   = get_progress(request.user, course)
+    course_description_plain = normalize_rich_text(course.description)
 
     # Contar aulas e progresso
     total_lessons = sum(m.lessons.filter(published=True).count() for m in modules)
@@ -105,6 +118,7 @@ def course_detail(request, slug):
         'total_lessons': total_lessons,
         'done_lessons':  done_lessons,
         'pct':           pct,
+        'course_description_plain': course_description_plain,
     })
 
 
