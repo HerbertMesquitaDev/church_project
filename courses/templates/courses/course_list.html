@@ -43,7 +43,7 @@
                         <span class="course-level-badge course-level-{{ course.level }}">{{ course.get_level_display }}</span>
                     </div>
                     <h3>{{ course.title }}</h3>
-                    <p class="course-desc">{{ course.description|truncatewords:18 }}</p>
+                    <p class="course-desc">{{ course.description|striptags|truncatewords:18 }}</p>
                     <div class="course-card-footer">
                         <span><i class="fa fa-book-open"></i> {{ course.lesson_count }} aula{{ course.lesson_count|pluralize }}</span>
                         {% if course.workload %}<span><i class="fa fa-clock"></i> {{ course.workload }} min</span>{% endif %}
