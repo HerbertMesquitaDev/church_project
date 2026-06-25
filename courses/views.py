@@ -104,6 +104,10 @@ def course_detail(request, slug):
     progress   = get_progress(request.user, course)
     course_description_plain = normalize_rich_text(course.description)
 
+    for module in modules:
+        for lesson in module.lessons.all():
+            lesson.description_plain = normalize_rich_text(lesson.description)
+
     # Contar aulas e progresso
     total_lessons = sum(m.lessons.filter(published=True).count() for m in modules)
     done_lessons  = len(progress)  # progress is now a set of completed lesson IDs

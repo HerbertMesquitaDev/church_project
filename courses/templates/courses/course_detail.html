@@ -84,7 +84,7 @@
                         {% else %}
                         <span>{{ lesson.title }}</span>
                         {% endif %}
-                        {% if lesson.description %}<small class="text-muted">{{ lesson.description|truncatewords:12 }}</small>{% endif %}
+                        {% if lesson.description_plain %}<small class="text-muted">{{ lesson.description_plain|truncatewords:12 }}</small>{% endif %}
                     </div>
                     {% if lesson.duration %}<span class="text-muted" style="font-size:.75rem;flex-shrink:0">{{ lesson.duration }} min</span>{% endif %}
                 </div>
