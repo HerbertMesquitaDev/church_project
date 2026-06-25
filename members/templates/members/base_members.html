@@ -158,7 +158,7 @@
             <a href="{% url 'offering_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'offering_list' %}active{% endif %}">
                 <i class="fa fa-hand-holding-heart"></i> Dízimos & Ofertas
             </a>
-            {% if request.user.profile.role == 'teacher' %}
+            {% if request.user.profile.approved and request.user.profile.role == 'teacher' %}
             <a href="{% url 'teacher_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}">
                 <i class="fa fa-chalkboard-teacher"></i> Dashboard do Professor
             </a>

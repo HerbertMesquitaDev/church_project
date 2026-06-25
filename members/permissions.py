@@ -4,7 +4,7 @@ from django.contrib import messages
 
 def is_teacher(user):
     profile = getattr(user, 'profile', None)
-    return bool(user.is_authenticated and profile and profile.role == 'teacher')
+    return bool(user.is_authenticated and profile and profile.approved and profile.role == 'teacher')
 
 
 def teacher_required(view_func):

@@ -39,7 +39,7 @@ class MemberProfileAdmin(TenantAdminMixin, admin.ModelAdmin):
     inlines = [MemberMinistryInline]
     fieldsets = (
         ('Dados Pessoais', {'fields': ('user', 'photo', 'phone', 'birth_date', 'bio', 'baptized', 'member_since')}),
-        ('Acesso',         {'fields': ('approved',)}),
+        ('Acesso',         {'fields': ('approved', 'role')}),
         ('Consentimento LGPD — Uso de Imagem', {
             'fields': ('image_consent', 'image_consent_date', 'image_consent_ip',
                        'image_consent_revoked', 'image_consent_revoked_date'),

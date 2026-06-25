@@ -7,6 +7,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
+from .role_utils import sync_user_flags
+
 
 @receiver(post_save, sender='members.MemberProfile')
 def sync_staff_status(sender, instance, **kwargs):
@@ -16,9 +18,11 @@ def sync_staff_status(sender, instance, **kwargs):
     """
     if instance.user.is_superuser:
         return
-    should_be_staff = (instance.role == 'admin' and instance.approved)
-    if instance.user.is_staff != should_be_staff:
-        User.objects.filter(pk=instance.user_id).update(is_staff=should_be_staff)
+    sync_user_flags(instance.user, instance.role, instance.approved)
+    User.objects.filter(pk=instance.user_id).update(
+        is_staff=instance.user.is_staff,
+        is_superuser=instance.user.is_superuser,
+    )
 
 
 @receiver(post_save, sender='events.Event')

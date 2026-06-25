@@ -17,6 +17,7 @@ from .emails import (
     notify_admin_new_testimony, notify_admin_delete_request,
     notify_collaborator_delete_reviewed,
 )
+from .role_utils import sync_user_flags
 from .forms import (RegisterForm, ProfileForm, MemberMinistryFormSet,
                     EventForm, ContentForm, NoticeForm, TestimonyForm, PrayerRequestForm,
                     OfferingForm, MinistryForm)
@@ -46,7 +47,8 @@ def is_collaborator(user):
 
 
 def is_teacher(user):
-    return user.is_authenticated and getattr(getattr(user, 'profile', None), 'role', '') == 'teacher'
+    profile = getattr(user, 'profile', None)
+    return bool(user.is_authenticated and profile and profile.approved and profile.role == 'teacher')
 
 
 def members_only(view_func):
@@ -103,6 +105,19 @@ def teacher_or_staff_only(view_func):
             return redirect('member_dashboard')
         return view_func(request, *args, **kwargs)
     return wrapper
+
+
+def apply_role_flags(user, role):
+    """Mantém is_staff/is_superuser coerentes com o papel do membro."""
+    if role == 'admin':
+        user.is_staff = True
+        user.is_superuser = True
+    elif role == 'collaborator':
+        user.is_staff = True
+        user.is_superuser = False
+    else:
+        user.is_staff = False
+        user.is_superuser = False
 
 
 def superuser_only(view_func):
@@ -526,16 +541,7 @@ def member_approve(request, pk):
         role = request.POST.get('role', 'member')
         profile.approved = True
         profile.role = role
-        # Colaborador recebe is_staff; admin recebe is_staff + is_superuser
-        if role == 'collaborator':
-            profile.user.is_staff = True
-            profile.user.is_superuser = False
-        elif role == 'admin':
-            profile.user.is_staff = True
-            profile.user.is_superuser = True
-        else:  # member
-            profile.user.is_staff = False
-            profile.user.is_superuser = False
+        sync_user_flags(profile.user, role, profile.approved)
         profile.user.save()
         profile.save()
         messages.success(request, f'{profile.full_name} aprovado(a) como {profile.get_role_display()}!')
@@ -575,15 +581,7 @@ def member_edit(request, pk):
         new_role = request.POST.get('role', profile.role)
         if new_role != profile.role:
             profile.role = new_role
-            if new_role == 'collaborator':
-                profile.user.is_staff = True
-                profile.user.is_superuser = False
-            elif new_role == 'admin':
-                profile.user.is_staff = True
-                profile.user.is_superuser = True
-            else:
-                profile.user.is_staff = False
-                profile.user.is_superuser = False
+            sync_user_flags(profile.user, new_role, profile.approved)
             profile.user.save()
 
         birth_date_raw   = request.POST.get('birth_date', '').strip()

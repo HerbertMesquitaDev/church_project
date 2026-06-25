@@ -89,7 +89,7 @@ class MemberProfile(models.Model):
 
     @property
     def is_teacher(self):
-        return self.role == 'teacher'
+        return self.approved and self.role == 'teacher'
 
 
 class ContentCategory(models.Model):

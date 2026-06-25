@@ -51,6 +51,8 @@
           <select name="role" class="role-select">
             <option value="member">Membro</option>
             <option value="collaborator">Colaborador</option>
+            <option value="teacher">Professor</option>
+            <option value="student">Aluno</option>
             <option value="admin">Admin</option>
           </select>
           <button type="submit" class="btn-action btn-approve"><i class="fa fa-check"></i> Aprovar</button>
@@ -102,6 +104,8 @@
         <span class="role-badge role-{{ p.role }}">
           {% if p.role == 'admin' %}<i class="fa fa-shield-alt"></i>
           {% elif p.role == 'collaborator' %}<i class="fa fa-pen"></i>
+          {% elif p.role == 'teacher' %}<i class="fa fa-chalkboard-teacher"></i>
+          {% elif p.role == 'student' %}<i class="fa fa-graduation-cap"></i>
           {% else %}<i class="fa fa-user"></i>{% endif %}
           {{ p.get_role_display }}
         </span>

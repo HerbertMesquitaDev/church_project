@@ -8,6 +8,7 @@ import json
 from datetime import date, timedelta
 
 from members.views import members_only, staff_only, superuser_only
+from members.permissions import is_teacher
 from .models import Booking, Location
 from .forms import BookingForm, BookingStatusForm, LocationForm
 
@@ -39,7 +40,7 @@ def agenda_view(request):
     # não-admin vê só aprovados + os próprios
     if not (request.user.is_staff or request.user.is_superuser):
         # Professores veem seus agendamentos + os aprovados
-        if hasattr(request.user, 'profile') and request.user.profile.role == 'teacher':
+        if is_teacher(request.user):
             bookings = bookings.filter(
                 Q(status='approved') | Q(responsible=request.user)
             )
@@ -114,7 +115,7 @@ def booking_list(request):
         bookings = bookings.filter(date__lte=date_to)
 
     # Professores veem apenas seus próprios agendamentos + aprovados
-    if hasattr(request.user, 'profile') and request.user.profile.role == 'teacher':
+    if is_teacher(request.user):
         bookings = bookings.filter(Q(responsible=request.user) | Q(status='approved'))
     # membros comuns veem apenas aprovados + os próprios
     elif not (request.user.is_staff or request.user.is_superuser):
