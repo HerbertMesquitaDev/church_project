@@ -114,6 +114,29 @@
     margin-bottom: .45rem;
 }
 
+.profile-photo-upload-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .75rem;
+    padding: .5rem .75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface-alt);
+}
+
+.profile-photo-upload-preview img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+}
+
+.profile-photo-upload-preview small {
+    color: var(--text-muted);
+}
+
 .profile-summary-ministries {
     display: flex;
     flex-wrap: wrap;
@@ -281,6 +304,10 @@
         align-items: flex-start;
     }
 
+    .profile-photo-upload-preview {
+        width: 100%;
+    }
+
     .profile-testimony {
         margin-top: 2rem;
     }
@@ -421,7 +448,16 @@
             </div>
 
             <div class="form-section-title">Foto de Perfil</div>
-            <div class="form-group">{{ form.photo }}</div>
+            {% if profile.photo %}
+            <div class="profile-photo-upload-preview">
+                <img src="{{ profile.photo.url }}" alt="Miniatura da foto de perfil">
+                <small>Foto atual. Envie uma nova para substituir.</small>
+            </div>
+            {% endif %}
+            <div class="form-group">
+                {{ form.photo.as_widget }}
+                {% if form.photo.errors %}<ul class="errorlist">{% for e in form.photo.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
 
             <div class="form-section-title">Sobre Mim</div>
             <div class="form-group"><label>Breve descrição</label>{{ form.bio }}</div>
