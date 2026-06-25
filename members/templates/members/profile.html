@@ -455,7 +455,14 @@
             </div>
             {% endif %}
             <div class="form-group">
-                {{ form.photo.as_widget }}
+                <input
+                    type="file"
+                    name="{{ form.photo.html_name }}"
+                    id="{{ form.photo.id_for_label }}"
+                    class="form-input"
+                    accept="image/*"
+                >
+                <small class="form-hint">Envie uma nova imagem para atualizar sua foto de perfil.</small>
                 {% if form.photo.errors %}<ul class="errorlist">{% for e in form.photo.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
             </div>
 
