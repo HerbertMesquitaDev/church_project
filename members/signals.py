@@ -3,11 +3,39 @@ Signals:
 - Notificações por e-mail (eventos, avisos urgentes, visitantes)
 - Sincronização de is_staff com role='admin' + approved=True
 """
+from django.contrib.auth import user_logged_in
+from django.contrib.sessions.models import Session
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
 from .role_utils import sync_user_flags
+
+
+def _clear_other_sessions(user, current_session_key=None):
+    """Remove outras sessões autenticadas do mesmo usuário."""
+    if not user.is_authenticated:
+        return
+
+    user_id = str(user.pk)
+
+    for session in Session.objects.all().iterator():
+        if current_session_key and session.session_key == current_session_key:
+            continue
+
+        try:
+            decoded = session.get_decoded()
+        except Exception:
+            continue
+
+        if decoded.get('_auth_user_id') == user_id:
+            session.delete()
+
+
+@receiver(user_logged_in)
+def enforce_single_session(sender, request, user, **kwargs):
+    current_session_key = getattr(getattr(request, 'session', None), 'session_key', None)
+    _clear_other_sessions(user, current_session_key=current_session_key)
 
 
 @receiver(post_save, sender='members.MemberProfile')

@@ -2,8 +2,86 @@
 {% block title %}Dashboard do Professor{% endblock %}
 {% block page_title %}Dashboard do Professor{% endblock %}
 
+{% block extra_css %}
+<style>
+.teacher-dashboard-section {
+  margin-bottom: 2rem;
+}
+
+.teacher-dashboard-table .manage-table {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .teacher-dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-dashboard-table {
+    overflow: visible;
+    border: none;
+    background: transparent;
+    margin-bottom: 1.25rem;
+  }
+
+  .teacher-dashboard-table table,
+  .teacher-dashboard-table thead,
+  .teacher-dashboard-table tbody,
+  .teacher-dashboard-table tr,
+  .teacher-dashboard-table th,
+  .teacher-dashboard-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .teacher-dashboard-table thead {
+    display: none;
+  }
+
+  .teacher-dashboard-table tbody tr {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .teacher-dashboard-table td {
+    border: none;
+    padding: 0.35rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.9rem;
+    align-items: flex-start;
+  }
+
+  .teacher-dashboard-table td::before {
+    content: attr(data-label);
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    flex: 0 0 42%;
+  }
+
+  .teacher-dashboard-table td:last-child {
+    padding-bottom: 0;
+  }
+
+  .teacher-dashboard-table td:last-child::before {
+    min-width: 3rem;
+  }
+
+  .teacher-dashboard-table .manage-btn {
+    margin-left: auto;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="stats-grid" style="margin-bottom:1.5rem;">
+<div class="stats-grid teacher-dashboard-stats" style="margin-bottom:1.5rem;">
   <div class="stat-card">
     <div class="stat-icon" style="background:rgba(39,174,96,.1)"><i class="fa fa-graduation-cap" style="color:#27ae60"></i></div>
     <div><span class="stat-number">{{ courses|length }}</span><span class="stat-label">Cursos</span></div>
@@ -15,7 +93,7 @@
 </div>
 
 <div class="section-label-sm">Meus Cursos</div>
-<div class="manage-table-wrap" style="margin-bottom:2rem;">
+<div class="manage-table-wrap teacher-dashboard-table teacher-dashboard-section">
   <table class="manage-table">
     <thead>
       <tr>
@@ -28,10 +106,10 @@
     <tbody>
       {% for course in courses %}
       <tr>
-        <td>{{ course.title }}</td>
-        <td class="hide-mobile">{{ course.category }}</td>
-        <td>{% if course.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
-        <td><a href="{% url 'manage_course_edit' course.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a></td>
+        <td data-label="Curso">{{ course.title }}</td>
+        <td class="hide-mobile" data-label="Categoria">{{ course.category }}</td>
+        <td data-label="Publicado">{% if course.published %}<i class="fa fa-check-circle" style="color:#27ae60"></i>{% else %}<i class="fa fa-times-circle" style="color:#e74c3c"></i>{% endif %}</td>
+        <td data-label="Ações"><a href="{% url 'manage_course_edit' course.pk %}" class="manage-btn manage-btn-edit" title="Editar"><i class="fa fa-pencil"></i></a></td>
       </tr>
       {% empty %}
       <tr><td colspan="4" class="text-muted" style="padding:2rem;text-align:center;">Nenhum curso encontrado.</td></tr>
@@ -41,7 +119,7 @@
 </div>
 
 <div class="section-label-sm">Meus Agendamentos</div>
-<div class="manage-table-wrap">
+<div class="manage-table-wrap teacher-dashboard-table">
   <table class="manage-table">
     <thead>
       <tr>
@@ -54,10 +132,10 @@
     <tbody>
       {% for booking in bookings %}
       <tr>
-        <td>{{ booking.date|date:'d/m/Y' }}</td>
-        <td>{{ booking.title }}</td>
-        <td>{{ booking.get_status_display }}</td>
-        <td><a href="{% url 'booking_detail' booking.pk %}" class="manage-btn manage-btn-view" title="Detalhes"><i class="fa fa-eye"></i></a></td>
+        <td data-label="Data">{{ booking.date|date:'d/m/Y' }}</td>
+        <td data-label="Título">{{ booking.title }}</td>
+        <td data-label="Status">{{ booking.get_status_display }}</td>
+        <td data-label="Ações"><a href="{% url 'booking_detail' booking.pk %}" class="manage-btn manage-btn-view" title="Detalhes"><i class="fa fa-eye"></i></a></td>
       </tr>
       {% empty %}
       <tr><td colspan="4" class="text-muted" style="padding:2rem;text-align:center;">Nenhum agendamento encontrado.</td></tr>

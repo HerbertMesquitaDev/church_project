@@ -141,6 +141,27 @@ class TestMemberAuth:
         resp = client.get(reverse('member_dashboard'))
         assert resp.status_code == 200
 
+    def test_new_login_invalidates_previous_session(self, client, approved_user, site_settings):
+        from django.test import Client
+
+        first_client = client
+        resp_login = first_client.post(reverse('member_login'), {
+            'username': 'aprovado',
+            'password': 'senha123'
+        })
+        assert resp_login.status_code in (200, 302)
+        assert first_client.get(reverse('member_dashboard')).status_code == 200
+
+        second_client = Client()
+        resp_login_2 = second_client.post(reverse('member_login'), {
+            'username': 'aprovado',
+            'password': 'senha123'
+        })
+        assert resp_login_2.status_code in (200, 302)
+
+        resp_old_session = first_client.get(reverse('member_dashboard'))
+        assert resp_old_session.status_code == 302
+
     def test_dashboard_blocked_unapproved(self, client, user, site_settings):
         client.login(username='membro', password='senha123')
         resp = client.get(reverse('member_dashboard'))
